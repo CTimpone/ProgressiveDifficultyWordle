@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="TypescriptLogic\GameLogic\" />
+    <Folder Include="TypeScript\GameLogic\" />
   </ItemGroup>
 
 </Project>

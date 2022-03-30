@@ -1,1 +1,1 @@
-{"version":3,"file":"EligibleWords.js","sourceRoot":"","sources":["../../TypescriptLogic/Models/EligibleWords.ts"],"names":[],"mappings":"AAAA,IAAU,GAAG,CAMZ;AAND,WAAU,GAAG;IACT,MAAa,aAAa;KAIzB;IAJY,iBAAa,gBAIzB,CAAA;AACL,CAAC,EANS,GAAG,KAAH,GAAG,QAMZ"}
+{"version":3,"file":"EligibleWords.js","sourceRoot":"","sources":["../../TypeScript/Models/EligibleWords.ts"],"names":[],"mappings":"AAAA,IAAU,GAAG,CAMZ;AAND,WAAU,GAAG;IACT,MAAa,aAAa;KAIzB;IAJY,iBAAa,gBAIzB,CAAA;AACL,CAAC,EANS,GAAG,KAAH,GAAG,QAMZ"}

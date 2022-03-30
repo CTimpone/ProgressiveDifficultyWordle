@@ -1,1 +1,1 @@
-{"version":3,"file":"SingleGame.js","sourceRoot":"","sources":["../../TypescriptLogic/Models/SingleGame.ts"],"names":[],"mappings":"AAAA,IAAU,GAAG,CASZ;AATD,WAAU,GAAG;IACT,MAAa,UAAU;KAOtB;IAPY,cAAU,aAOtB,CAAA;AACL,CAAC,EATS,GAAG,KAAH,GAAG,QASZ"}
+{"version":3,"file":"SingleGame.js","sourceRoot":"","sources":["../../TypeScript/Models/SingleGame.ts"],"names":[],"mappings":"AAAA,IAAU,GAAG,CASZ;AATD,WAAU,GAAG;IACT,MAAa,UAAU;KAOtB;IAPY,cAAU,aAOtB,CAAA;AACL,CAAC,EATS,GAAG,KAAH,GAAG,QASZ"}

@@ -1,1 +1,1 @@
-{"version":3,"file":"GameOptions.js","sourceRoot":"","sources":["../../TypescriptLogic/Models/GameOptions.ts"],"names":[],"mappings":"AAAA,IAAU,GAAG,CAOZ;AAPD,WAAU,GAAG;IACT,MAAa,WAAW;KAKvB;IALY,eAAW,cAKvB,CAAA;AACL,CAAC,EAPS,GAAG,KAAH,GAAG,QAOZ"}
+{"version":3,"file":"GameOptions.js","sourceRoot":"","sources":["../../TypeScript/Models/GameOptions.ts"],"names":[],"mappings":"AAAA,IAAU,GAAG,CAOZ;AAPD,WAAU,GAAG;IACT,MAAa,WAAW;KAKvB;IALY,eAAW,cAKvB,CAAA;AACL,CAAC,EAPS,GAAG,KAAH,GAAG,QAOZ"}
