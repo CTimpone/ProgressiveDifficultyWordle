@@ -1,7 +1,9 @@
 ﻿namespace PDW {
-    export enum LetterState {
-        "Absent" = 0,
-        "Correct" = 1,
-        "Present" = 2
+    export class LetterState {
+        ExactMatch: Map<number, string>;
+        PresentBadLocations: Map<string, number[]>;
+        Absent: string[];
+
+        constructor() { }
     }
 }

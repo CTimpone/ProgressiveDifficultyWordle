@@ -24,9 +24,13 @@ module.exports = function (grunt) {
             }
         },
         uglify: {
-            all: {
-                src: ['temp/combined.js'],
-                dest: 'wwwroot/lib/combined.min.js'
+            options: {
+                mangle: true
+            },
+            my_target: {
+                files: {
+                    'wwwroot/lib/combined.min.js': ['temp/combined.js']
+                }
             }
         },
         watch: {
