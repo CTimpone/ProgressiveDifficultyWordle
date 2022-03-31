@@ -5,6 +5,8 @@
         Absent: string[];
 
         constructor() {
+            this.ExactMatch = new Map<number, string>();
+            this.PresentBadLocations = new Map<string, number[]>();
             this.Absent = [];
         }
     }

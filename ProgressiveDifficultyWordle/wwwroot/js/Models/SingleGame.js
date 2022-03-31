@@ -1,12 +1,13 @@
 var PDW;
 (function (PDW) {
     class SingleGame {
-        constructor(options) {
+        constructor(options, eligibleWords) {
             this.options = options;
-            this.chosenWord = PDW.EligibleWords.eligibleAnswers[Math.floor(Math.random() * PDW.EligibleWords.eligibleAnswers.length)];
+            this.chosenWord = eligibleWords.eligibleAnswers[Math.floor(Math.random() * eligibleWords.eligibleAnswers.length)];
             this.letterState = new PDW.LetterState();
             this.userGuesses = [];
             this.startTime = new Date();
+            this.eligibleWords = eligibleWords;
         }
         guessTrigger(input) {
             input = input.toLowerCase();
@@ -33,14 +34,18 @@ var PDW;
                     }
                 }
             }
+            if (!this.eligibleWords.guessInWordList(input)) {
+                return false;
+            }
             return true;
         }
         finalizeGuess(input) {
             input = input.toLowerCase();
             let currentGuess = new PDW.GuessDetails(input, this.chosenWord);
-            if (currentGuess.fullMatch || this.userGuesses.length == this.options.maxGuesses) {
+            if (currentGuess.fullMatch || this.userGuesses.length === this.options.maxGuesses) {
                 this.endTime = new Date();
             }
+            console.log(currentGuess.characterStates);
             for (let i = 0; i < currentGuess.characterStates.length; i++) {
                 switch (currentGuess.characterStates[i]) {
                     case PDW.LetterStatus.ExactMatch:
