@@ -11,8 +11,4 @@
     </PackageReference>
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="TypeScript\GameLogic\" />
-  </ItemGroup>
-
 </Project>
