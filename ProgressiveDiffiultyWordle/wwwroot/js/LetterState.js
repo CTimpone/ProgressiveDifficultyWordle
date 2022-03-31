@@ -1,7 +1,9 @@
 var PDW;
 (function (PDW) {
     class LetterState {
-        constructor() { }
+        constructor() {
+            this.Absent = [];
+        }
     }
     PDW.LetterState = LetterState;
 })(PDW || (PDW = {}));
