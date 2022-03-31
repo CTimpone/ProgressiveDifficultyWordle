@@ -9,23 +9,53 @@
 
         constructor(options: GameOptions) {
             this.options = options;
-            this.chosenWord = EligibleWords.EligibleAnswers[Math.floor(Math.random() * EligibleWords.EligibleAnswers.length)];
+            this.chosenWord = EligibleWords.eligibleAnswers[Math.floor(Math.random() * EligibleWords.eligibleAnswers.length)];
             this.letterState = new LetterState();
             this.userGuesses = [];
             this.startTime = new Date();
         }
 
-        validateGuess(input: string) {
+        guessTrigger(input: string): boolean {
+            input = input.toLowerCase();
 
+            if (this.validateGuess(input)) {
+                this.finalizeGuess(input);
+            }
 
+            return this.endTime !== undefined;
         }
-        processGuess(input: string) {
+
+        validateGuess(input: string): boolean {
+            if (this.endTime !== undefined) {
+                return false;
+            }
+
+            if (this.options.maxGuesses <= this.userGuesses.length) {
+                return false;
+            }
+            
+            let inputRegex = /[a-z]/g;
+            if (input.match(inputRegex).length != input.length) {
+                return false;
+            }
+
+            if (this.options.hardMode) {
+                for (let i = 0; i < input.length; i++) {
+                    if (this.letterState.ExactMatch.has(i) && input[i] != this.letterState.ExactMatch.get(i)) {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        }
+
+        finalizeGuess (input: string): void {
             input = input.toLowerCase();
 
             let currentGuess = new GuessDetails(input, this.chosenWord);
-            this.userGuesses.push(currentGuess);
 
-            if (currentGuess.fullMatch || this.userGuesses.length == this.options.maxGuesses) {
+            if (currentGuess.fullMatch || this.userGuesses.length === this.options.maxGuesses) {
                 this.endTime = new Date();
             }
 
@@ -51,6 +81,8 @@
 
                 }
             }
+
+            this.userGuesses.push(currentGuess);
         }
     }
 }

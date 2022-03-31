@@ -1,8 +1,8 @@
 ﻿namespace PDW {
     export class ScoreDetails {
-        TotalScore: number;
-        RoundsCompleted: number;
-        EndTime: Date | undefined;
-        StartingGuesses: string[];
+        totalScore: number;
+        roundsCompleted: number;
+        endTime: Date | undefined;
+        startingGuesses: string[];
     }
 }

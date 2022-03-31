@@ -1,6 +1,6 @@
 var PDW;
 (function (PDW) {
-    class SingleGame {
+    class GameInitializer {
         constructor(options) {
             this.options = options;
             this.chosenWord = PDW.EligibleWords.eligibleAnswers[Math.floor(Math.random() * PDW.EligibleWords.eligibleAnswers.length)];
@@ -38,7 +38,7 @@ var PDW;
         finalizeGuess(input) {
             input = input.toLowerCase();
             let currentGuess = new PDW.GuessDetails(input, this.chosenWord);
-            if (currentGuess.fullMatch || this.userGuesses.length === this.options.maxGuesses) {
+            if (currentGuess.fullMatch || this.userGuesses.length == this.options.maxGuesses) {
                 this.endTime = new Date();
             }
             for (let i = 0; i < currentGuess.characterStates.length; i++) {
@@ -66,6 +66,6 @@ var PDW;
             this.userGuesses.push(currentGuess);
         }
     }
-    PDW.SingleGame = SingleGame;
+    PDW.GameInitializer = GameInitializer;
 })(PDW || (PDW = {}));
-//# sourceMappingURL=SingleGame.js.map
+//# sourceMappingURL=GameInitializer.js.map

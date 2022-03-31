@@ -1,10 +1,10 @@
 ﻿namespace PDW {
     export class SessionState {
-        GameHistory: SingleGame[] | undefined;
-        Active: boolean;
-        StartTime: Date;
-        HardMode: boolean;
-        GameTimerLength: number | undefined;
-        MaxGuesses: number;
+        gameHistory: SingleGame[] | undefined;
+        active: boolean;
+        startTime: Date;
+        hardMode: boolean;
+        gameTimerLength: number | undefined;
+        maxGuesses: number;
     }
 }

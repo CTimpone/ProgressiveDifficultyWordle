@@ -17,7 +17,7 @@
 
             this.populateCharacterStates(inputMap, answerMap);
 
-            this.fullMatch = this.characterStates.every((state) => state == LetterStatus.ExactMatch);
+            this.fullMatch = this.characterStates.every((state) => state === LetterStatus.ExactMatch);
         }
 
         private updateCharacterMap(map: Map<string, number[]>, value: string, index: number) {
