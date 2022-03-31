@@ -6,13 +6,15 @@
         letterState: LetterState;
         userGuesses: GuessDetails[];
         options: GameOptions;
+        eligibleWords: EligibleWords;
 
-        constructor(options: GameOptions) {
+        constructor(options: GameOptions, eligibleWords: EligibleWords) {
             this.options = options;
-            this.chosenWord = EligibleWords.eligibleAnswers[Math.floor(Math.random() * EligibleWords.eligibleAnswers.length)];
+            this.chosenWord = eligibleWords.eligibleAnswers[Math.floor(Math.random() * eligibleWords.eligibleAnswers.length)];
             this.letterState = new LetterState();
             this.userGuesses = [];
             this.startTime = new Date();
+            this.eligibleWords = eligibleWords;
         }
 
         guessTrigger(input: string): boolean {
@@ -47,6 +49,10 @@
                 }
             }
 
+            if (!this.eligibleWords.guessInWordList(input)) {
+                return false;
+            }
+
             return true;
         }
 
@@ -58,6 +64,8 @@
             if (currentGuess.fullMatch || this.userGuesses.length === this.options.maxGuesses) {
                 this.endTime = new Date();
             }
+
+            console.log(currentGuess.characterStates);
 
             for (let i = 0; i < currentGuess.characterStates.length; i++) {
                 switch (currentGuess.characterStates[i]) {

@@ -9,6 +9,7 @@
     "outDir": "wwwroot/js"
   },
   "include": [
-    "TypeScript/**/**/*"
+    "TypeScript/**/**/*",
+    "TypeScript/**/**/**/*"
   ]
 }

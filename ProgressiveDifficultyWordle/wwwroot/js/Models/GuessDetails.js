@@ -10,8 +10,10 @@ var PDW;
                 this.updateCharacterMap(answerMap, answer, i);
                 this.updateCharacterMap(inputMap, input, i);
             }
+            console.log(inputMap);
+            console.log(answerMap);
             this.populateCharacterStates(inputMap, answerMap);
-            this.fullMatch = this.characterStates.every((state) => state == PDW.LetterStatus.ExactMatch);
+            this.fullMatch = this.characterStates.every((state) => state === PDW.LetterStatus.ExactMatch);
         }
         updateCharacterMap(map, value, index) {
             if (!map.has(value[index])) {
@@ -50,6 +52,11 @@ var PDW;
                                 }
                             }
                         }
+                    }
+                }
+                else {
+                    for (let absentIndex of inputMap.get(key)) {
+                        this.characterStates[absentIndex] = PDW.LetterStatus.Absent;
                     }
                 }
             }
