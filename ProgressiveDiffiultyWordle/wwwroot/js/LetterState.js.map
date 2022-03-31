@@ -1,1 +1,1 @@
-{"version":3,"file":"LetterState.js","sourceRoot":"","sources":["../../TypeScript/Models/LetterState.ts"],"names":[],"mappings":"AAAA,IAAU,GAAG,CAQZ;AARD,WAAU,GAAG;IACT,MAAa,WAAW;QAKpB,gBAAgB,CAAC;KACpB;IANY,eAAW,cAMvB,CAAA;AACL,CAAC,EARS,GAAG,KAAH,GAAG,QAQZ"}
+{"version":3,"file":"LetterState.js","sourceRoot":"","sources":["../../TypeScript/Models/LetterState.ts"],"names":[],"mappings":"AAAA,IAAU,GAAG,CAUZ;AAVD,WAAU,GAAG;IACT,MAAa,WAAW;QAKpB;YACI,IAAI,CAAC,MAAM,GAAG,EAAE,CAAC;QACrB,CAAC;KACJ;IARY,eAAW,cAQvB,CAAA;AACL,CAAC,EAVS,GAAG,KAAH,GAAG,QAUZ"}

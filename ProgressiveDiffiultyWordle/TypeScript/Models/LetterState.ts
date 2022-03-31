@@ -4,6 +4,8 @@
         PresentBadLocations: Map<string, number[]>;
         Absent: string[];
 
-        constructor() { }
+        constructor() {
+            this.Absent = [];
+        }
     }
 }
