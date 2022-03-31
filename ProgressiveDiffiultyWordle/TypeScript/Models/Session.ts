@@ -1,8 +1,8 @@
 ﻿namespace PDW {
     export class Session {
-        CurrentGame: SingleGame;
-        Type: GameType;
-        State: SessionState;
-        Score: ScoreDetails;
+        currentGame: SingleGame;
+        type: GameType;
+        state: SessionState;
+        score: ScoreDetails;
     }
 }

@@ -11,7 +11,7 @@ var PDW;
                 this.updateCharacterMap(inputMap, input, i);
             }
             this.populateCharacterStates(inputMap, answerMap);
-            this.fullMatch = this.characterStates.every((state) => state === PDW.LetterStatus.ExactMatch);
+            this.fullMatch = this.characterStates.every((state) => state == PDW.LetterStatus.ExactMatch);
         }
         updateCharacterMap(map, value, index) {
             if (!map.has(value[index])) {

@@ -38,7 +38,7 @@ var PDW;
         finalizeGuess(input) {
             input = input.toLowerCase();
             let currentGuess = new PDW.GuessDetails(input, this.chosenWord);
-            if (currentGuess.fullMatch || this.userGuesses.length === this.options.maxGuesses) {
+            if (currentGuess.fullMatch || this.userGuesses.length == this.options.maxGuesses) {
                 this.endTime = new Date();
             }
             for (let i = 0; i < currentGuess.characterStates.length; i++) {
