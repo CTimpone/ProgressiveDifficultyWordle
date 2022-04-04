@@ -4,9 +4,6 @@ import assert = require('assert');
 import { FIVE_LETTER_ANSWERS } from '../../progressivedifficultywordle/typescript/Constants/Words/FiveLetterAnswers';
 import { FIVE_LETTER_GUESSES } from '../../progressivedifficultywordle/typescript/Constants/Words/FiveLetterGuesses';
 import { EligibleWords } from '../../progressivedifficultywordle/typescript/models/eligiblewords';
-//import {  } from '../../progressivedifficultywordle/typescript/Constants/Words/FiveLetterAnswers';
-//import { FIVE_LETTER_GUESSES } from '../../progressivedifficultywordle/typescript/Constants/Words/FiveLetterGuesses';
-//import * as PDW from '../../progressivedifficultywordle/typescript/models/eligiblewords';
 
 describe("EligibleWords", () => {
     describe("#constructor", () => {

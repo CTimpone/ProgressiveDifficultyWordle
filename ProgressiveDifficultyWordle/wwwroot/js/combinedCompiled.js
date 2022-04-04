@@ -15415,28 +15415,10 @@ System.register("Models/GameType", [], function (exports_5, context_5) {
         }
     };
 });
-System.register("Models/LetterState", [], function (exports_6, context_6) {
-    "use strict";
-    var LetterState;
-    var __moduleName = context_6 && context_6.id;
-    return {
-        setters: [],
-        execute: function () {
-            LetterState = class LetterState {
-                constructor() {
-                    this.ExactMatch = new Map();
-                    this.PresentBadLocations = new Map();
-                    this.Absent = [];
-                }
-            };
-            exports_6("LetterState", LetterState);
-        }
-    };
-});
-System.register("Models/LetterStatus", [], function (exports_7, context_7) {
+System.register("Models/LetterStatus", [], function (exports_6, context_6) {
     "use strict";
     var LetterStatus;
-    var __moduleName = context_7 && context_7.id;
+    var __moduleName = context_6 && context_6.id;
     return {
         setters: [],
         execute: function () {
@@ -15446,27 +15428,14 @@ System.register("Models/LetterStatus", [], function (exports_7, context_7) {
                 LetterStatus[LetterStatus["WrongLocation"] = 2] = "WrongLocation";
                 LetterStatus[LetterStatus["Absent"] = 3] = "Absent";
             })(LetterStatus || (LetterStatus = {}));
-            exports_7("LetterStatus", LetterStatus);
+            exports_6("LetterStatus", LetterStatus);
         }
     };
 });
-System.register("Models/ScoreDetails", [], function (exports_8, context_8) {
-    "use strict";
-    var ScoreDetails;
-    var __moduleName = context_8 && context_8.id;
-    return {
-        setters: [],
-        execute: function () {
-            ScoreDetails = class ScoreDetails {
-            };
-            exports_8("ScoreDetails", ScoreDetails);
-        }
-    };
-});
-System.register("Models/GuessDetails", ["Models/LetterStatus"], function (exports_9, context_9) {
+System.register("Models/GuessDetails", ["Models/LetterStatus"], function (exports_7, context_7) {
     "use strict";
     var LetterStatus_1, GuessDetails;
-    var __moduleName = context_9 && context_9.id;
+    var __moduleName = context_7 && context_7.id;
     return {
         setters: [
             function (LetterStatus_1_1) {
@@ -15536,7 +15505,38 @@ System.register("Models/GuessDetails", ["Models/LetterStatus"], function (export
                     }
                 }
             };
-            exports_9("GuessDetails", GuessDetails);
+            exports_7("GuessDetails", GuessDetails);
+        }
+    };
+});
+System.register("Models/LetterState", [], function (exports_8, context_8) {
+    "use strict";
+    var LetterState;
+    var __moduleName = context_8 && context_8.id;
+    return {
+        setters: [],
+        execute: function () {
+            LetterState = class LetterState {
+                constructor() {
+                    this.ExactMatch = new Map();
+                    this.PresentBadLocations = new Map();
+                    this.Absent = [];
+                }
+            };
+            exports_8("LetterState", LetterState);
+        }
+    };
+});
+System.register("Models/ScoreDetails", [], function (exports_9, context_9) {
+    "use strict";
+    var ScoreDetails;
+    var __moduleName = context_9 && context_9.id;
+    return {
+        setters: [],
+        execute: function () {
+            ScoreDetails = class ScoreDetails {
+            };
+            exports_9("ScoreDetails", ScoreDetails);
         }
     };
 });
