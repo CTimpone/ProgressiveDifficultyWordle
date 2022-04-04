@@ -1,11 +1,10 @@
 var PDW;
 (function (PDW) {
-    let LetterStatus;
-    (function (LetterStatus) {
-        LetterStatus[LetterStatus["Unknown"] = 0] = "Unknown";
-        LetterStatus[LetterStatus["ExactMatch"] = 1] = "ExactMatch";
-        LetterStatus[LetterStatus["WrongLocation"] = 2] = "WrongLocation";
-        LetterStatus[LetterStatus["Absent"] = 3] = "Absent";
-    })(LetterStatus = PDW.LetterStatus || (PDW.LetterStatus = {}));
+    let GameType;
+    (function (GameType) {
+        GameType[GameType["Single"] = 0] = "Single";
+        GameType[GameType["Endless"] = 1] = "Endless";
+        GameType[GameType["ProgressiveDifficulty"] = 2] = "ProgressiveDifficulty";
+    })(GameType = PDW.GameType || (PDW.GameType = {}));
 })(PDW || (PDW = {}));
 //# sourceMappingURL=GameType.js.map
