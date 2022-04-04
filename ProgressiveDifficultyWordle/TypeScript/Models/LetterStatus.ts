@@ -1,8 +1,6 @@
-﻿namespace PDW {
-    export enum LetterStatus {
-        "Unknown" = 0,
-        "ExactMatch" = 1,
-        "WrongLocation" = 2,
-        "Absent" = 3
-    }
+﻿export enum LetterStatus {
+    "Unknown" = 0,
+    "ExactMatch" = 1,
+    "WrongLocation" = 2,
+    "Absent" = 3
 }

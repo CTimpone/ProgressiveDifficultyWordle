@@ -6,7 +6,8 @@
     "removeComments": false,
     "sourceMap": true,
     "target": "es6",
-    "outDir": "wwwroot/js"
+    "outFile": "wwwroot/js/combinedCompiled.js",
+    "module": "System"
   },
   "include": [
     "TypeScript/**/**/*",
