@@ -4,17 +4,26 @@
         eligibleGuesses: string[];
         guessSearchHelper: Map<string, [number, number]>;
 
-        constructor(letterCount = 5) {
-            switch (letterCount) {
-                case 5:
-                    this.eligibleAnswers = FIVE_LETTER_ANSWERS;
-                    this.eligibleGuesses = FIVE_LETTER_GUESSES;
-                    break;
-                default:
-                    throw new Error(`No word-sets configured for ${letterCount}`)
+        constructor(eligibleAnswers?: string[], eligibleGuesses?: string[], letterCount = 5) {
+            if ((eligibleAnswers === undefined && eligibleGuesses !== undefined) ||
+                (eligibleAnswers !== undefined && eligibleGuesses === undefined) ||
+                (eligibleAnswers === undefined && eligibleGuesses === undefined)) {
+                console.log("Values only override when both are submitted. Defaulting to constant values.");
+            } else if (eligibleAnswers !== undefined && eligibleGuesses !== undefined) {
+                this.eligibleAnswers = eligibleAnswers;
+                this.eligibleGuesses = eligibleGuesses;
             }
-
-
+            else {
+                switch (letterCount) {
+                    case 5:
+                        this.eligibleAnswers = FIVE_LETTER_ANSWERS;
+                        this.eligibleGuesses = FIVE_LETTER_GUESSES;
+                        break;
+                    default:
+                        throw new Error(`No word-sets configured for ${letterCount}`)
+                }
+            }
+            
             this.buildGuessSearchHelper();
         }
 
