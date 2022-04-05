@@ -9,14 +9,18 @@ class EligibleWords {
             this.eligibleAnswers = eligibleAnswers;
             this.eligibleGuesses = eligibleGuesses;
         }
-        else {
+        else if ((eligibleAnswers !== undefined && eligibleGuesses === undefined) ||
+            (eligibleAnswers === undefined && eligibleGuesses !== undefined)) {
+            console.log('Both eligibleAnswers and eligibleGuesses must be supplied to not rely on constants.');
+        }
+        if (this.eligibleAnswers === undefined && this.eligibleGuesses === undefined) {
             switch (letterCount) {
                 case 5:
                     this.eligibleAnswers = FiveLetterAnswers_1.FIVE_LETTER_ANSWERS;
                     this.eligibleGuesses = FiveLetterGuesses_1.FIVE_LETTER_GUESSES;
                     break;
                 default:
-                    throw new Error(`No word-sets configured for ${letterCount}`);
+                    throw new Error(`No word-sets configured for letterCount=${letterCount}`);
             }
         }
         this.buildGuessSearchHelper();
@@ -35,6 +39,9 @@ class EligibleWords {
         this.guessSearchHelper.get(this.eligibleGuesses[this.eligibleGuesses.length - 1][0])[1] = this.eligibleGuesses.length - 1;
     }
     guessInWordList(target) {
+        if (!this.guessSearchHelper.has(target[0])) {
+            return false;
+        }
         let [start, end] = this.guessSearchHelper.get(target[0]);
         console.log(start);
         console.log(end);

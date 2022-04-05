@@ -1,10 +1,15 @@
 {
+  "compileOnSave": true,
   "compilerOptions": {
     "module": "commonjs",
     "target": "es6",
-    "lib": [ "es6" ],
+    "lib": [ "es6", "DOM" ],
     "sourceMap": true
   },
+  "include": [
+    "app.ts",
+    "Tests/*"
+  ],
   "exclude": [
     "node_modules"
   ]
