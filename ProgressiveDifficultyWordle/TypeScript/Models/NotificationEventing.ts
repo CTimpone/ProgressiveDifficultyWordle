@@ -1,4 +1,4 @@
-﻿export class MessageEventing {
+﻿export class NotificationEventing {
     internalMessage: string;
     internalEventListener: (arg0: string) => void;
 

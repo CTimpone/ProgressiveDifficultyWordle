@@ -5,13 +5,14 @@ const GuessDetails_1 = require("./GuessDetails");
 const LetterStatus_1 = require("./LetterStatus");
 const LetterState_1 = require("./LetterState");
 class SingleGame {
-    constructor(options, eligibleWords) {
+    constructor(options, eligibleWords, messaging) {
         this.options = options;
         this.chosenWord = eligibleWords.eligibleAnswers[Math.floor(Math.random() * eligibleWords.eligibleAnswers.length)];
         this.letterState = new LetterState_1.LetterState();
         this.userGuesses = [];
         this.startTime = new Date();
         this.eligibleWords = eligibleWords;
+        this.messaging = messaging;
     }
     guessTrigger(input) {
         input = input.toLowerCase();
@@ -47,7 +48,10 @@ class SingleGame {
     finalizeGuess(input) {
         let currentGuess = new GuessDetails_1.GuessDetails(input, this.chosenWord);
         this.userGuesses.push(currentGuess);
-        if (currentGuess.fullMatch || (this.userGuesses.length >= this.options.maxGuesses && this.endTime === undefined)) {
+        if (currentGuess.fullMatch) {
+            this.endTime = new Date();
+        }
+        else if (this.userGuesses.length >= this.options.maxGuesses && this.endTime === undefined) {
             this.endTime = new Date();
         }
         for (let i = 0; i < currentGuess.characterStates.length; i++) {

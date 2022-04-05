@@ -15545,10 +15545,33 @@ System.register("Models/ScoreDetails", [], function (exports_9, context_9) {
         }
     };
 });
-System.register("Models/SingleGame", ["Models/GuessDetails", "Models/LetterStatus", "Models/LetterState"], function (exports_10, context_10) {
+System.register("Models/NotificationEventing", [], function (exports_10, context_10) {
+    "use strict";
+    var NotificationEventing;
+    var __moduleName = context_10 && context_10.id;
+    return {
+        setters: [],
+        execute: function () {
+            NotificationEventing = class NotificationEventing {
+                set message(value) {
+                    this.internalMessage = value;
+                    this.internalEventListener(value);
+                }
+                get message() {
+                    return this.internalMessage;
+                }
+                registerListener(fn) {
+                    this.internalEventListener = fn;
+                }
+            };
+            exports_10("NotificationEventing", NotificationEventing);
+        }
+    };
+});
+System.register("Models/SingleGame", ["Models/GuessDetails", "Models/LetterStatus", "Models/LetterState"], function (exports_11, context_11) {
     "use strict";
     var GuessDetails_1, LetterStatus_2, LetterState_1, SingleGame;
-    var __moduleName = context_10 && context_10.id;
+    var __moduleName = context_11 && context_11.id;
     return {
         setters: [
             function (GuessDetails_1_1) {
@@ -15563,13 +15586,14 @@ System.register("Models/SingleGame", ["Models/GuessDetails", "Models/LetterStatu
         ],
         execute: function () {
             SingleGame = class SingleGame {
-                constructor(options, eligibleWords) {
+                constructor(options, eligibleWords, messaging) {
                     this.options = options;
                     this.chosenWord = eligibleWords.eligibleAnswers[Math.floor(Math.random() * eligibleWords.eligibleAnswers.length)];
                     this.letterState = new LetterState_1.LetterState();
                     this.userGuesses = [];
                     this.startTime = new Date();
                     this.eligibleWords = eligibleWords;
+                    this.messaging = messaging;
                 }
                 guessTrigger(input) {
                     input = input.toLowerCase();
@@ -15605,7 +15629,10 @@ System.register("Models/SingleGame", ["Models/GuessDetails", "Models/LetterStatu
                 finalizeGuess(input) {
                     let currentGuess = new GuessDetails_1.GuessDetails(input, this.chosenWord);
                     this.userGuesses.push(currentGuess);
-                    if (currentGuess.fullMatch || (this.userGuesses.length >= this.options.maxGuesses && this.endTime === undefined)) {
+                    if (currentGuess.fullMatch) {
+                        this.endTime = new Date();
+                    }
+                    else if (this.userGuesses.length >= this.options.maxGuesses && this.endTime === undefined) {
                         this.endTime = new Date();
                     }
                     for (let i = 0; i < currentGuess.characterStates.length; i++) {
@@ -15632,56 +15659,33 @@ System.register("Models/SingleGame", ["Models/GuessDetails", "Models/LetterStatu
                     }
                 }
             };
-            exports_10("SingleGame", SingleGame);
+            exports_11("SingleGame", SingleGame);
         }
     };
 });
-System.register("Models/SessionState", [], function (exports_11, context_11) {
+System.register("Models/SessionState", [], function (exports_12, context_12) {
     "use strict";
     var SessionState;
-    var __moduleName = context_11 && context_11.id;
+    var __moduleName = context_12 && context_12.id;
     return {
         setters: [],
         execute: function () {
             SessionState = class SessionState {
             };
-            exports_11("SessionState", SessionState);
+            exports_12("SessionState", SessionState);
         }
     };
 });
-System.register("Models/Session", [], function (exports_12, context_12) {
+System.register("Models/Session", [], function (exports_13, context_13) {
     "use strict";
     var Session;
-    var __moduleName = context_12 && context_12.id;
+    var __moduleName = context_13 && context_13.id;
     return {
         setters: [],
         execute: function () {
             Session = class Session {
             };
-            exports_12("Session", Session);
-        }
-    };
-});
-System.register("Models/MessageEventing", [], function (exports_13, context_13) {
-    "use strict";
-    var MessageEventing;
-    var __moduleName = context_13 && context_13.id;
-    return {
-        setters: [],
-        execute: function () {
-            MessageEventing = class MessageEventing {
-                set message(value) {
-                    this.internalMessage = value;
-                    this.internalEventListener(value);
-                }
-                get message() {
-                    return this.internalMessage;
-                }
-                registerListener(fn) {
-                    this.internalEventListener = fn;
-                }
-            };
-            exports_13("MessageEventing", MessageEventing);
+            exports_13("Session", Session);
         }
     };
 });

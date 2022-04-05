@@ -3,6 +3,7 @@ import { LetterStatus } from './LetterStatus';
 import { LetterState } from './LetterState';
 import { GameOptions } from './GameOptions';
 import { EligibleWords } from './EligibleWords';
+import { NotificationEventing } from './NotificationEventing';
 
 export class SingleGame {
     chosenWord: string;
@@ -12,14 +13,16 @@ export class SingleGame {
     userGuesses: GuessDetails[];
     options: GameOptions;
     eligibleWords: EligibleWords;
+    messaging: NotificationEventing;
 
-    constructor(options: GameOptions, eligibleWords: EligibleWords) {
+    constructor(options: GameOptions, eligibleWords: EligibleWords, messaging: NotificationEventing) {
         this.options = options;
         this.chosenWord = eligibleWords.eligibleAnswers[Math.floor(Math.random() * eligibleWords.eligibleAnswers.length)];
         this.letterState = new LetterState();
         this.userGuesses = [];
         this.startTime = new Date();
         this.eligibleWords = eligibleWords;
+        this.messaging = messaging;
     }
 
     guessTrigger(input: string): boolean {
@@ -66,7 +69,9 @@ export class SingleGame {
         let currentGuess = new GuessDetails(input, this.chosenWord);
         this.userGuesses.push(currentGuess);
 
-        if (currentGuess.fullMatch || (this.userGuesses.length >= this.options.maxGuesses && this.endTime === undefined)) {
+        if (currentGuess.fullMatch) {
+            this.endTime = new Date();
+        } else if (this.userGuesses.length >= this.options.maxGuesses && this.endTime === undefined) {
             this.endTime = new Date();
         }
 
