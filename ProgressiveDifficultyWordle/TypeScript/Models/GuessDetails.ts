@@ -7,23 +7,21 @@ export class GuessDetails {
 
     constructor(input: string, answer: string) {
         this.guess = input;
-        this.characterStates = new Array<LetterStatus>(5);
+        this.characterStates = new Array<LetterStatus>(input.length);
 
         let answerMap = new Map<string, number[]>();
         let inputMap = new Map<string, number[]>();
         for (let i = 0; i < answer.length; i++) {
-            this.updateCharacterMap(answerMap, answer, i);
-            this.updateCharacterMap(inputMap, input, i);
+            this.buildCharacterMap(answerMap, answer, i);
+            this.buildCharacterMap(inputMap, input, i);
         }
 
-        console.log(inputMap);
-        console.log(answerMap);
         this.populateCharacterStates(inputMap, answerMap);
 
         this.fullMatch = this.characterStates.every((state) => state === LetterStatus.ExactMatch);
     }
 
-    private updateCharacterMap(map: Map<string, number[]>, value: string, index: number) {
+    buildCharacterMap(map: Map<string, number[]>, value: string, index: number) {
         if (!map.has(value[index])) {
             map.set(value[index], [index]);
         } else {
@@ -31,7 +29,7 @@ export class GuessDetails {
         }
     }
 
-    private populateCharacterStates(inputMap: Map<string, number[]>, answerMap: Map<string, number[]>) {
+    populateCharacterStates(inputMap: Map<string, number[]>, answerMap: Map<string, number[]>) {
         for (let key of inputMap.keys()) {
             let inputIndices = inputMap.get(key);
 

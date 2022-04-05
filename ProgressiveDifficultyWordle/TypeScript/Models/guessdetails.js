@@ -5,19 +5,17 @@ const LetterStatus_1 = require("./LetterStatus");
 class GuessDetails {
     constructor(input, answer) {
         this.guess = input;
-        this.characterStates = new Array(5);
+        this.characterStates = new Array(input.length);
         let answerMap = new Map();
         let inputMap = new Map();
         for (let i = 0; i < answer.length; i++) {
-            this.updateCharacterMap(answerMap, answer, i);
-            this.updateCharacterMap(inputMap, input, i);
+            this.buildCharacterMap(answerMap, answer, i);
+            this.buildCharacterMap(inputMap, input, i);
         }
-        console.log(inputMap);
-        console.log(answerMap);
         this.populateCharacterStates(inputMap, answerMap);
         this.fullMatch = this.characterStates.every((state) => state === LetterStatus_1.LetterStatus.ExactMatch);
     }
-    updateCharacterMap(map, value, index) {
+    buildCharacterMap(map, value, index) {
         if (!map.has(value[index])) {
             map.set(value[index], [index]);
         }
