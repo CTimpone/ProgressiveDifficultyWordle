@@ -4,12 +4,12 @@
   "private": true,
   "devDependencies": {
     "@types/jquery": "^3.5.14",
-    "grunt": "1.4.1",
-    "grunt-contrib-clean": "2.0.0",
-    "grunt-contrib-concat": "2.0.0",
-    "grunt-contrib-jshint": "3.2.0",
-    "grunt-contrib-uglify": "5.1.0",
-    "grunt-contrib-watch": "1.1.0",
-    "jquery": "3.6.0"
+    "grunt": "^1.4.1",
+    "grunt-contrib-clean": "^2.0.0",
+    "grunt-contrib-concat": "^2.0.0",
+    "grunt-contrib-jshint": "^3.2.0",
+    "grunt-contrib-uglify": "^5.1.0",
+    "grunt-contrib-watch": "^1.1.0",
+    "jquery": "^3.6.0"
   }
 }
