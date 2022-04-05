@@ -10,5 +10,5 @@
 /// <reference path="../progressivedifficultywordle/typescript/models/singlegame.ts" />
 /// <reference path="../progressivedifficultywordle/typescript/constants/words/fiveletteranswers.ts" />
 /// <reference path="../progressivedifficultywordle/typescript/constants/words/fiveletterguesses.ts" />
-/// <reference path="../progressivedifficultywordle/typescript/models/messageeventing.ts" />
+/// <reference path="../progressivedifficultywordle/typescript/models/notificationeventing.ts" />
 //# sourceMappingURL=PDWIndex.js.map
