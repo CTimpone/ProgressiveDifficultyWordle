@@ -15588,7 +15588,8 @@ System.register("Models/SingleGame", ["Models/GuessDetails", "Models/LetterStatu
                         return false;
                     }
                     let inputRegex = /[a-z]/g;
-                    if (input.match(inputRegex).length != input.length) {
+                    let match = input.match(inputRegex);
+                    if (match === null || match.length != input.length) {
                         return false;
                     }
                     if (this.options.hardMode) {
