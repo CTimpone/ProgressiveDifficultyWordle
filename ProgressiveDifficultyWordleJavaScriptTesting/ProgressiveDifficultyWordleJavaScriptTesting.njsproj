@@ -39,6 +39,7 @@
     <Content Include="tsconfig.json" />
   </ItemGroup>
   <ItemGroup>
+    <TypeScriptCompile Include="Tests\SingleGameTests.ts" />
     <TypescriptCompile Include="Tests\EligibleWordsTests.ts">
       <SubType>Code</SubType>
       <TestFramework>Mocha</TestFramework>
