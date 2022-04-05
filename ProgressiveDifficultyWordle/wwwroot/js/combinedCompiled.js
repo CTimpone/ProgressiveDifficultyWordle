@@ -15662,4 +15662,27 @@ System.register("Models/Session", [], function (exports_12, context_12) {
         }
     };
 });
+System.register("Models/MessageEventing", [], function (exports_13, context_13) {
+    "use strict";
+    var MessageEventing;
+    var __moduleName = context_13 && context_13.id;
+    return {
+        setters: [],
+        execute: function () {
+            MessageEventing = class MessageEventing {
+                set message(value) {
+                    this.internalMessage = value;
+                    this.internalEventListener(value);
+                }
+                get message() {
+                    return this.internalMessage;
+                }
+                registerListener(fn) {
+                    this.internalEventListener = fn;
+                }
+            };
+            exports_13("MessageEventing", MessageEventing);
+        }
+    };
+});
 //# sourceMappingURL=combinedCompiled.js.map
