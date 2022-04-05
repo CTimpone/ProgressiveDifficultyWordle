@@ -15605,12 +15605,11 @@ System.register("Models/SingleGame", ["Models/GuessDetails", "Models/LetterStatu
                     return true;
                 }
                 finalizeGuess(input) {
-                    input = input.toLowerCase();
                     let currentGuess = new GuessDetails_1.GuessDetails(input, this.chosenWord);
-                    if (currentGuess.fullMatch || this.userGuesses.length === this.options.maxGuesses) {
+                    this.userGuesses.push(currentGuess);
+                    if (currentGuess.fullMatch || (this.userGuesses.length >= this.options.maxGuesses && this.endTime === undefined)) {
                         this.endTime = new Date();
                     }
-                    console.log(currentGuess.characterStates);
                     for (let i = 0; i < currentGuess.characterStates.length; i++) {
                         switch (currentGuess.characterStates[i]) {
                             case LetterStatus_2.LetterStatus.ExactMatch:
@@ -15633,7 +15632,6 @@ System.register("Models/SingleGame", ["Models/GuessDetails", "Models/LetterStatu
                                 throw new Error(`Invalid status for guess input at ${i}: status of ${currentGuess.characterStates[i]}`);
                         }
                     }
-                    this.userGuesses.push(currentGuess);
                 }
             };
             exports_10("SingleGame", SingleGame);

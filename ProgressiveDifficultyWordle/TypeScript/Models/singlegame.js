@@ -45,12 +45,11 @@ class SingleGame {
         return true;
     }
     finalizeGuess(input) {
-        input = input.toLowerCase();
         let currentGuess = new GuessDetails_1.GuessDetails(input, this.chosenWord);
-        if (currentGuess.fullMatch || this.userGuesses.length === this.options.maxGuesses) {
+        this.userGuesses.push(currentGuess);
+        if (currentGuess.fullMatch || (this.userGuesses.length >= this.options.maxGuesses && this.endTime === undefined)) {
             this.endTime = new Date();
         }
-        console.log(currentGuess.characterStates);
         for (let i = 0; i < currentGuess.characterStates.length; i++) {
             switch (currentGuess.characterStates[i]) {
                 case LetterStatus_1.LetterStatus.ExactMatch:
@@ -73,7 +72,6 @@ class SingleGame {
                     throw new Error(`Invalid status for guess input at ${i}: status of ${currentGuess.characterStates[i]}`);
             }
         }
-        this.userGuesses.push(currentGuess);
     }
 }
 exports.SingleGame = SingleGame;

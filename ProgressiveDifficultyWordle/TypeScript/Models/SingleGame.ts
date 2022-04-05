@@ -63,15 +63,12 @@ export class SingleGame {
     }
 
     finalizeGuess(input: string): void {
-        input = input.toLowerCase();
-
         let currentGuess = new GuessDetails(input, this.chosenWord);
+        this.userGuesses.push(currentGuess);
 
-        if (currentGuess.fullMatch || this.userGuesses.length === this.options.maxGuesses) {
+        if (currentGuess.fullMatch || (this.userGuesses.length >= this.options.maxGuesses && this.endTime === undefined)) {
             this.endTime = new Date();
         }
-
-        console.log(currentGuess.characterStates);
 
         for (let i = 0; i < currentGuess.characterStates.length; i++) {
             switch (currentGuess.characterStates[i]) {
@@ -92,10 +89,7 @@ export class SingleGame {
                     break;
                 default:
                     throw new Error(`Invalid status for guess input at ${i}: status of ${currentGuess.characterStates[i]}`)
-
             }
         }
-
-        this.userGuesses.push(currentGuess);
     }
 }
