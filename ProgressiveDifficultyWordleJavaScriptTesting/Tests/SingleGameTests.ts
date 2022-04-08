@@ -8,6 +8,8 @@ import { EligibleWords } from '../../progressivedifficultywordle/typescript/mode
 import { GameOptions } from '../../progressivedifficultywordle/typescript/models/gameoptions';
 import { GuessDetails } from '../../progressivedifficultywordle/typescript/models/GuessDetails';
 import { NotificationEventing } from '../../progressivedifficultywordle/typescript/models/Notification/NotificationEventing';
+import { NotificationType } from '../../progressivedifficultywordle/typescript/models/Notification/NotificationType';
+import { NotificationWrapper } from '../../progressivedifficultywordle/typescript/models/Notification/NotificationWrapper';
 import { SingleGame } from '../../progressivedifficultywordle/typescript/models/singlegame';
 
 describe("SingleGame", () => {
@@ -57,6 +59,7 @@ describe("SingleGame", () => {
             let ew = new EligibleWords(answerList, guessList);
             let options = new GameOptions();
             let notify = new NotificationEventing();
+            notify.internalEventListener = function (wrapper: NotificationWrapper) { };
 
             let game = new SingleGame(options, ew, notify);
 
@@ -75,6 +78,10 @@ describe("SingleGame", () => {
             let ew = new EligibleWords(answerList, guessList);
             let options = new GameOptions();
             let notify = new NotificationEventing();
+            notify.internalEventListener = function (wrapper: NotificationWrapper) {
+                assert.equal(NotificationType.Error, wrapper.type);
+                assert.equal("The game has already ended.", wrapper.message);
+            }
 
             let game = new SingleGame(options, ew, notify);
             game.endTime = new Date();
@@ -89,6 +96,10 @@ describe("SingleGame", () => {
             let ew = new EligibleWords(answerList, guessList);
             let options = new GameOptions(false, 1);
             let notify = new NotificationEventing();
+            notify.internalEventListener = function (wrapper: NotificationWrapper) {
+                assert.equal(NotificationType.Error, wrapper.type);
+                assert.equal("Exceeded max number (1) of guesses.", wrapper.message);
+            }
 
             let game = new SingleGame(options, ew, notify);
             game.userGuesses.push(new GuessDetails("other", game.chosenWord));
@@ -104,6 +115,10 @@ describe("SingleGame", () => {
             let ew = new EligibleWords(answerList, guessList);
             let options = new GameOptions(false, 1);
             let notify = new NotificationEventing();
+            notify.internalEventListener = function (wrapper: NotificationWrapper) {
+                assert.equal(NotificationType.Error, wrapper.type);
+                assert.equal("Exceeded max number (1) of guesses.", wrapper.message);
+            }
 
             let game = new SingleGame(options, ew, notify);
             game.userGuesses.push(new GuessDetails("other", game.chosenWord));
@@ -120,6 +135,10 @@ describe("SingleGame", () => {
             let ew = new EligibleWords(answerList, guessList);
             let options = new GameOptions();
             let notify = new NotificationEventing();
+            notify.internalEventListener = function (wrapper: NotificationWrapper) {
+                assert.equal(NotificationType.Error, wrapper.type);
+                assert.equal("Invalid input.", wrapper.message);
+            }
 
             let game = new SingleGame(options, ew, notify);
 
@@ -137,6 +156,10 @@ describe("SingleGame", () => {
             let ew = new EligibleWords(answerList, guessList);
             let options = new GameOptions();
             let notify = new NotificationEventing();
+            notify.internalEventListener = function (wrapper: NotificationWrapper) {
+                assert.equal(NotificationType.Error, wrapper.type);
+                assert.equal("Invalid input.", wrapper.message);
+            }
 
             let game = new SingleGame(options, ew, notify);
 
@@ -154,10 +177,15 @@ describe("SingleGame", () => {
             let ew = new EligibleWords(answerList, guessList);
             let options = new GameOptions(true);
             let notify = new NotificationEventing();
+            notify.internalEventListener = function (wrapper: NotificationWrapper) {
+                assert.equal(NotificationType.Error, wrapper.type);
+                assert.equal("Hard mode rules violated: 'b' must be present at character index 1 of 4.", wrapper.message);
+            }
 
             let game = new SingleGame(options, ew, notify);
             game.letterState.ExactMatch.set(0, 'a');
             game.letterState.ExactMatch.set(1, 'b');
+            game.letterState.ExactMatch.set(2, 'h');
 
             assert.equal(false, game.validateGuess("apple"));
         });
@@ -185,6 +213,10 @@ describe("SingleGame", () => {
             let ew = new EligibleWords(answerList, guessList);
             let options = new GameOptions(true);
             let notify = new NotificationEventing();
+            notify.internalEventListener = function (wrapper: NotificationWrapper) {
+                assert.equal(NotificationType.Error, wrapper.type);
+                assert.equal("Guess is not in word list.", wrapper.message);
+            }
 
             let game = new SingleGame(options, ew, notify);
             game.letterState.ExactMatch.set(0, 'a');
@@ -204,6 +236,10 @@ describe("SingleGame", () => {
             let ew = new EligibleWords(answerList, guessList);
             let options = new GameOptions();
             let notify = new NotificationEventing();
+            notify.internalEventListener = function (wrapper: NotificationWrapper) {
+                assert.equal(NotificationType.Info, wrapper.type);
+                assert.equal("Successful solve!", wrapper.message);
+            }
 
             let game = new SingleGame(options, ew, notify);
 
@@ -228,6 +264,10 @@ describe("SingleGame", () => {
             let ew = new EligibleWords(answerList, guessList);
             let options = new GameOptions(false, 1);
             let notify = new NotificationEventing();
+            notify.internalEventListener = function (wrapper: NotificationWrapper) {
+                assert.equal(NotificationType.Error, wrapper.type);
+                assert.equal("Exceeded max number (1) of guesses.", wrapper.message);
+            }
 
             let game = new SingleGame(options, ew, notify);
 
@@ -247,6 +287,10 @@ describe("SingleGame", () => {
             let ew = new EligibleWords(answerList, guessList);
             let options = new GameOptions();
             let notify = new NotificationEventing();
+            notify.internalEventListener = function (wrapper: NotificationWrapper) {
+                assert.equal(NotificationType.Error, wrapper.type);
+                assert.equal("Exceeded max number (6) of guesses.", wrapper.message);
+            }
 
             let game = new SingleGame(options, ew, notify);
 
