@@ -6,6 +6,7 @@ export class NotificationEventing {
 
     set message(value: NotificationWrapper) {
         this.internalMessage = value;
+        console.log(`{"messageType": "${value.type.toString()}", "message", "${value.message}"}`);
         this.internalEventListener(value);
     }
 

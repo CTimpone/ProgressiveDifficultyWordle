@@ -15591,6 +15591,7 @@ System.register("Models/Notification/NotificationEventing", [], function (export
             NotificationEventing = class NotificationEventing {
                 set message(value) {
                     this.internalMessage = value;
+                    console.log(`{"messageType": "${value.type.toString()}", "message", "${value.message}"}`);
                     this.internalEventListener(value);
                 }
                 get message() {
@@ -15733,6 +15734,9 @@ System.register("Models/Session", [], function (exports_15, context_15) {
         setters: [],
         execute: function () {
             Session = class Session {
+                constructor(notificationTools) {
+                    this.notify = notificationTools;
+                }
             };
             exports_15("Session", Session);
         }
