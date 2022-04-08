@@ -30,6 +30,9 @@ describe("SingleGame", () => {
             let ew = new EligibleWords(answerList, guessList);
             let options = new GameOptions();
             let notify = new NotificationEventing();
+            notify.internalEventListener = function (wrapper: NotificationWrapper) {
+                assert.fail("No notification should occur");
+            }
 
             let game = new SingleGame(options, ew, notify);
 
@@ -46,6 +49,9 @@ describe("SingleGame", () => {
             let ew = new EligibleWords(answerList, guessList);
             let options = new GameOptions();
             let notify = new NotificationEventing();
+            notify.internalEventListener = function (wrapper: NotificationWrapper) {
+                assert.fail("No notification should occur");
+            }
 
             let game = new SingleGame(options, ew, notify);
 
@@ -197,6 +203,9 @@ describe("SingleGame", () => {
             let ew = new EligibleWords(answerList, guessList);
             let options = new GameOptions(true);
             let notify = new NotificationEventing();
+            notify.internalEventListener = function (wrapper: NotificationWrapper) {
+                assert.fail("No notification should occur");
+            }
 
             let game = new SingleGame(options, ew, notify);
             game.letterState.ExactMatch.set(0, 'a');
@@ -316,6 +325,9 @@ describe("SingleGame", () => {
             let ew = new EligibleWords(answerList, guessList);
             let options = new GameOptions();
             let notify = new NotificationEventing();
+            notify.internalEventListener = function (wrapper: NotificationWrapper) {
+                assert.fail("No notification should occur");
+            }
 
             let game = new SingleGame(options, ew, notify);
 
@@ -335,6 +347,9 @@ describe("SingleGame", () => {
             let ew = new EligibleWords(answerList, guessList);
             let options = new GameOptions();
             let notify = new NotificationEventing();
+            notify.internalEventListener = function (wrapper: NotificationWrapper) {
+                assert.fail("No notification should occur");
+            }
 
             let game = new SingleGame(options, ew, notify);
 
@@ -362,6 +377,9 @@ describe("SingleGame", () => {
             let ew = new EligibleWords(answerList, guessList);
             let options = new GameOptions();
             let notify = new NotificationEventing();
+            notify.internalEventListener = function (wrapper: NotificationWrapper) {
+                assert.fail("No notification should occur");
+            }
 
             let game = new SingleGame(options, ew, notify);
 
@@ -389,6 +407,9 @@ describe("SingleGame", () => {
             let ew = new EligibleWords(answerList, guessList);
             let options = new GameOptions();
             let notify = new NotificationEventing();
+            notify.internalEventListener = function (wrapper: NotificationWrapper) {
+                assert.fail("No notification should occur");
+            }
 
             let game = new SingleGame(options, ew, notify);
 
@@ -408,6 +429,9 @@ describe("SingleGame", () => {
             let ew = new EligibleWords(answerList, guessList);
             let options = new GameOptions();
             let notify = new NotificationEventing();
+            notify.internalEventListener = function (wrapper: NotificationWrapper) {
+                assert.fail("No notification should occur");
+            }
 
             let game = new SingleGame(options, ew, notify);
 
@@ -440,6 +464,9 @@ describe("SingleGame", () => {
             let ew = new EligibleWords(answerList, guessList);
             let options = new GameOptions();
             let notify = new NotificationEventing();
+            notify.internalEventListener = function (wrapper: NotificationWrapper) {
+                assert.fail("No notification should occur");
+            }
 
             let game = new SingleGame(options, ew, notify);
 
@@ -466,6 +493,9 @@ describe("SingleGame", () => {
             let ew = new EligibleWords(answerList, guessList);
             let options = new GameOptions();
             let notify = new NotificationEventing();
+            notify.internalEventListener = function (wrapper: NotificationWrapper) {
+                assert.fail("No notification should occur");
+            }
 
             let game = new SingleGame(options, ew, notify);
 
