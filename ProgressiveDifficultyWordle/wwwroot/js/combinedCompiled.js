@@ -15545,10 +15545,46 @@ System.register("Models/ScoreDetails", [], function (exports_9, context_9) {
         }
     };
 });
-System.register("Models/NotificationEventing", [], function (exports_10, context_10) {
+System.register("Models/Notification/NotificationType", [], function (exports_10, context_10) {
+    "use strict";
+    var NotificationType;
+    var __moduleName = context_10 && context_10.id;
+    return {
+        setters: [],
+        execute: function () {
+            (function (NotificationType) {
+                NotificationType[NotificationType["Info"] = 0] = "Info";
+                NotificationType[NotificationType["Error"] = 1] = "Error";
+            })(NotificationType || (NotificationType = {}));
+            exports_10("NotificationType", NotificationType);
+        }
+    };
+});
+System.register("Models/Notification/NotificationWrapper", [], function (exports_11, context_11) {
+    "use strict";
+    var NotificationWrapper;
+    var __moduleName = context_11 && context_11.id;
+    return {
+        setters: [],
+        execute: function () {
+            NotificationWrapper = class NotificationWrapper {
+                constructor(type, text) {
+                    this.message = text;
+                    this.type = type;
+                }
+                static interpolateMessage(baseMessage, interpolated) {
+                    return baseMessage.replace(this.REPLACEMENT, interpolated);
+                }
+            };
+            exports_11("NotificationWrapper", NotificationWrapper);
+            NotificationWrapper.REPLACEMENT = /REPLACEMENT=>text/g;
+        }
+    };
+});
+System.register("Models/Notification/NotificationEventing", [], function (exports_12, context_12) {
     "use strict";
     var NotificationEventing;
-    var __moduleName = context_10 && context_10.id;
+    var __moduleName = context_12 && context_12.id;
     return {
         setters: [],
         execute: function () {
@@ -15564,14 +15600,14 @@ System.register("Models/NotificationEventing", [], function (exports_10, context
                     this.internalEventListener = fn;
                 }
             };
-            exports_10("NotificationEventing", NotificationEventing);
+            exports_12("NotificationEventing", NotificationEventing);
         }
     };
 });
-System.register("Models/SingleGame", ["Models/GuessDetails", "Models/LetterStatus", "Models/LetterState"], function (exports_11, context_11) {
+System.register("Models/SingleGame", ["Models/GuessDetails", "Models/LetterStatus", "Models/LetterState", "Models/Notification/NotificationWrapper", "Models/Notification/NotificationType"], function (exports_13, context_13) {
     "use strict";
-    var GuessDetails_1, LetterStatus_2, LetterState_1, SingleGame;
-    var __moduleName = context_11 && context_11.id;
+    var GuessDetails_1, LetterStatus_2, LetterState_1, NotificationWrapper_1, NotificationType_1, SingleGame;
+    var __moduleName = context_13 && context_13.id;
     return {
         setters: [
             function (GuessDetails_1_1) {
@@ -15582,6 +15618,12 @@ System.register("Models/SingleGame", ["Models/GuessDetails", "Models/LetterStatu
             },
             function (LetterState_1_1) {
                 LetterState_1 = LetterState_1_1;
+            },
+            function (NotificationWrapper_1_1) {
+                NotificationWrapper_1 = NotificationWrapper_1_1;
+            },
+            function (NotificationType_1_1) {
+                NotificationType_1 = NotificationType_1_1;
             }
         ],
         execute: function () {
@@ -15604,24 +15646,29 @@ System.register("Models/SingleGame", ["Models/GuessDetails", "Models/LetterStatu
                 }
                 validateGuess(input) {
                     if (this.endTime !== undefined) {
+                        this.messaging.message = new NotificationWrapper_1.NotificationWrapper(NotificationType_1.NotificationType.Error, "The game has already ended.");
                         return false;
                     }
                     if (this.options.maxGuesses <= this.userGuesses.length) {
+                        this.messaging.message = new NotificationWrapper_1.NotificationWrapper(NotificationType_1.NotificationType.Error, NotificationWrapper_1.NotificationWrapper.interpolateMessage("Exceeded max number (REPLACEMENT=>text) of guesses.", this.options.maxGuesses.toString()));
                         return false;
                     }
                     let inputRegex = /[a-z]/g;
                     let match = input.match(inputRegex);
                     if (match === null || match.length != input.length) {
+                        this.messaging.message = new NotificationWrapper_1.NotificationWrapper(NotificationType_1.NotificationType.Error, "Invalid input.");
                         return false;
                     }
                     if (this.options.hardMode) {
                         for (let i = 0; i < input.length; i++) {
                             if (this.letterState.ExactMatch.has(i) && input[i] != this.letterState.ExactMatch.get(i)) {
+                                this.messaging.message = new NotificationWrapper_1.NotificationWrapper(NotificationType_1.NotificationType.Error, NotificationWrapper_1.NotificationWrapper.interpolateMessage("Hard mode rules violated: (REPLACEMENT=>text).", `${this.letterState.ExactMatch.get(i)} must be present at character index ${i} of ${input.length - 1}`));
                                 return false;
                             }
                         }
                     }
                     if (!this.eligibleWords.guessInWordList(input)) {
+                        this.messaging.message = new NotificationWrapper_1.NotificationWrapper(NotificationType_1.NotificationType.Error, "Guess is not in word list.");
                         return false;
                     }
                     return true;
@@ -15629,12 +15676,6 @@ System.register("Models/SingleGame", ["Models/GuessDetails", "Models/LetterStatu
                 finalizeGuess(input) {
                     let currentGuess = new GuessDetails_1.GuessDetails(input, this.chosenWord);
                     this.userGuesses.push(currentGuess);
-                    if (currentGuess.fullMatch) {
-                        this.endTime = new Date();
-                    }
-                    else if (this.userGuesses.length >= this.options.maxGuesses && this.endTime === undefined) {
-                        this.endTime = new Date();
-                    }
                     for (let i = 0; i < currentGuess.characterStates.length; i++) {
                         switch (currentGuess.characterStates[i]) {
                             case LetterStatus_2.LetterStatus.ExactMatch:
@@ -15657,35 +15698,43 @@ System.register("Models/SingleGame", ["Models/GuessDetails", "Models/LetterStatu
                                 throw new Error(`Invalid status for guess input at ${i}: status of ${currentGuess.characterStates[i]}`);
                         }
                     }
+                    if (currentGuess.fullMatch) {
+                        this.messaging.message = new NotificationWrapper_1.NotificationWrapper(NotificationType_1.NotificationType.Info, "Successful solve!");
+                        this.endTime = new Date();
+                    }
+                    else if (this.userGuesses.length >= this.options.maxGuesses && this.endTime === undefined) {
+                        this.messaging.message = new NotificationWrapper_1.NotificationWrapper(NotificationType_1.NotificationType.Error, NotificationWrapper_1.NotificationWrapper.interpolateMessage("Exceeded max number (REPLACEMENT=>text) of guesses.", this.options.maxGuesses.toString()));
+                        this.endTime = new Date();
+                    }
                 }
             };
-            exports_11("SingleGame", SingleGame);
+            exports_13("SingleGame", SingleGame);
         }
     };
 });
-System.register("Models/SessionState", [], function (exports_12, context_12) {
+System.register("Models/SessionState", [], function (exports_14, context_14) {
     "use strict";
     var SessionState;
-    var __moduleName = context_12 && context_12.id;
+    var __moduleName = context_14 && context_14.id;
     return {
         setters: [],
         execute: function () {
             SessionState = class SessionState {
             };
-            exports_12("SessionState", SessionState);
+            exports_14("SessionState", SessionState);
         }
     };
 });
-System.register("Models/Session", [], function (exports_13, context_13) {
+System.register("Models/Session", [], function (exports_15, context_15) {
     "use strict";
     var Session;
-    var __moduleName = context_13 && context_13.id;
+    var __moduleName = context_15 && context_15.id;
     return {
         setters: [],
         execute: function () {
             Session = class Session {
             };
-            exports_13("Session", Session);
+            exports_15("Session", Session);
         }
     };
 });

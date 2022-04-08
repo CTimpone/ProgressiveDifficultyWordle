@@ -3,7 +3,9 @@ import { LetterStatus } from './LetterStatus';
 import { LetterState } from './LetterState';
 import { GameOptions } from './GameOptions';
 import { EligibleWords } from './EligibleWords';
-import { NotificationEventing } from './NotificationEventing';
+import { NotificationEventing } from './Notification/NotificationEventing';
+import { NotificationWrapper } from './Notification/NotificationWrapper';
+import { NotificationType } from './Notification/NotificationType';
 
 export class SingleGame {
     chosenWord: string;
@@ -37,28 +39,40 @@ export class SingleGame {
 
     validateGuess(input: string): boolean {
         if (this.endTime !== undefined) {
+            this.messaging.message = new NotificationWrapper(NotificationType.Error, "The game has already ended.");
             return false;
         }
 
         if (this.options.maxGuesses <= this.userGuesses.length) {
+            this.messaging.message = new NotificationWrapper(NotificationType.Error,
+                NotificationWrapper.interpolateMessage("Exceeded max number (REPLACEMENT=>text) of guesses.", this.options.maxGuesses.toString()));
+
             return false;
         }
 
         let inputRegex = /[a-z]/g;
         let match = input.match(inputRegex);
         if (match === null || match.length != input.length) {
+            this.messaging.message = new NotificationWrapper(NotificationType.Error, "Invalid input.");
+
             return false;
         }
 
         if (this.options.hardMode) {
             for (let i = 0; i < input.length; i++) {
                 if (this.letterState.ExactMatch.has(i) && input[i] != this.letterState.ExactMatch.get(i)) {
+                    this.messaging.message = new NotificationWrapper(NotificationType.Error,
+                        NotificationWrapper.interpolateMessage("Hard mode rules violated: (REPLACEMENT=>text).",
+                        `${this.letterState.ExactMatch.get(i)} must be present at character index ${i} of ${input.length - 1}`));
+
                     return false;
                 }
             }
         }
 
         if (!this.eligibleWords.guessInWordList(input)) {
+            this.messaging.message = new NotificationWrapper(NotificationType.Error, "Guess is not in word list.");
+
             return false;
         }
 
@@ -68,12 +82,6 @@ export class SingleGame {
     finalizeGuess(input: string): void {
         let currentGuess = new GuessDetails(input, this.chosenWord);
         this.userGuesses.push(currentGuess);
-
-        if (currentGuess.fullMatch) {
-            this.endTime = new Date();
-        } else if (this.userGuesses.length >= this.options.maxGuesses && this.endTime === undefined) {
-            this.endTime = new Date();
-        }
 
         for (let i = 0; i < currentGuess.characterStates.length; i++) {
             switch (currentGuess.characterStates[i]) {
@@ -96,5 +104,15 @@ export class SingleGame {
                     throw new Error(`Invalid status for guess input at ${i}: status of ${currentGuess.characterStates[i]}`)
             }
         }
+
+        if (currentGuess.fullMatch) {
+            this.messaging.message = new NotificationWrapper(NotificationType.Info, "Successful solve!");
+            this.endTime = new Date();
+        } else if (this.userGuesses.length >= this.options.maxGuesses && this.endTime === undefined) {
+            this.messaging.message = new NotificationWrapper(NotificationType.Error,
+                NotificationWrapper.interpolateMessage("Exceeded max number (REPLACEMENT=>text) of guesses.", this.options.maxGuesses.toString()));
+            this.endTime = new Date();
+        }
+
     }
 }

@@ -2,7 +2,7 @@
 import { ScoreDetails } from './ScoreDetails';
 import { SingleGame } from './SingleGame';
 import { SessionState } from './SessionState';
-import { NotificationEventing } from './NotificationEventing';
+import { NotificationEventing } from './Notification/NotificationEventing';
 
 export class Session {
     currentGame: SingleGame;
