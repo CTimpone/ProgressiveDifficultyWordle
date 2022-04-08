@@ -9,5 +9,9 @@ export class Session {
     type: GameType;
     state: SessionState;
     score: ScoreDetails;
-    message: NotificationEventing;
+    notify: NotificationEventing;
+
+    constructor(notificationTools: NotificationEventing) {
+        this.notify = notificationTools;
+    }
 }
