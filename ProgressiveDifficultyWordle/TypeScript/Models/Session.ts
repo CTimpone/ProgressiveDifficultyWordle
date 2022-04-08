@@ -11,7 +11,8 @@ export class Session {
     score: ScoreDetails;
     notify: NotificationEventing;
 
-    constructor(notificationTools: NotificationEventing) {
+    constructor(type: GameType, notificationTools: NotificationEventing) {
+        this.type = type;
         this.notify = notificationTools;
     }
 }
