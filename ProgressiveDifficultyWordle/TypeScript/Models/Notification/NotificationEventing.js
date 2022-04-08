@@ -14,4 +14,4 @@ class NotificationEventing {
     }
 }
 exports.NotificationEventing = NotificationEventing;
-//# sourceMappingURL=notificationeventing.js.map
+//# sourceMappingURL=NotificationEventing.js.map

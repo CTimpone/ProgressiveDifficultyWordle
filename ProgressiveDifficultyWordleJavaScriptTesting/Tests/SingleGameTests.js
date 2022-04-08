@@ -6,6 +6,7 @@ const sinon = require("sinon");
 const eligiblewords_1 = require("../../progressivedifficultywordle/typescript/models/eligiblewords");
 const gameoptions_1 = require("../../progressivedifficultywordle/typescript/models/gameoptions");
 const GuessDetails_1 = require("../../progressivedifficultywordle/typescript/models/GuessDetails");
+const NotificationEventing_1 = require("../../progressivedifficultywordle/typescript/models/Notification/NotificationEventing");
 const singlegame_1 = require("../../progressivedifficultywordle/typescript/models/singlegame");
 describe("SingleGame", () => {
     var consoleSpy;
@@ -21,7 +22,8 @@ describe("SingleGame", () => {
             let guessList = ['abbot', 'abhor', 'abide', 'abode', 'apple'];
             let ew = new eligiblewords_1.EligibleWords(answerList, guessList);
             let options = new gameoptions_1.GameOptions();
-            let game = new singlegame_1.SingleGame(options, ew);
+            let notify = new NotificationEventing_1.NotificationEventing();
+            let game = new singlegame_1.SingleGame(options, ew, notify);
             assert.notEqual(undefined, game.chosenWord);
             assert.equal(true, ew.eligibleAnswers.indexOf(game.chosenWord) !== -1);
         });
@@ -32,7 +34,8 @@ describe("SingleGame", () => {
             let guessList = ['abbot', 'abhor', 'abide', 'abode', 'apple'];
             let ew = new eligiblewords_1.EligibleWords(answerList, guessList);
             let options = new gameoptions_1.GameOptions();
-            let game = new singlegame_1.SingleGame(options, ew);
+            let notify = new NotificationEventing_1.NotificationEventing();
+            let game = new singlegame_1.SingleGame(options, ew, notify);
             assert.equal(true, game.validateGuess("abbot"));
         });
         it('does not update the game\'s userGuesses list regardless of whether the guess is valid or invalid.', () => {
@@ -40,7 +43,8 @@ describe("SingleGame", () => {
             let guessList = ['abbot', 'abhor', 'abide', 'abode', 'apple'];
             let ew = new eligiblewords_1.EligibleWords(answerList, guessList);
             let options = new gameoptions_1.GameOptions();
-            let game = new singlegame_1.SingleGame(options, ew);
+            let notify = new NotificationEventing_1.NotificationEventing();
+            let game = new singlegame_1.SingleGame(options, ew, notify);
             assert.equal(true, game.validateGuess("abbot"));
             assert.equal(0, game.userGuesses);
             assert.equal(false, game.validateGuess("abuzz"));
@@ -51,7 +55,8 @@ describe("SingleGame", () => {
             let guessList = ['abbot', 'abhor', 'abide', 'abode', 'apple'];
             let ew = new eligiblewords_1.EligibleWords(answerList, guessList);
             let options = new gameoptions_1.GameOptions();
-            let game = new singlegame_1.SingleGame(options, ew);
+            let notify = new NotificationEventing_1.NotificationEventing();
+            let game = new singlegame_1.SingleGame(options, ew, notify);
             game.endTime = new Date();
             assert.equal(false, game.validateGuess("wrong"));
         });
@@ -60,7 +65,8 @@ describe("SingleGame", () => {
             let guessList = ['abbot', 'abhor', 'abide', 'abode', 'apple'];
             let ew = new eligiblewords_1.EligibleWords(answerList, guessList);
             let options = new gameoptions_1.GameOptions(false, 1);
-            let game = new singlegame_1.SingleGame(options, ew);
+            let notify = new NotificationEventing_1.NotificationEventing();
+            let game = new singlegame_1.SingleGame(options, ew, notify);
             game.userGuesses.push(new GuessDetails_1.GuessDetails("other", game.chosenWord));
             assert.equal(game.options.maxGuesses, game.userGuesses.length);
             assert.equal(false, game.validateGuess("wrong"));
@@ -70,7 +76,8 @@ describe("SingleGame", () => {
             let guessList = ['abbot', 'abhor', 'abide', 'abode', 'apple'];
             let ew = new eligiblewords_1.EligibleWords(answerList, guessList);
             let options = new gameoptions_1.GameOptions(false, 1);
-            let game = new singlegame_1.SingleGame(options, ew);
+            let notify = new NotificationEventing_1.NotificationEventing();
+            let game = new singlegame_1.SingleGame(options, ew, notify);
             game.userGuesses.push(new GuessDetails_1.GuessDetails("other", game.chosenWord));
             game.userGuesses.push(new GuessDetails_1.GuessDetails("again", game.chosenWord));
             assert.ok(game.options.maxGuesses < game.userGuesses.length);
@@ -81,7 +88,8 @@ describe("SingleGame", () => {
             let guessList = ['abbot', 'abhor', 'abide', 'abode', 'apple'];
             let ew = new eligiblewords_1.EligibleWords(answerList, guessList);
             let options = new gameoptions_1.GameOptions();
-            let game = new singlegame_1.SingleGame(options, ew);
+            let notify = new NotificationEventing_1.NotificationEventing();
+            let game = new singlegame_1.SingleGame(options, ew, notify);
             assert.equal(false, game.validateGuess("WRONG"));
             assert.equal(false, game.validateGuess("WRoNG"));
             assert.equal(false, game.validateGuess("wrOng"));
@@ -93,7 +101,8 @@ describe("SingleGame", () => {
             let guessList = ['abbot', 'abhor', 'abide', 'abode', 'apple'];
             let ew = new eligiblewords_1.EligibleWords(answerList, guessList);
             let options = new gameoptions_1.GameOptions();
-            let game = new singlegame_1.SingleGame(options, ew);
+            let notify = new NotificationEventing_1.NotificationEventing();
+            let game = new singlegame_1.SingleGame(options, ew, notify);
             assert.equal(false, game.validateGuess("abbo"));
             assert.equal(false, game.validateGuess("abho"));
             assert.equal(false, game.validateGuess("abid"));
@@ -105,7 +114,8 @@ describe("SingleGame", () => {
             let guessList = ['abbot', 'abhor', 'abide', 'abode', 'apple'];
             let ew = new eligiblewords_1.EligibleWords(answerList, guessList);
             let options = new gameoptions_1.GameOptions(true);
-            let game = new singlegame_1.SingleGame(options, ew);
+            let notify = new NotificationEventing_1.NotificationEventing();
+            let game = new singlegame_1.SingleGame(options, ew, notify);
             game.letterState.ExactMatch.set(0, 'a');
             game.letterState.ExactMatch.set(1, 'b');
             assert.equal(false, game.validateGuess("apple"));
@@ -115,7 +125,8 @@ describe("SingleGame", () => {
             let guessList = ['abbot', 'abhor', 'abide', 'abode', 'abuzz'];
             let ew = new eligiblewords_1.EligibleWords(answerList, guessList);
             let options = new gameoptions_1.GameOptions(true);
-            let game = new singlegame_1.SingleGame(options, ew);
+            let notify = new NotificationEventing_1.NotificationEventing();
+            let game = new singlegame_1.SingleGame(options, ew, notify);
             game.letterState.ExactMatch.set(0, 'a');
             game.letterState.ExactMatch.set(1, 'b');
             game.letterState.PresentBadLocations.set('o', [3]);
@@ -126,7 +137,8 @@ describe("SingleGame", () => {
             let guessList = ['abbot', 'abhor', 'abide', 'abode', 'apple'];
             let ew = new eligiblewords_1.EligibleWords(answerList, guessList);
             let options = new gameoptions_1.GameOptions(true);
-            let game = new singlegame_1.SingleGame(options, ew);
+            let notify = new NotificationEventing_1.NotificationEventing();
+            let game = new singlegame_1.SingleGame(options, ew, notify);
             game.letterState.ExactMatch.set(0, 'a');
             game.letterState.ExactMatch.set(1, 'b');
             assert.equal(false, game.validateGuess("abuzz"));
@@ -139,7 +151,8 @@ describe("SingleGame", () => {
             let guessList = ['abbot', 'abhor', 'abide', 'abode', 'apple'];
             let ew = new eligiblewords_1.EligibleWords(answerList, guessList);
             let options = new gameoptions_1.GameOptions();
-            let game = new singlegame_1.SingleGame(options, ew);
+            let notify = new NotificationEventing_1.NotificationEventing();
+            let game = new singlegame_1.SingleGame(options, ew, notify);
             let guess = game.chosenWord;
             game.finalizeGuess(guess);
             assert.notEqual(undefined, game.endTime);
@@ -157,7 +170,8 @@ describe("SingleGame", () => {
             let guessList = ['abbot', 'abhor', 'abide', 'abode', 'apple'];
             let ew = new eligiblewords_1.EligibleWords(answerList, guessList);
             let options = new gameoptions_1.GameOptions(false, 1);
-            let game = new singlegame_1.SingleGame(options, ew);
+            let notify = new NotificationEventing_1.NotificationEventing();
+            let game = new singlegame_1.SingleGame(options, ew, notify);
             let guess = game.eligibleWords.eligibleGuesses[0];
             game.finalizeGuess(guess);
             assert.equal(1, game.userGuesses.length);
@@ -170,7 +184,8 @@ describe("SingleGame", () => {
             let guessList = ['abbot', 'abhor', 'abide', 'abode', 'apple'];
             let ew = new eligiblewords_1.EligibleWords(answerList, guessList);
             let options = new gameoptions_1.GameOptions();
-            let game = new singlegame_1.SingleGame(options, ew);
+            let notify = new NotificationEventing_1.NotificationEventing();
+            let game = new singlegame_1.SingleGame(options, ew, notify);
             let guess = game.eligibleWords.eligibleGuesses[0];
             for (let i = 1; i <= game.options.maxGuesses; i++) {
                 game.finalizeGuess(guess);
@@ -190,7 +205,8 @@ describe("SingleGame", () => {
             let guessList = ['abbot', 'risen'];
             let ew = new eligiblewords_1.EligibleWords(answerList, guessList);
             let options = new gameoptions_1.GameOptions();
-            let game = new singlegame_1.SingleGame(options, ew);
+            let notify = new NotificationEventing_1.NotificationEventing();
+            let game = new singlegame_1.SingleGame(options, ew, notify);
             let guess = 'risen';
             game.finalizeGuess(guess);
             assert.equal(5, game.letterState.Absent.length);
@@ -203,7 +219,8 @@ describe("SingleGame", () => {
             let guessList = ['abbot', 'risen', 'sense'];
             let ew = new eligiblewords_1.EligibleWords(answerList, guessList);
             let options = new gameoptions_1.GameOptions();
-            let game = new singlegame_1.SingleGame(options, ew);
+            let notify = new NotificationEventing_1.NotificationEventing();
+            let game = new singlegame_1.SingleGame(options, ew, notify);
             let guess = 'risen';
             game.finalizeGuess(guess);
             assert.equal(5, game.letterState.Absent.length);
@@ -222,7 +239,8 @@ describe("SingleGame", () => {
             let guessList = ['abbot', 'nymph', 'risen'];
             let ew = new eligiblewords_1.EligibleWords(answerList, guessList);
             let options = new gameoptions_1.GameOptions();
-            let game = new singlegame_1.SingleGame(options, ew);
+            let notify = new NotificationEventing_1.NotificationEventing();
+            let game = new singlegame_1.SingleGame(options, ew, notify);
             let guess = 'risen';
             game.finalizeGuess(guess);
             assert.equal(5, game.letterState.Absent.length);
@@ -241,7 +259,8 @@ describe("SingleGame", () => {
             let guessList = ['alert', 'later'];
             let ew = new eligiblewords_1.EligibleWords(answerList, guessList);
             let options = new gameoptions_1.GameOptions();
-            let game = new singlegame_1.SingleGame(options, ew);
+            let notify = new NotificationEventing_1.NotificationEventing();
+            let game = new singlegame_1.SingleGame(options, ew, notify);
             let guess = 'later';
             game.finalizeGuess(guess);
             assert.equal(5, game.letterState.PresentBadLocations.size);
@@ -254,7 +273,8 @@ describe("SingleGame", () => {
             let guessList = ['alert', 'later', 'nymph'];
             let ew = new eligiblewords_1.EligibleWords(answerList, guessList);
             let options = new gameoptions_1.GameOptions();
-            let game = new singlegame_1.SingleGame(options, ew);
+            let notify = new NotificationEventing_1.NotificationEventing();
+            let game = new singlegame_1.SingleGame(options, ew, notify);
             let guess = 'later';
             game.finalizeGuess(guess);
             assert.equal(5, game.letterState.PresentBadLocations.size);
@@ -277,7 +297,8 @@ describe("SingleGame", () => {
             let guessList = ['aorta', 'naval'];
             let ew = new eligiblewords_1.EligibleWords(answerList, guessList);
             let options = new gameoptions_1.GameOptions();
-            let game = new singlegame_1.SingleGame(options, ew);
+            let notify = new NotificationEventing_1.NotificationEventing();
+            let game = new singlegame_1.SingleGame(options, ew, notify);
             let guess = 'aorta';
             game.finalizeGuess(guess);
             assert.equal(1, game.letterState.PresentBadLocations.size);
@@ -296,7 +317,8 @@ describe("SingleGame", () => {
             let guessList = ['aorta', 'taboo'];
             let ew = new eligiblewords_1.EligibleWords(answerList, guessList);
             let options = new gameoptions_1.GameOptions();
-            let game = new singlegame_1.SingleGame(options, ew);
+            let notify = new NotificationEventing_1.NotificationEventing();
+            let game = new singlegame_1.SingleGame(options, ew, notify);
             let guess = 'aorta';
             game.finalizeGuess(guess);
             assert.equal(3, game.letterState.PresentBadLocations.size);

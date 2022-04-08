@@ -10,4 +10,6 @@
 /// <reference path="../progressivedifficultywordle/typescript/models/singlegame.ts" />
 /// <reference path="../progressivedifficultywordle/typescript/constants/words/fiveletteranswers.ts" />
 /// <reference path="../progressivedifficultywordle/typescript/constants/words/fiveletterguesses.ts" />
-/// <reference path="../progressivedifficultywordle/typescript/models/notificationeventing.ts" />
+/// <reference path="../progressivedifficultywordle/typescript/models/notification/notificationeventing.ts" />
+/// <reference path="../progressivedifficultywordle/typescript/models/notification/notificationtype.ts" />
+/// <reference path="../progressivedifficultywordle/typescript/models/notification/notificationwrapper.ts" />
