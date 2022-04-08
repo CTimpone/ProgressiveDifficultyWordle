@@ -52,7 +52,7 @@ export class SingleGame {
 
         let inputRegex = /[a-z]/g;
         let match = input.match(inputRegex);
-        if (match === null || match.length != input.length) {
+        if (match === null || match.length != this.chosenWord.length) {
             this.messaging.message = new NotificationWrapper(NotificationType.Error, "Invalid input.");
 
             return false;
@@ -62,8 +62,8 @@ export class SingleGame {
             for (let i = 0; i < input.length; i++) {
                 if (this.letterState.ExactMatch.has(i) && input[i] != this.letterState.ExactMatch.get(i)) {
                     this.messaging.message = new NotificationWrapper(NotificationType.Error,
-                        NotificationWrapper.interpolateMessage("Hard mode rules violated: (REPLACEMENT=>text).",
-                        `${this.letterState.ExactMatch.get(i)} must be present at character index ${i} of ${input.length - 1}`));
+                        NotificationWrapper.interpolateMessage("Hard mode rules violated: REPLACEMENT=>text.",
+                        `'${this.letterState.ExactMatch.get(i)}' must be present at character index ${i} of ${input.length - 1}`));
 
                     return false;
                 }
