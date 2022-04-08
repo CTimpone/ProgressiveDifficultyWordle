@@ -15532,23 +15532,10 @@ System.register("Models/LetterState", [], function (exports_8, context_8) {
         }
     };
 });
-System.register("Models/ScoreDetails", [], function (exports_9, context_9) {
-    "use strict";
-    var ScoreDetails;
-    var __moduleName = context_9 && context_9.id;
-    return {
-        setters: [],
-        execute: function () {
-            ScoreDetails = class ScoreDetails {
-            };
-            exports_9("ScoreDetails", ScoreDetails);
-        }
-    };
-});
-System.register("Models/Notification/NotificationType", [], function (exports_10, context_10) {
+System.register("Models/Notification/NotificationType", [], function (exports_9, context_9) {
     "use strict";
     var NotificationType;
-    var __moduleName = context_10 && context_10.id;
+    var __moduleName = context_9 && context_9.id;
     return {
         setters: [],
         execute: function () {
@@ -15556,14 +15543,14 @@ System.register("Models/Notification/NotificationType", [], function (exports_10
                 NotificationType[NotificationType["Info"] = 0] = "Info";
                 NotificationType[NotificationType["Error"] = 1] = "Error";
             })(NotificationType || (NotificationType = {}));
-            exports_10("NotificationType", NotificationType);
+            exports_9("NotificationType", NotificationType);
         }
     };
 });
-System.register("Models/Notification/NotificationWrapper", [], function (exports_11, context_11) {
+System.register("Models/Notification/NotificationWrapper", [], function (exports_10, context_10) {
     "use strict";
     var NotificationWrapper;
-    var __moduleName = context_11 && context_11.id;
+    var __moduleName = context_10 && context_10.id;
     return {
         setters: [],
         execute: function () {
@@ -15576,15 +15563,15 @@ System.register("Models/Notification/NotificationWrapper", [], function (exports
                     return baseMessage.replace(this.REPLACEMENT, interpolated);
                 }
             };
-            exports_11("NotificationWrapper", NotificationWrapper);
+            exports_10("NotificationWrapper", NotificationWrapper);
             NotificationWrapper.REPLACEMENT = /REPLACEMENT=>text/g;
         }
     };
 });
-System.register("Models/Notification/NotificationEventing", [], function (exports_12, context_12) {
+System.register("Models/Notification/NotificationEventing", [], function (exports_11, context_11) {
     "use strict";
     var NotificationEventing;
-    var __moduleName = context_12 && context_12.id;
+    var __moduleName = context_11 && context_11.id;
     return {
         setters: [],
         execute: function () {
@@ -15601,14 +15588,14 @@ System.register("Models/Notification/NotificationEventing", [], function (export
                     this.internalEventListener = fn;
                 }
             };
-            exports_12("NotificationEventing", NotificationEventing);
+            exports_11("NotificationEventing", NotificationEventing);
         }
     };
 });
-System.register("Models/SingleGame", ["Models/GuessDetails", "Models/LetterStatus", "Models/LetterState", "Models/Notification/NotificationWrapper", "Models/Notification/NotificationType"], function (exports_13, context_13) {
+System.register("Models/SingleGame", ["Models/GuessDetails", "Models/LetterStatus", "Models/LetterState", "Models/Notification/NotificationWrapper", "Models/Notification/NotificationType"], function (exports_12, context_12) {
     "use strict";
     var GuessDetails_1, LetterStatus_2, LetterState_1, NotificationWrapper_1, NotificationType_1, SingleGame;
-    var __moduleName = context_13 && context_13.id;
+    var __moduleName = context_12 && context_12.id;
     return {
         setters: [
             function (GuessDetails_1_1) {
@@ -15709,7 +15696,55 @@ System.register("Models/SingleGame", ["Models/GuessDetails", "Models/LetterStatu
                     }
                 }
             };
-            exports_13("SingleGame", SingleGame);
+            exports_12("SingleGame", SingleGame);
+        }
+    };
+});
+System.register("Models/ScoreDetails", [], function (exports_13, context_13) {
+    "use strict";
+    var ScoreDetails;
+    var __moduleName = context_13 && context_13.id;
+    return {
+        setters: [],
+        execute: function () {
+            ScoreDetails = class ScoreDetails {
+                constructor() {
+                    this.totalScore = 0;
+                    this.roundsCompleted = 0;
+                    this.startingGuesses = new Set();
+                }
+                updateScore(game) {
+                    if (this.endTime === undefined) {
+                        let guessCount = game.userGuesses.length;
+                        let roundScore = 0;
+                        if (guessCount > 0) {
+                            let lastGuess = game.userGuesses[guessCount - 1];
+                            roundScore = lastGuess.fullMatch ? 1000 : 0;
+                            roundScore += 500 * ScoreDetails.ROUND_SCORE_GUESS_MULTIPLIERS[guessCount - 1];
+                            let timeElapsedMinutes = Math.floor((game.endTime.getTime() - game.startTime.getTime()) / 60000);
+                            if (timeElapsedMinutes <= 4) {
+                                roundScore = (roundScore * 2) / Math.sqrt(timeElapsedMinutes);
+                            }
+                            if (this.startingGuesses.has(game.userGuesses[0].guess)) {
+                                roundScore *= 0.75;
+                            }
+                            else {
+                                this.startingGuesses.add(game.userGuesses[0].guess);
+                            }
+                        }
+                        if (roundScore === 0) {
+                            this.endTime = game.endTime;
+                        }
+                        else {
+                            this.totalScore += roundScore;
+                            this.roundsCompleted += 1;
+                            this.totalScore = this.totalScore * (Math.log(100 + this.roundsCompleted) / Math.log(100));
+                        }
+                    }
+                }
+            };
+            exports_13("ScoreDetails", ScoreDetails);
+            ScoreDetails.ROUND_SCORE_GUESS_MULTIPLIERS = [2, 1.5, 1.25, 1, 0.8, 0.5];
         }
     };
 });
@@ -15734,7 +15769,8 @@ System.register("Models/Session", [], function (exports_15, context_15) {
         setters: [],
         execute: function () {
             Session = class Session {
-                constructor(notificationTools) {
+                constructor(type, notificationTools) {
+                    this.type = type;
                     this.notify = notificationTools;
                 }
             };
