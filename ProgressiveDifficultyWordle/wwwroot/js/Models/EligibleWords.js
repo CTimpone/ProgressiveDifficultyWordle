@@ -62,4 +62,4 @@ class EligibleWords {
     }
 }
 exports.EligibleWords = EligibleWords;
-//# sourceMappingURL=eligiblewords.js.map
+//# sourceMappingURL=EligibleWords.js.map

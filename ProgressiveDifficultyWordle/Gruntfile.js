@@ -1,4 +1,6 @@
-/// <binding ProjectOpened='watch, code' />
+/// <binding ProjectOpened='all' />
+const webpackConfig = require('./webpack.config.js');
+
 module.exports = function (grunt) {
     grunt.initConfig({
         clean: {
@@ -21,31 +23,8 @@ module.exports = function (grunt) {
                 "TypeScript/**/**/*.ts"
             ]
         },
-        concat: {
-            scripts: {
-                src: ['wwwroot/js/GameLogic/*.js', 'wwwroot/js/Models/*.js'],
-                dest: 'temp/combined.js'
-            },
-            words: {
-                src: ['wwwroot/js/Constants/Words/*.js'],
-                dest: 'temp/words.js'
-            }
-        },
-        uglify: {
-            options: {
-                mangle: true
-            },
-            codeMin: {
-                files: {
-                    'wwwroot/lib/combined.min.js': ['temp/combined.js']
-                }
-            },
-            wordsMin: {
-                files: {
-                    'wwwroot/lib/words.min.js': ['temp/words.js']
-                }
-            },
-
+        webpack: {
+            webpackConfig,
         },
         watch: {
             codeWatch: {
@@ -63,11 +42,9 @@ module.exports = function (grunt) {
 
     grunt.loadNpmTasks("grunt-contrib-clean");
     grunt.loadNpmTasks("grunt-eslint");
-    grunt.loadNpmTasks('grunt-contrib-concat');
-    grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-watch');
+    grunt.loadNpmTasks('grunt-webpack');
 
-    grunt.registerTask("code", ['clean:codeOnly', 'concat:scripts', 'eslint', 'uglify:codeMin', 'clean:tempOnly']);
-    grunt.registerTask("all", ['clean:complete', 'concat:scripts', 'concat:words', 'eslint', 'uglify:codeMin', 'uglify:wordsMin', 'clean:tempOnly']);
+    grunt.registerTask("all", ['clean:complete', 'eslint', 'webpack', 'clean:tempOnly']);
 
 };
