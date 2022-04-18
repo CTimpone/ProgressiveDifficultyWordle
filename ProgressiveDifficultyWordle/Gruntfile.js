@@ -1,8 +1,29 @@
 /// <binding ProjectOpened='watch, code' />
 module.exports = function (grunt) {
     grunt.initConfig({
+        clean: {
+            complete: {
+                src: ["wwwroot/lib/combined.min.js", "wwwroot/lib/words.min.js", "temp/"],
+            },
+            codeOnly: {
+                src: ["wwwroot/lib/combined.min.js", "temp/"],
+            },
+            tempOnly: {
+                src: ["temp/"],
+            }
+        },
+        concat: {
+            scripts: {
+                src: ['wwwroot/js/GameLogic/*.js', 'wwwroot/js/Models/*.js'],
+                dest: 'temp/combined.js'
+            },
+            words: {
+                src: ['wwwroot/js/Constants/Words/*.js'],
+                dest: 'temp/words.js'
+            }
+        },
         jshint: {
-            files: ['wwwroot/js/combinedCompiled.js'],
+            files: ['temp/*.js'],
             options: {
                 'esversion': 6,
                 '-W069': false,
@@ -12,17 +33,25 @@ module.exports = function (grunt) {
             options: {
                 mangle: true
             },
-            all: {
+            codeMin: {
                 files: {
-                    'wwwroot/lib/combined.min.js': ['wwwroot/js/combinedCompiled.js']
+                    'wwwroot/lib/combined.min.js': ['temp/combined.js']
                 }
-            }
+            },
+            wordsMin: {
+                files: {
+                    'wwwroot/lib/words.min.js': ['temp/words.js']
+                }
+            },
 
         },
         watch: {
-
+            codeWatch: {
+                files: ["TypeScript/**/*.ts"],
+                tasks: ["code"]
+            },
             allWatch: {
-                files: ["TypeScript/**/**/*.ts", "TypeScript/**/*.ts"],
+                files: ["TypeScript/**/**/*.ts"],
                 tasks: ["all"]
 
             }
@@ -36,6 +65,7 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-watch');
 
-    grunt.registerTask("all", ['jshint', 'uglify:all']);
+    grunt.registerTask("code", ['clean:codeOnly', 'concat:scripts', 'jshint', 'uglify:codeMin', 'clean:tempOnly']);
+    grunt.registerTask("all", ['clean:complete', 'concat:scripts', 'concat:words', 'jshint', 'uglify:codeMin', 'uglify:wordsMin', 'clean:tempOnly']);
 
 };
