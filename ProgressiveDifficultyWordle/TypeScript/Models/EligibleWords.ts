@@ -33,7 +33,7 @@ export class EligibleWords {
     buildGuessSearchHelper(): void {
         this.guessSearchHelper = new Map<string, [number, number]>();
         for (let i = 0; i < this.eligibleGuesses.length; i++) {
-            let currentLetter = this.eligibleGuesses[i][0];
+            const currentLetter = this.eligibleGuesses[i][0];
             if (!this.guessSearchHelper.has(currentLetter)) {
 
                 this.guessSearchHelper.set(currentLetter, [i, i]);
@@ -57,8 +57,8 @@ export class EligibleWords {
         console.log(start);
         console.log(end);
         while (start <= end) {
-            let midPoint = start + Math.floor((end - start) / 2);
-            let midVal = this.eligibleGuesses[midPoint];
+            const midPoint = start + Math.floor((end - start) / 2);
+            const midVal = this.eligibleGuesses[midPoint];
 
             if (midVal === target) {
                 return true;
