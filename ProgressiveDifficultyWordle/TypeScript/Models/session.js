@@ -39,15 +39,24 @@ class Session {
                             this.state.active = false;
                             this.score.updateScore(this.currentGame);
                         }
-                        this.messaging.message = new NotificationWrapper_1.NotificationWrapper(NotificationType_1.NotificationType.Error, "Unsuccessful solve. To play, you will need a new session.");
+                        this.messaging.message = new NotificationWrapper_1.NotificationWrapper(NotificationType_1.NotificationType.Error, "Unsuccessful solve. To playing, you will need a new session.");
                     }
                     else {
                         this.currentGame.finalizeGuess(input);
                     }
                     break;
                 case GameType_1.GameType.ProgressiveDifficulty:
+                    throw new Error("Not yet implemented.");
                     break;
                 case GameType_1.GameType.Single:
+                    if (this.currentGame.endTime !== undefined) {
+                        this.messaging.message = new NotificationWrapper_1.NotificationWrapper(NotificationType_1.NotificationType.Error, "The game has ended. To continue playing, you will need a new session.");
+                    }
+                    else {
+                        this.currentGame.finalizeGuess(input);
+                        this.updateBoard();
+                        this.state.active = this.currentGame.endTime === undefined;
+                    }
                     break;
                 default:
                     const exhaustiveCheck = this.type;
