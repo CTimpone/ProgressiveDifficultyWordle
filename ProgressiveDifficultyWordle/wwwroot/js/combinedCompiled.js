@@ -15686,7 +15686,7 @@ System.register("Models/SingleGame", ["Models/GuessDetails", "Models/LetterStatu
                                 throw new Error(`Invalid status for guess input at ${i}: status of ${currentGuess.characterStates[i]}`);
                         }
                     }
-                    if (currentGuess.fullMatch) {
+                    if (this.solved()) {
                         this.messaging.message = new NotificationWrapper_1.NotificationWrapper(NotificationType_1.NotificationType.Info, "Successful solve!");
                         this.endTime = new Date();
                     }
@@ -15694,6 +15694,9 @@ System.register("Models/SingleGame", ["Models/GuessDetails", "Models/LetterStatu
                         this.messaging.message = new NotificationWrapper_1.NotificationWrapper(NotificationType_1.NotificationType.Error, NotificationWrapper_1.NotificationWrapper.interpolateMessage("Exceeded max number (REPLACEMENT=>text) of guesses.", this.options.maxGuesses.toString()));
                         this.endTime = new Date();
                     }
+                }
+                solved() {
+                    return this.userGuesses[this.userGuesses.length - 1].fullMatch;
                 }
             };
             exports_12("SingleGame", SingleGame);
@@ -15756,22 +15759,99 @@ System.register("Models/SessionState", [], function (exports_14, context_14) {
         setters: [],
         execute: function () {
             SessionState = class SessionState {
+                constructor(hardMode) {
+                    this.gameHistory = [];
+                    this.active = true;
+                    this.startTime = new Date();
+                    this.gameTimerLimitExists = false;
+                    this.hardMode = hardMode;
+                    this.maxGuesses = 6;
+                }
             };
             exports_14("SessionState", SessionState);
         }
     };
 });
-System.register("Models/Session", [], function (exports_15, context_15) {
+System.register("Models/Session", ["Models/GameType", "Models/ScoreDetails", "Models/SingleGame", "Models/SessionState", "Models/GameOptions", "Models/EligibleWords", "Models/Notification/NotificationWrapper", "Models/Notification/NotificationType"], function (exports_15, context_15) {
     "use strict";
-    var Session;
+    var GameType_1, ScoreDetails_1, SingleGame_1, SessionState_1, GameOptions_1, EligibleWords_1, NotificationWrapper_2, NotificationType_2, Session;
     var __moduleName = context_15 && context_15.id;
     return {
-        setters: [],
+        setters: [
+            function (GameType_1_1) {
+                GameType_1 = GameType_1_1;
+            },
+            function (ScoreDetails_1_1) {
+                ScoreDetails_1 = ScoreDetails_1_1;
+            },
+            function (SingleGame_1_1) {
+                SingleGame_1 = SingleGame_1_1;
+            },
+            function (SessionState_1_1) {
+                SessionState_1 = SessionState_1_1;
+            },
+            function (GameOptions_1_1) {
+                GameOptions_1 = GameOptions_1_1;
+            },
+            function (EligibleWords_1_1) {
+                EligibleWords_1 = EligibleWords_1_1;
+            },
+            function (NotificationWrapper_2_1) {
+                NotificationWrapper_2 = NotificationWrapper_2_1;
+            },
+            function (NotificationType_2_1) {
+                NotificationType_2 = NotificationType_2_1;
+            }
+        ],
         execute: function () {
             Session = class Session {
-                constructor(type, notificationTools) {
+                constructor(type, hardMode, notificationTools, fn) {
                     this.type = type;
-                    this.notify = notificationTools;
+                    this.messaging = notificationTools;
+                    this.score = new ScoreDetails_1.ScoreDetails();
+                    this.state = new SessionState_1.SessionState(hardMode);
+                    this.boardBinder = fn;
+                    this.generateGame();
+                    this.state.startTime = this.currentGame.startTime;
+                }
+                generateGame() {
+                    this.currentGame = new SingleGame_1.SingleGame(this.generateGameOptions(), new EligibleWords_1.EligibleWords(), this.messaging);
+                }
+                generateGameOptions() {
+                    return new GameOptions_1.GameOptions(this.state.hardMode, this.state.maxGuesses, this.state.gameTimerLimitExists, this.state.gameTimerLength);
+                }
+                next(input) {
+                    if (this.state.active) {
+                        switch (this.type) {
+                            case GameType_1.GameType.Endless:
+                                if (this.currentGame.solved()) {
+                                    this.score.updateScore(this.currentGame);
+                                    this.generateGame();
+                                    this.updateBoard();
+                                }
+                                else if (!this.currentGame.solved() && this.currentGame.endTime !== undefined) {
+                                    if (this.state.active) {
+                                        this.state.active = false;
+                                        this.score.updateScore(this.currentGame);
+                                    }
+                                    this.messaging.message = new NotificationWrapper_2.NotificationWrapper(NotificationType_2.NotificationType.Error, "Unsuccessful solve. To play, you will need a new session.");
+                                }
+                                else {
+                                    this.currentGame.finalizeGuess(input);
+                                }
+                                break;
+                            case GameType_1.GameType.ProgressiveDifficulty:
+                                break;
+                            case GameType_1.GameType.Single:
+                                break;
+                            default:
+                                const exhaustiveCheck = this.type;
+                                throw new Error(exhaustiveCheck);
+                        }
+                    }
+                }
+                updateBoard() {
+                    this.boardBinder(this.currentGame.userGuesses.map(guess => guess.guess), this.currentGame.userGuesses.map(guess => guess.characterStates));
                 }
             };
             exports_15("Session", Session);

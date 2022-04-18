@@ -2,7 +2,7 @@
 
 export class NotificationEventing {
     internalMessage: NotificationWrapper;
-    internalEventListener: (arg0: NotificationWrapper) => void;
+    internalEventListener: (notification: NotificationWrapper) => void;
 
     set message(value: NotificationWrapper) {
         this.internalMessage = value;
@@ -14,7 +14,7 @@ export class NotificationEventing {
         return this.internalMessage;
     }
 
-    registerListener(fn: (arg0: NotificationWrapper) => void): void {
+    registerListener(fn: (notification: NotificationWrapper) => void): void {
         this.internalEventListener = fn;
     }
 }

@@ -77,7 +77,7 @@ class SingleGame {
                     throw new Error(`Invalid status for guess input at ${i}: status of ${currentGuess.characterStates[i]}`);
             }
         }
-        if (currentGuess.fullMatch) {
+        if (this.solved()) {
             this.messaging.message = new NotificationWrapper_1.NotificationWrapper(NotificationType_1.NotificationType.Info, "Successful solve!");
             this.endTime = new Date();
         }
@@ -85,6 +85,9 @@ class SingleGame {
             this.messaging.message = new NotificationWrapper_1.NotificationWrapper(NotificationType_1.NotificationType.Error, NotificationWrapper_1.NotificationWrapper.interpolateMessage("Exceeded max number (REPLACEMENT=>text) of guesses.", this.options.maxGuesses.toString()));
             this.endTime = new Date();
         }
+    }
+    solved() {
+        return this.userGuesses[this.userGuesses.length - 1].fullMatch;
     }
 }
 exports.SingleGame = SingleGame;

@@ -105,14 +105,18 @@ export class SingleGame {
             }
         }
 
-        if (currentGuess.fullMatch) {
+        if (this.solved()) {
             this.messaging.message = new NotificationWrapper(NotificationType.Info, "Successful solve!");
+
             this.endTime = new Date();
         } else if (this.userGuesses.length >= this.options.maxGuesses && this.endTime === undefined) {
             this.messaging.message = new NotificationWrapper(NotificationType.Error,
                 NotificationWrapper.interpolateMessage("Exceeded max number (REPLACEMENT=>text) of guesses.", this.options.maxGuesses.toString()));
             this.endTime = new Date();
         }
+    }
 
+    solved(): boolean {
+        return this.userGuesses[this.userGuesses.length - 1].fullMatch;
     }
 }
