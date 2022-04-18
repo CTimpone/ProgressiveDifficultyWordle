@@ -16,17 +16,17 @@ export class ScoreDetails {
 
     updateScore(game: SingleGame): void {
         if (this.endTime === undefined) {
-            let guessCount = game.userGuesses.length;
+            const guessCount = game.userGuesses.length;
             let roundScore = 0;
 
             if (guessCount > 0) {
-                let lastGuess = game.userGuesses[guessCount - 1];
+                const lastGuess = game.userGuesses[guessCount - 1];
 
                 roundScore = lastGuess.fullMatch ? 1000 : 0;
 
                 roundScore += 500 * ScoreDetails.ROUND_SCORE_GUESS_MULTIPLIERS[guessCount - 1];
 
-                let timeElapsedMinutes = Math.floor((game.endTime.getTime() - game.startTime.getTime()) / 60000);
+                const timeElapsedMinutes = Math.floor((game.endTime.getTime() - game.startTime.getTime()) / 60000);
 
                 if (timeElapsedMinutes <= 4) {
                     roundScore = (roundScore * 2) / Math.sqrt(timeElapsedMinutes);

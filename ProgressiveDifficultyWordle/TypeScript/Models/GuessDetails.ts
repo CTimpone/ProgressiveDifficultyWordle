@@ -9,8 +9,8 @@ export class GuessDetails {
         this.guess = input;
         this.characterStates = new Array<LetterStatus>(input.length);
 
-        let answerMap = new Map<string, number[]>();
-        let inputMap = new Map<string, number[]>();
+        const answerMap = new Map<string, number[]>();
+        const inputMap = new Map<string, number[]>();
         for (let i = 0; i < answer.length; i++) {
             this.buildCharacterMap(answerMap, answer, i);
             this.buildCharacterMap(inputMap, input, i);
@@ -30,20 +30,20 @@ export class GuessDetails {
     }
 
     populateCharacterStates(inputMap: Map<string, number[]>, answerMap: Map<string, number[]>) {
-        for (let key of inputMap.keys()) {
-            let inputIndices = inputMap.get(key);
+        for (const key of inputMap.keys()) {
+            const inputIndices = inputMap.get(key);
 
             if (answerMap.has(key)) {
-                let answerIndices = answerMap.get(key);
+                const answerIndices = answerMap.get(key);
 
                 if (answerIndices.length >= inputIndices.length) {
-                    for (let charIndex of inputIndices) {
+                    for (const charIndex of inputIndices) {
                         this.characterStates[charIndex] = answerIndices.indexOf(charIndex) > -1 ? LetterStatus.ExactMatch : LetterStatus.WrongLocation;
                     }
                 } else {
                     let exactMatchCount = 0;
-                    let potentialLocationIndices = [];
-                    for (let charIndex of inputIndices) {
+                    const potentialLocationIndices = [];
+                    for (const charIndex of inputIndices) {
                         if (answerIndices.indexOf(charIndex) > -1) {
                             this.characterStates[charIndex] = LetterStatus.ExactMatch;
                             exactMatchCount += 1;
@@ -63,7 +63,7 @@ export class GuessDetails {
                     }
                 }
             } else {
-                for (let absentIndex of inputMap.get(key)) {
+                for (const absentIndex of inputMap.get(key)) {
                     this.characterStates[absentIndex] = LetterStatus.Absent;
                 }
             }

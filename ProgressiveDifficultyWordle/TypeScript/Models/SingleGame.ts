@@ -50,8 +50,8 @@ export class SingleGame {
             return false;
         }
 
-        let inputRegex = /[a-z]/g;
-        let match = input.match(inputRegex);
+        const inputRegex = /[a-z]/g;
+        const match = input.match(inputRegex);
         if (match === null || match.length != this.chosenWord.length) {
             this.messaging.message = new NotificationWrapper(NotificationType.Error, "Invalid input.");
 
@@ -80,7 +80,7 @@ export class SingleGame {
     }
 
     finalizeGuess(input: string): void {
-        let currentGuess = new GuessDetails(input, this.chosenWord);
+        const currentGuess = new GuessDetails(input, this.chosenWord);
         this.userGuesses.push(currentGuess);
 
         for (let i = 0; i < currentGuess.characterStates.length; i++) {
