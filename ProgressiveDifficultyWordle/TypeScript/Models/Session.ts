@@ -47,15 +47,21 @@ export class Session {
                         this.generateGame();
                         this.updateBoard();
                     } else if (!this.currentGame.solved() && this.currentGame.endTime !== undefined) {
-                        if (this.state.active) {
-                            this.state.active = false;
-                            this.score.updateScore(this.currentGame);
-                        }
+                        this.state.active = false;
 
                         this.messaging.message = new NotificationWrapper(NotificationType.Error,
-                            "Unsuccessful solve. To playing, you will need a new session.");
+                            "Unsuccessfully solved. To playing, you will need a new session.");
                     } else {
                         this.currentGame.finalizeGuess(input);
+                        this.updateBoard();
+
+                        if (this.currentGame.solved()) {
+                            this.score.updateScore(this.currentGame);
+                            this.generateGame();
+                            this.updateBoard();
+                        } else if (this.currentGame.endTime) {
+                            this.state.active = false;
+                        }
                     }
                     break;
                 case GameType.ProgressiveDifficulty:
@@ -63,6 +69,8 @@ export class Session {
                     break;
                 case GameType.Single:
                     if (this.currentGame.endTime !== undefined) {
+                        this.state.active = false;
+
                         this.messaging.message = new NotificationWrapper(NotificationType.Error,
                             "The game has ended. To continue playing, you will need a new session.");
                     } else {
