@@ -15835,9 +15835,12 @@ System.register("Models/Session", ["Models/GameType", "Models/ScoreDetails", "Mo
                             }
                             else if (this.currentGame.endTime) {
                                 this.state.active = false;
-                                this.messaging.message = new NotificationWrapper_2.NotificationWrapper(NotificationType_2.NotificationType.Error, "Unsuccessfully solved. To playing, you will need a new session.");
+                                this.messaging.message = new NotificationWrapper_2.NotificationWrapper(NotificationType_2.NotificationType.Error, "Unsuccessfully solved. To keep playing, you will need a new session.");
                             }
                         }
+                    }
+                    else {
+                        this.messaging.message = new NotificationWrapper_2.NotificationWrapper(NotificationType_2.NotificationType.Error, "The session has ended. To keep playing, you will need a new session.");
                     }
                 }
                 anotherGame() {
@@ -15879,8 +15882,9 @@ System.register("Models/Session", ["Models/GameType", "Models/ScoreDetails", "Mo
                             break;
                     }
                 }
-                paintBoard() {
-                    this.boardBinder(this.currentGame.userGuesses.map(guess => guess.guess), this.currentGame.userGuesses.map(guess => guess.characterStates));
+                paintBoard(game) {
+                    game = game !== null && game !== void 0 ? game : this.currentGame;
+                    this.boardBinder(game.userGuesses.map(guess => guess.guess), game.userGuesses.map(guess => guess.characterStates));
                 }
             };
             exports_15("Session", Session);
