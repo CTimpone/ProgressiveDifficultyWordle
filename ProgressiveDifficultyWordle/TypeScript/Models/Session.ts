@@ -35,7 +35,10 @@ export class Session {
     }
 
     generateGameOptions(): GameOptions {
-        return new GameOptions(this.state.hardMode, this.state.maxGuesses, this.state.gameTimerLimitExists, this.state.gameTimerLength);
+        return new GameOptions(this.state.hardMode,
+            this.state.maxGuesses,
+            this.state.gameTimerLimitExists,
+            this.state.gameTimerLength);
     }
 
     next(input: string) {
@@ -45,7 +48,7 @@ export class Session {
                     if (this.currentGame.solved()) {
                         this.score.updateScore(this.currentGame);
                         this.generateGame();
-                        this.updateBoard();
+                        this.paintBoard();
                     } else if (!this.currentGame.solved() && this.currentGame.endTime !== undefined) {
                         this.state.active = false;
 
@@ -53,19 +56,41 @@ export class Session {
                             "Unsuccessfully solved. To playing, you will need a new session.");
                     } else {
                         this.currentGame.finalizeGuess(input);
-                        this.updateBoard();
+                        this.paintBoard();
 
                         if (this.currentGame.solved()) {
                             this.score.updateScore(this.currentGame);
                             this.generateGame();
-                            this.updateBoard();
+                            this.paintBoard();
                         } else if (this.currentGame.endTime) {
                             this.state.active = false;
                         }
                     }
                     break;
                 case GameType.ProgressiveDifficulty:
-                    throw new Error("Not yet implemented.");
+                    if (this.currentGame.solved()) {
+                        this.score.updateScore(this.currentGame);
+                        this.getHarder();
+                        this.generateGame();
+                        this.paintBoard();
+                    } else if (!this.currentGame.solved() && this.currentGame.endTime !== undefined) {
+                        this.state.active = false;
+
+                        this.messaging.message = new NotificationWrapper(NotificationType.Error,
+                            "Unsuccessfully solved. To playing, you will need a new session.");
+                    } else {
+                        this.currentGame.finalizeGuess(input);
+                        this.paintBoard();
+
+                        if (this.currentGame.solved()) {
+                            this.score.updateScore(this.currentGame);
+                            this.getHarder();
+                            this.generateGame();
+                            this.paintBoard();
+                        } else if (this.currentGame.endTime) {
+                            this.state.active = false;
+                        }
+                    }
                     break;
                 case GameType.Single:
                     if (this.currentGame.endTime !== undefined) {
@@ -75,7 +100,7 @@ export class Session {
                             "The game has ended. To continue playing, you will need a new session.");
                     } else {
                         this.currentGame.finalizeGuess(input);
-                        this.updateBoard();
+                        this.paintBoard();
 
                         this.state.active = this.currentGame.endTime === undefined;
                     }
@@ -87,7 +112,38 @@ export class Session {
         }
     }
 
-    updateBoard(): void {
+    getHarder(): void {
+        switch (this.score.roundsCompleted) {
+            case 3:
+                this.state.gameTimerLimitExists = true;
+                this.state.gameTimerLength = 600;
+                break;
+            case 5:
+            case 7:
+            case 11:
+            case 13:
+            case 17:
+                this.state.gameTimerLength -= 60;
+                break;
+            case 19:
+            case 21:
+            case 23:
+            case 25:
+            case 27:
+            case 29:
+                this.state.gameTimerLength -= 30;
+                break;
+            case 9:
+            case 15:
+            case 30:
+                this.state.maxGuesses -= 1;
+                break;
+            default:
+                break;
+        }
+    }
+
+    paintBoard(): void {
         this.boardBinder(this.currentGame.userGuesses.map(guess => guess.guess),
             this.currentGame.userGuesses.map(guess => guess.characterStates));
     }
