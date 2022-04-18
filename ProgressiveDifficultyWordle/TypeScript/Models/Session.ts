@@ -10,13 +10,13 @@ import { NotificationType } from './Notification/NotificationType';
 import { LetterStatus } from './LetterStatus';
 
 export class Session {
-    currentGame: SingleGame;
+    private currentGame: SingleGame;
+    private boardBinder: (words: string[], letterStatuses: LetterStatus[][]) => void;
+
     type: GameType;
     state: SessionState;
     score: ScoreDetails;
     messaging: NotificationEventing;
-    boardBinder: (words: string[], letterStatuses: LetterStatus[][]) => void;
-
 
     constructor(type: GameType, hardMode: boolean, notificationTools: NotificationEventing,
         fn: (words: string[], letterStatuses: LetterStatus[][]) => void) {
@@ -43,73 +43,37 @@ export class Session {
 
     next(input: string) {
         if (this.state.active) {
-            switch (this.type) {
-                case GameType.Endless:
-                    if (this.currentGame.solved()) {
-                        this.score.updateScore(this.currentGame);
-                        this.generateGame();
-                        this.paintBoard();
-                    } else if (!this.currentGame.solved() && this.currentGame.endTime !== undefined) {
-                        this.state.active = false;
+            if (this.type === GameType.Single) {
+                this.currentGame.finalizeGuess(input);
+                this.paintBoard();
 
-                        this.messaging.message = new NotificationWrapper(NotificationType.Error,
-                            "Unsuccessfully solved. To playing, you will need a new session.");
-                    } else {
-                        this.currentGame.finalizeGuess(input);
-                        this.paintBoard();
+                this.state.active = this.currentGame.endTime === undefined;
+            } else {
+                this.currentGame.finalizeGuess(input);
+                this.paintBoard();
 
-                        if (this.currentGame.solved()) {
-                            this.score.updateScore(this.currentGame);
-                            this.generateGame();
-                            this.paintBoard();
-                        } else if (this.currentGame.endTime) {
-                            this.state.active = false;
-                        }
-                    }
-                    break;
-                case GameType.ProgressiveDifficulty:
-                    if (this.currentGame.solved()) {
-                        this.score.updateScore(this.currentGame);
-                        this.getHarder();
-                        this.generateGame();
-                        this.paintBoard();
-                    } else if (!this.currentGame.solved() && this.currentGame.endTime !== undefined) {
-                        this.state.active = false;
+                if (this.currentGame.solved()) {
+                    this.anotherGame();
+                } else if (this.currentGame.endTime) {
+                    this.state.active = false;
 
-                        this.messaging.message = new NotificationWrapper(NotificationType.Error,
-                            "Unsuccessfully solved. To playing, you will need a new session.");
-                    } else {
-                        this.currentGame.finalizeGuess(input);
-                        this.paintBoard();
+                    this.messaging.message = new NotificationWrapper(NotificationType.Error,
+                        "Unsuccessfully solved. To playing, you will need a new session.");
 
-                        if (this.currentGame.solved()) {
-                            this.score.updateScore(this.currentGame);
-                            this.getHarder();
-                            this.generateGame();
-                            this.paintBoard();
-                        } else if (this.currentGame.endTime) {
-                            this.state.active = false;
-                        }
-                    }
-                    break;
-                case GameType.Single:
-                    if (this.currentGame.endTime !== undefined) {
-                        this.state.active = false;
-
-                        this.messaging.message = new NotificationWrapper(NotificationType.Error,
-                            "The game has ended. To continue playing, you will need a new session.");
-                    } else {
-                        this.currentGame.finalizeGuess(input);
-                        this.paintBoard();
-
-                        this.state.active = this.currentGame.endTime === undefined;
-                    }
-                    break;
-                default:
-                    const exhaustiveCheck: never = this.type;
-                    throw new Error(exhaustiveCheck);
+                }
             }
         }
+    }
+
+    anotherGame(): void {
+        this.state.gameHistory.push(this.currentGame);
+
+        if (this.type === GameType.ProgressiveDifficulty) {
+            this.getHarder();
+        }
+
+        this.generateGame();
+        this.paintBoard();
     }
 
     getHarder(): void {
@@ -139,6 +103,7 @@ export class Session {
                 this.state.maxGuesses -= 1;
                 break;
             default:
+                console.log("No difficulty increase.")
                 break;
         }
     }
