@@ -50,6 +50,7 @@ class Session {
     }
     anotherGame() {
         this.state.gameHistory.push(this.currentGame);
+        this.score.updateScore(this.currentGame);
         if (this.type === GameType_1.GameType.ProgressiveDifficulty) {
             this.getHarder();
         }

@@ -12975,4 +12975,4 @@ exports.FIVE_LETTER_GUESSES = [
     "zymes",
     "zymic"
 ];
-//# sourceMappingURL=FiveLetterGuesses.js.map
+//# sourceMappingURL=fiveletterguesses.js.map

@@ -15,28 +15,6 @@ describe("EligibleWords", () => {
         consoleSpy.restore();
     });
     describe("#constructor", () => {
-        it('should use the default constants to generate the guess list, answer list, and search map helper when no parameters are supplied', () => {
-            let ew = new eligiblewords_1.EligibleWords();
-            assert.equal(FiveLetterAnswers_1.FIVE_LETTER_ANSWERS.length, ew.eligibleAnswers.length);
-            assert.equal(FiveLetterGuesses_1.FIVE_LETTER_GUESSES.length, ew.eligibleGuesses.length);
-            assert.notEqual(undefined, ew.guessSearchHelper);
-        });
-        it('should use the default constants to generate the guess list, answer list, and search map helper when only the answer list parameter is supplied', () => {
-            let answerList = ['first', 'again'];
-            let ew = new eligiblewords_1.EligibleWords(answerList);
-            assert.equal(FiveLetterAnswers_1.FIVE_LETTER_ANSWERS.length, ew.eligibleAnswers.length);
-            assert.equal(FiveLetterGuesses_1.FIVE_LETTER_GUESSES.length, ew.eligibleGuesses.length);
-            assert.notEqual(undefined, ew.guessSearchHelper);
-            assert(consoleSpy.calledWith('Both eligibleAnswers and eligibleGuesses must be supplied to not rely on constants.'));
-        });
-        it('should use the default constants to generate the guess list, answer list, and search map helper when only the guess list parameter is supplied', () => {
-            let guessList = ['first', 'again'];
-            let ew = new eligiblewords_1.EligibleWords(undefined, guessList);
-            assert.equal(FiveLetterAnswers_1.FIVE_LETTER_ANSWERS.length, ew.eligibleAnswers.length);
-            assert.equal(FiveLetterGuesses_1.FIVE_LETTER_GUESSES.length, ew.eligibleGuesses.length);
-            assert.notEqual(undefined, ew.guessSearchHelper);
-            assert(consoleSpy.calledWith('Both eligibleAnswers and eligibleGuesses must be supplied to not rely on constants.'));
-        });
         it('should use the submitted parameters to populate lists when both are present.', () => {
             let answerList = ['first'];
             let guessList = ['first', 'again'];
@@ -49,21 +27,10 @@ describe("EligibleWords", () => {
             assert.notEqual(undefined, ew.guessSearchHelper);
             assert(consoleSpy.neverCalledWith('Both eligibleAnswers and eligibleGuesses must be supplied to not rely on constants.'));
         });
-        it('should use the 5-letter constants when the letter count is explicitly submitted.', () => {
-            let ew = new eligiblewords_1.EligibleWords(undefined, undefined, 5);
-            assert.equal(FiveLetterAnswers_1.FIVE_LETTER_ANSWERS.length, ew.eligibleAnswers.length);
-            assert.equal(FiveLetterGuesses_1.FIVE_LETTER_GUESSES.length, ew.eligibleGuesses.length);
-            assert.notEqual(undefined, ew.guessSearchHelper);
-        });
-        it('should attempt to use other, currently invalid constants when the letter count parameter is explictly submitted with another value.', () => {
-            assert.throws(() => {
-                new eligiblewords_1.EligibleWords(undefined, undefined, 6);
-            }, Error('No word-sets configured for letterCount=6'));
-        });
     });
     describe("#buildGuessSearchHelper", () => {
         it('should build a character-based bsearch-localizing map.', () => {
-            let ew = new eligiblewords_1.EligibleWords();
+            let ew = new eligiblewords_1.EligibleWords(FiveLetterAnswers_1.FIVE_LETTER_ANSWERS, FiveLetterGuesses_1.FIVE_LETTER_GUESSES);
             assert.equal(FiveLetterAnswers_1.FIVE_LETTER_ANSWERS.length, ew.eligibleAnswers.length);
             assert.equal(FiveLetterGuesses_1.FIVE_LETTER_GUESSES.length, ew.eligibleGuesses.length);
             //Resetting the guessSearchHelper to allow for direct testing of the function, rather than relying on call initiated in constuctor
