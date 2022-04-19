@@ -77,6 +77,67 @@ describe("ScoreDetails", () => {
             assert.notEqual(undefined, scoreDetails.endTime);
             assert.equal(game.endTime, scoreDetails.endTime);
         });
+
+        it('increments roundsCompleted when the game is solved.', () => {
+            let scoreDetails = new ScoreDetails();
+            assert.equal(undefined, scoreDetails.endTime);
+            assert.equal(0, scoreDetails.roundsCompleted);
+            assert.equal(0, scoreDetails.startingGuesses.size);
+            assert.equal(0, scoreDetails.totalScore);
+
+            game.options.maxGuesses = 1;
+            game.finalizeGuess("apple");
+
+            const initialRounds = scoreDetails.roundsCompleted;
+            scoreDetails.updateScore(game);
+
+            assert.equal(initialRounds + 1, scoreDetails.roundsCompleted);
+        });
+
+        it('increments totalScore when the game is solved.', () => {
+            let scoreDetails = new ScoreDetails();
+            assert.equal(undefined, scoreDetails.endTime);
+            assert.equal(0, scoreDetails.roundsCompleted);
+            assert.equal(0, scoreDetails.startingGuesses.size);
+            assert.equal(0, scoreDetails.totalScore);
+
+            game.options.maxGuesses = 1;
+            game.finalizeGuess("apple");
+
+            const initialScore = scoreDetails.totalScore;
+            scoreDetails.updateScore(game);
+            scoreDetails.startingGuesses = new Set<string>();
+            assert.equal(initialScore + scoreDetails.calculateRoundScore(game), scoreDetails.totalScore);
+        });
+
+        it('totalScore increases additionally as more games are solved successfully.', () => {
+            let scoreDetails = new ScoreDetails();
+            assert.equal(undefined, scoreDetails.endTime);
+            assert.equal(0, scoreDetails.roundsCompleted);
+            assert.equal(0, scoreDetails.startingGuesses.size);
+            assert.equal(0, scoreDetails.totalScore);
+
+            game.options.maxGuesses = 1;
+            game.finalizeGuess("apple");
+
+            const initialScore = scoreDetails.totalScore;
+            scoreDetails.updateScore(game);
+            scoreDetails.startingGuesses = new Set<string>();
+            const scoreAfterOne = scoreDetails.totalScore;
+            scoreDetails.updateScore(game);
+            scoreDetails.startingGuesses = new Set<string>();
+            const scoreAfterTwo = scoreDetails.totalScore;
+            scoreDetails.updateScore(game);
+            scoreDetails.startingGuesses = new Set<string>();
+            const scoreAfterThree = scoreDetails.totalScore;
+
+            const roundScore = scoreDetails.calculateRoundScore(game);
+
+            assert.equal(initialScore + roundScore, scoreAfterOne);
+            assert.ok(scoreAfterOne + roundScore < scoreAfterTwo);
+            assert.ok(scoreAfterTwo - scoreAfterOne < scoreAfterThree - scoreAfterTwo);
+
+        });
     });
 
     describe("#calculateRoundScore", () => {
