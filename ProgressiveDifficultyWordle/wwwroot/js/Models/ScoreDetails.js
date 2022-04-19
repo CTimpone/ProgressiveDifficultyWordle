@@ -11,7 +11,7 @@ class ScoreDetails {
         if (this.endTime === undefined) {
             const guessCount = game.userGuesses.length;
             let roundScore = 0;
-            if (guessCount > 0) {
+            if (game.solved()) {
                 const lastGuess = game.userGuesses[guessCount - 1];
                 roundScore = lastGuess.fullMatch ? 1000 : 0;
                 roundScore += 500 * ScoreDetails.ROUND_SCORE_GUESS_MULTIPLIERS[guessCount - 1];
@@ -25,18 +25,19 @@ class ScoreDetails {
                 else {
                     this.startingGuesses.add(game.userGuesses[0].guess);
                 }
-            }
-            if (roundScore === 0) {
-                this.endTime = game.endTime;
-            }
-            else {
                 this.totalScore += roundScore;
                 this.roundsCompleted += 1;
                 this.totalScore = this.totalScore * (Math.log(100 + this.roundsCompleted) / Math.log(100));
             }
+            else if (game.endTime !== undefined) {
+                this.endTime = game.endTime;
+            }
+        }
+        else {
+            throw new Error("Cannot update score when not active.");
         }
     }
 }
 exports.ScoreDetails = ScoreDetails;
 ScoreDetails.ROUND_SCORE_GUESS_MULTIPLIERS = [2, 1.5, 1.25, 1, 0.8, 0.5];
-//# sourceMappingURL=ScoreDetails.js.map
+//# sourceMappingURL=scoredetails.js.map
