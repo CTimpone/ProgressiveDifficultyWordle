@@ -12,13 +12,16 @@ import { LetterStatus } from './LetterStatus';
 export class Session {
     private currentGame: SingleGame;
     private boardBinder: (words: string[], letterStatuses: LetterStatus[][]) => void;
+    private eligibleAnswers: string[];
+    private eligibleGuesses: string[];
 
     type: GameType;
     state: SessionState;
     score: ScoreDetails;
     messaging: NotificationEventing;
 
-    constructor(type: GameType, hardMode: boolean, notificationTools: NotificationEventing,
+    constructor(type: GameType, hardMode: boolean, eligibleAnswers: string[], eligibleGuesses: string[],
+        notificationTools: NotificationEventing,
         fn: (words: string[], letterStatuses: LetterStatus[][]) => void) {
         this.type = type;
         this.messaging = notificationTools;
@@ -31,7 +34,8 @@ export class Session {
     }
 
     generateGame(): void {
-        this.currentGame = new SingleGame(this.generateGameOptions(), new EligibleWords(), this.messaging);
+        this.currentGame = new SingleGame(this.generateGameOptions(),
+            new EligibleWords(this.eligibleAnswers, this.eligibleGuesses), this.messaging);
     }
 
     generateGameOptions(): GameOptions {

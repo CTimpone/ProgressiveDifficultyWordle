@@ -1,28 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.EligibleWords = void 0;
-const FiveLetterGuesses_1 = require("../Constants/Words/FiveLetterGuesses");
-const FiveLetterAnswers_1 = require("../Constants/Words/FiveLetterAnswers");
 class EligibleWords {
-    constructor(eligibleAnswers, eligibleGuesses, letterCount = 5) {
-        if (eligibleAnswers !== undefined && eligibleGuesses !== undefined) {
-            this.eligibleAnswers = eligibleAnswers;
-            this.eligibleGuesses = eligibleGuesses;
-        }
-        else if ((eligibleAnswers !== undefined && eligibleGuesses === undefined) ||
-            (eligibleAnswers === undefined && eligibleGuesses !== undefined)) {
-            console.log('Both eligibleAnswers and eligibleGuesses must be supplied to not rely on constants.');
-        }
-        if (this.eligibleAnswers === undefined && this.eligibleGuesses === undefined) {
-            switch (letterCount) {
-                case 5:
-                    this.eligibleAnswers = FiveLetterAnswers_1.FIVE_LETTER_ANSWERS;
-                    this.eligibleGuesses = FiveLetterGuesses_1.FIVE_LETTER_GUESSES;
-                    break;
-                default:
-                    throw new Error(`No word-sets configured for letterCount=${letterCount}`);
-            }
-        }
+    constructor(eligibleAnswers, eligibleGuesses) {
+        this.eligibleAnswers = eligibleAnswers;
+        this.eligibleGuesses = eligibleGuesses;
         this.buildGuessSearchHelper();
     }
     buildGuessSearchHelper() {
@@ -62,4 +44,4 @@ class EligibleWords {
     }
 }
 exports.EligibleWords = EligibleWords;
-//# sourceMappingURL=EligibleWords.js.map
+//# sourceMappingURL=eligiblewords.js.map
