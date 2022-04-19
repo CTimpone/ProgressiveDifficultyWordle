@@ -94,4 +94,4 @@ class Session {
     }
 }
 exports.Session = Session;
-//# sourceMappingURL=Session.js.map
+//# sourceMappingURL=session.js.map
