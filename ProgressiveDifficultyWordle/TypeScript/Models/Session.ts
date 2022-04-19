@@ -74,6 +74,7 @@ export class Session {
 
     anotherGame(): void {
         this.state.gameHistory.push(this.currentGame);
+        this.score.updateScore(this.currentGame);
 
         if (this.type === GameType.ProgressiveDifficulty) {
             this.getHarder();
