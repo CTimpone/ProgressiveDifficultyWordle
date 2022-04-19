@@ -52,41 +52,10 @@ class Session {
         this.state.gameHistory.push(this.currentGame);
         this.score.updateScore(this.currentGame);
         if (this.type === GameType_1.GameType.ProgressiveDifficulty) {
-            this.getHarder();
+            this.state.getHarder(this.score.roundsCompleted);
         }
         this.generateGame();
         this.paintBoard();
-    }
-    getHarder() {
-        switch (this.score.roundsCompleted) {
-            case 3:
-                this.state.gameTimerLimitExists = true;
-                this.state.gameTimerLength = 600;
-                break;
-            case 5:
-            case 7:
-            case 11:
-            case 13:
-            case 17:
-                this.state.gameTimerLength -= 60;
-                break;
-            case 19:
-            case 21:
-            case 23:
-            case 25:
-            case 27:
-            case 29:
-                this.state.gameTimerLength -= 30;
-                break;
-            case 9:
-            case 15:
-            case 30:
-                this.state.maxGuesses -= 1;
-                break;
-            default:
-                console.log("No difficulty increase.");
-                break;
-        }
     }
     paintBoard(game) {
         game = game !== null && game !== void 0 ? game : this.currentGame;
