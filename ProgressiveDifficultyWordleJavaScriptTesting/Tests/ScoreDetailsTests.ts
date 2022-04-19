@@ -11,20 +11,20 @@ import { SingleGame } from '../../progressivedifficultywordle/typescript/models/
 
 describe("ScoreDetails", () => {
     var consoleSpy;
-    var game;
-
+    var game: SingleGame;
+    var ew: EligibleWords;
+    var options: GameOptions;
+    var notify: NotificationEventing;
     beforeEach(() => {
         consoleSpy = sinon.spy(console, 'log');
 
         let answerList = ['apple'];
         let guessList = ['abbot', 'abhor', 'abide', 'abode', 'apple', 'other', 'wrong'];
 
-        let ew = new EligibleWords(answerList, guessList);
-        let options = new GameOptions();
-        let notify = new NotificationEventing();
-        notify.internalEventListener = function (wrapper: NotificationWrapper) {
-            assert.fail("No notification should occur");
-        }
+        ew = new EligibleWords(answerList, guessList);
+        options = new GameOptions();
+        notify = new NotificationEventing();
+        notify.internalEventListener = function (wrapper: NotificationWrapper) { }
 
         game = new SingleGame(options, ew, notify);
 
@@ -35,7 +35,7 @@ describe("ScoreDetails", () => {
     });
 
     describe("#constructor", () => {
-        it('initializes parameters to allow for scoring', () => {
+        it('initializes parameters to allow for scoring.', () => {
             let scoreDetails = new ScoreDetails();
             assert.equal(undefined, scoreDetails.endTime);
             assert.equal(0, scoreDetails.roundsCompleted);
@@ -45,7 +45,7 @@ describe("ScoreDetails", () => {
     });
 
     describe("#updateScore", () => {
-        it('throws error if has populated endTime', () => {
+        it('throws error if has populated endTime.', () => {
             let scoreDetails = new ScoreDetails();
             assert.equal(undefined, scoreDetails.endTime);
             assert.equal(0, scoreDetails.roundsCompleted);
@@ -61,6 +61,94 @@ describe("ScoreDetails", () => {
                 assert.equal("Cannot update score when not active.", trueError.message);
             }
         });
+
+        it('sets endTime if individual game has ended, but was not solved.', () => {
+            let scoreDetails = new ScoreDetails();
+            assert.equal(undefined, scoreDetails.endTime);
+            assert.equal(0, scoreDetails.roundsCompleted);
+            assert.equal(0, scoreDetails.startingGuesses.size);
+            assert.equal(0, scoreDetails.totalScore);
+
+            game.options.maxGuesses = 1;
+            game.finalizeGuess("wrong");
+
+            scoreDetails.updateScore(game);
+
+            assert.notEqual(undefined, scoreDetails.endTime);
+            assert.equal(game.endTime, scoreDetails.endTime);
+        });
+
+        it('update scores to be higher when using fewer guesses.', () => {
+            let scoreDetails = new ScoreDetails();
+            assert.equal(undefined, scoreDetails.endTime);
+            assert.equal(0, scoreDetails.roundsCompleted);
+            assert.equal(0, scoreDetails.startingGuesses.size);
+            assert.equal(0, scoreDetails.totalScore);
+
+            assert.equal(6, options.maxGuesses);
+            game.finalizeGuess("wrong");
+            game.finalizeGuess("wrong");
+            game.finalizeGuess("wrong");
+            game.finalizeGuess("wrong");
+            game.finalizeGuess("wrong");
+            game.finalizeGuess("apple");
+            scoreDetails.updateScore(game);
+
+            let sixGuessScore = scoreDetails.totalScore;
+
+            scoreDetails = new ScoreDetails();
+            game = new SingleGame(options, ew, notify);
+            game.finalizeGuess("wrong");
+            game.finalizeGuess("wrong");
+            game.finalizeGuess("wrong");
+            game.finalizeGuess("wrong");
+            game.finalizeGuess("apple");
+
+            let fiveGuessScore = scoreDetails.totalScore;
+
+            assert.ok(fiveGuessScore > sixGuessScore);
+
+            scoreDetails = new ScoreDetails();
+            game = new SingleGame(options, ew, notify);
+            game.finalizeGuess("wrong");
+            game.finalizeGuess("wrong");
+            game.finalizeGuess("wrong");
+            game.finalizeGuess("apple");
+
+            let fourGuessScore = scoreDetails.totalScore;
+
+            assert.ok(fourGuessScore > fiveGuessScore);
+
+            scoreDetails = new ScoreDetails();
+            game = new SingleGame(options, ew, notify);
+            game.finalizeGuess("wrong");
+            game.finalizeGuess("wrong");
+            game.finalizeGuess("apple");
+
+            let threeGuessScore = scoreDetails.totalScore;
+
+            assert.ok(threeGuessScore > fourGuessScore);
+
+            scoreDetails = new ScoreDetails();
+            game = new SingleGame(options, ew, notify);
+            game.finalizeGuess("wrong");
+            game.finalizeGuess("apple");
+
+            let twoGuessScore = scoreDetails.totalScore;
+
+            assert.ok(twoGuessScore > threeGuessScore);
+
+            scoreDetails = new ScoreDetails();
+            game = new SingleGame(options, ew, notify);
+            game.finalizeGuess("apple");
+
+            let oneGuessScore = scoreDetails.totalScore;
+
+            assert.ok(oneGuessScore > threeGuessScore);
+
+        });
+
+
     });
 
 });

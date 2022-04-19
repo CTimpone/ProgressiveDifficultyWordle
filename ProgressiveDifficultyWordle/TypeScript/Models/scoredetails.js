@@ -9,22 +9,8 @@ class ScoreDetails {
     }
     updateScore(game) {
         if (this.endTime === undefined) {
-            const guessCount = game.userGuesses.length;
-            let roundScore = 0;
-            if (game.solved()) {
-                const lastGuess = game.userGuesses[guessCount - 1];
-                roundScore = lastGuess.fullMatch ? 1000 : 0;
-                roundScore += 500 * ScoreDetails.ROUND_SCORE_GUESS_MULTIPLIERS[guessCount - 1];
-                const timeElapsedMinutes = Math.floor((game.endTime.getTime() - game.startTime.getTime()) / 60000);
-                if (timeElapsedMinutes <= 4) {
-                    roundScore = (roundScore * 2) / Math.sqrt(timeElapsedMinutes);
-                }
-                if (this.startingGuesses.has(game.userGuesses[0].guess)) {
-                    roundScore *= 0.75;
-                }
-                else {
-                    this.startingGuesses.add(game.userGuesses[0].guess);
-                }
+            const roundScore = this.calculateRoundScore(game);
+            if (roundScore !== 0) {
                 this.totalScore += roundScore;
                 this.roundsCompleted += 1;
                 this.totalScore = this.totalScore * (Math.log(100 + this.roundsCompleted) / Math.log(100));
@@ -36,6 +22,29 @@ class ScoreDetails {
         else {
             throw new Error("Cannot update score when not active.");
         }
+    }
+    calculateRoundScore(game) {
+        let roundScore = 0;
+        const guessCount = game.userGuesses.length;
+        if (game.solved()) {
+            const lastGuess = game.userGuesses[guessCount - 1];
+            roundScore = lastGuess.fullMatch ? 1000 : 0;
+            roundScore += 500 * ScoreDetails.ROUND_SCORE_GUESS_MULTIPLIERS[guessCount - 1];
+            const timeElapsedMinutes = Math.floor((game.endTime.getTime() - game.startTime.getTime()) / 60000);
+            if (timeElapsedMinutes <= 4) {
+                roundScore = (roundScore * 2) / Math.sqrt(timeElapsedMinutes);
+            }
+            if (this.startingGuesses.has(game.userGuesses[0].guess)) {
+                roundScore *= 0.75;
+            }
+            else {
+                this.startingGuesses.add(game.userGuesses[0].guess);
+            }
+            this.totalScore += roundScore;
+            this.roundsCompleted += 1;
+            this.totalScore = this.totalScore * (Math.log(100 + this.roundsCompleted) / Math.log(100));
+        }
+        return roundScore;
     }
 }
 exports.ScoreDetails = ScoreDetails;
