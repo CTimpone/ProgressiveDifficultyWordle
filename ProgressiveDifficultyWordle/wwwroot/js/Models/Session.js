@@ -10,7 +10,7 @@ const EligibleWords_1 = require("./EligibleWords");
 const NotificationWrapper_1 = require("./Notification/NotificationWrapper");
 const NotificationType_1 = require("./Notification/NotificationType");
 class Session {
-    constructor(type, hardMode, notificationTools, fn) {
+    constructor(type, hardMode, eligibleAnswers, eligibleGuesses, notificationTools, fn) {
         this.type = type;
         this.messaging = notificationTools;
         this.score = new ScoreDetails_1.ScoreDetails();
@@ -20,7 +20,7 @@ class Session {
         this.state.startTime = this.currentGame.startTime;
     }
     generateGame() {
-        this.currentGame = new SingleGame_1.SingleGame(this.generateGameOptions(), new EligibleWords_1.EligibleWords(), this.messaging);
+        this.currentGame = new SingleGame_1.SingleGame(this.generateGameOptions(), new EligibleWords_1.EligibleWords(this.eligibleAnswers, this.eligibleGuesses), this.messaging);
     }
     generateGameOptions() {
         return new GameOptions_1.GameOptions(this.state.hardMode, this.state.maxGuesses, this.state.gameTimerLimitExists, this.state.gameTimerLength);
@@ -93,4 +93,4 @@ class Session {
     }
 }
 exports.Session = Session;
-//# sourceMappingURL=Session.js.map
+//# sourceMappingURL=session.js.map

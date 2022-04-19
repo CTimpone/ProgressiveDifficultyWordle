@@ -1,31 +1,11 @@
-﻿import { FIVE_LETTER_GUESSES } from '../Constants/Words/FiveLetterGuesses';
-import { FIVE_LETTER_ANSWERS } from '../Constants/Words/FiveLetterAnswers';
-
-export class EligibleWords {
+﻿export class EligibleWords {
     eligibleAnswers: string[];
     eligibleGuesses: string[];
     guessSearchHelper: Map<string, [number, number]>;
 
-    constructor(eligibleAnswers?: string[], eligibleGuesses?: string[], letterCount = 5) {
-        if (eligibleAnswers !== undefined && eligibleGuesses !== undefined) {
-            this.eligibleAnswers = eligibleAnswers;
-            this.eligibleGuesses = eligibleGuesses;
-        }
-        else if ((eligibleAnswers !== undefined && eligibleGuesses === undefined) ||
-            (eligibleAnswers === undefined && eligibleGuesses !== undefined)) {
-            console.log('Both eligibleAnswers and eligibleGuesses must be supplied to not rely on constants.');
-        }
-
-        if (this.eligibleAnswers === undefined && this.eligibleGuesses === undefined) {
-            switch (letterCount) {
-                case 5:
-                    this.eligibleAnswers = FIVE_LETTER_ANSWERS;
-                    this.eligibleGuesses = FIVE_LETTER_GUESSES;
-                    break;
-                default:
-                    throw new Error(`No word-sets configured for letterCount=${letterCount}`)
-            }
-        }
+    constructor(eligibleAnswers: string[], eligibleGuesses: string[]) {
+        this.eligibleAnswers = eligibleAnswers;
+        this.eligibleGuesses = eligibleGuesses;
             
         this.buildGuessSearchHelper();
     }
