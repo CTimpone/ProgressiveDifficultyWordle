@@ -4,7 +4,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const assert = require("assert");
 const sinon = require("sinon");
 const SessionState_1 = require("../../ProgressiveDifficultyWordle/TypeScript/Models/SessionState");
-describe("ScoreDetails", () => {
+describe("SessionState", () => {
     var consoleSpy;
     beforeEach(() => {
         consoleSpy = sinon.spy(console, 'log');

@@ -11,9 +11,8 @@ import { LetterStatus } from './LetterStatus';
 
 export class Session {
     private currentGame: SingleGame;
-    private boardBinder: (words: string[], letterStatuses: LetterStatus[][]) => void;
-    private eligibleAnswers: string[];
-    private eligibleGuesses: string[];
+    private boardBinder: (words: string[], letterStatuses: LetterStatus[][], onlyPaintLast?: boolean) => void;
+    private eligibleWords: EligibleWords;
 
     type: GameType;
     state: SessionState;
@@ -22,20 +21,20 @@ export class Session {
 
     constructor(type: GameType, hardMode: boolean, eligibleAnswers: string[], eligibleGuesses: string[],
         notificationTools: NotificationEventing,
-        fn: (words: string[], letterStatuses: LetterStatus[][]) => void) {
+        fn: (words: string[], letterStatuses: LetterStatus[][], onlyPaintLast?: boolean) => void) {
         this.type = type;
         this.messaging = notificationTools;
         this.score = new ScoreDetails();
         this.state = new SessionState(hardMode);
         this.boardBinder = fn;
+        this.eligibleWords = new EligibleWords(eligibleAnswers, eligibleGuesses);
 
         this.generateGame();
         this.state.startTime = this.currentGame.startTime;
     }
 
     generateGame(): void {
-        this.currentGame = new SingleGame(this.generateGameOptions(),
-            new EligibleWords(this.eligibleAnswers, this.eligibleGuesses), this.messaging);
+        this.currentGame = new SingleGame(this.generateGameOptions(), this.eligibleWords, this.messaging);
     }
 
     generateGameOptions(): GameOptions {
@@ -82,6 +81,10 @@ export class Session {
 
         this.generateGame();
         this.paintBoard();
+    }
+
+    isCurrentGameNew(): boolean {
+        return this.currentGame !== undefined && this.currentGame.userGuesses.length === 0;
     }
 
     paintBoard(game?: SingleGame): void {
