@@ -16,11 +16,12 @@ class Session {
         this.score = new ScoreDetails_1.ScoreDetails();
         this.state = new SessionState_1.SessionState(hardMode);
         this.boardBinder = fn;
+        this.eligibleWords = new EligibleWords_1.EligibleWords(eligibleAnswers, eligibleGuesses);
         this.generateGame();
         this.state.startTime = this.currentGame.startTime;
     }
     generateGame() {
-        this.currentGame = new SingleGame_1.SingleGame(this.generateGameOptions(), new EligibleWords_1.EligibleWords(this.eligibleAnswers, this.eligibleGuesses), this.messaging);
+        this.currentGame = new SingleGame_1.SingleGame(this.generateGameOptions(), this.eligibleWords, this.messaging);
     }
     generateGameOptions() {
         return new GameOptions_1.GameOptions(this.state.hardMode, this.state.maxGuesses, this.state.gameTimerLimitExists, this.state.gameTimerLength);
@@ -56,6 +57,9 @@ class Session {
         }
         this.generateGame();
         this.paintBoard();
+    }
+    isCurrentGameNew() {
+        return this.currentGame !== undefined && this.currentGame.userGuesses.length === 0;
     }
     paintBoard(game) {
         game = game !== null && game !== void 0 ? game : this.currentGame;

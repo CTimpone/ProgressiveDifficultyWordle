@@ -42,6 +42,7 @@
     <TypeScriptCompile Include="Tests\GuessDetailsTests.ts">
       <TestFramework>Mocha</TestFramework>
     </TypeScriptCompile>
+    <TypeScriptCompile Include="Tests\SessionTests.ts" />
     <TypeScriptCompile Include="Tests\SessionStateTests.ts">
       <TestFramework>Mocha</TestFramework>
     </TypeScriptCompile>

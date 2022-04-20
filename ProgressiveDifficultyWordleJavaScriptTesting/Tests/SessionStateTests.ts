@@ -4,7 +4,7 @@ import assert = require('assert');
 import sinon = require('sinon');
 import { SessionState } from '../../ProgressiveDifficultyWordle/TypeScript/Models/SessionState';
 
-describe("ScoreDetails", () => {
+describe("SessionState", () => {
     var consoleSpy;
 
     beforeEach(() => {

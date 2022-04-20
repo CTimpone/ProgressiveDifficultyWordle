@@ -1,4 +1,4 @@
-/// <binding ProjectOpened='all' />
+/// <binding AfterBuild='all' />
 const webpackConfig = require('./webpack.config.js');
 
 module.exports = function (grunt) {
