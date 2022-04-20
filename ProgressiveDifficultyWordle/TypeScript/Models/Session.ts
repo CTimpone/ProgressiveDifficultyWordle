@@ -33,17 +33,6 @@ export class Session {
         this.state.startTime = this.currentGame.startTime;
     }
 
-    generateGame(): void {
-        this.currentGame = new SingleGame(this.generateGameOptions(), this.eligibleWords, this.messaging);
-    }
-
-    generateGameOptions(): GameOptions {
-        return new GameOptions(this.state.hardMode,
-            this.state.maxGuesses,
-            this.state.gameTimerLimitExists,
-            this.state.gameTimerLength);
-    }
-
     next(input: string) {
         if (this.state.active) {
             if (this.type === GameType.Single) {
@@ -67,11 +56,32 @@ export class Session {
         } else {
             this.messaging.message = new NotificationWrapper(NotificationType.Error,
                 "The session has ended. To keep playing, you will need a new session.");
-
         }
     }
 
-    anotherGame(): void {
+    isCurrentGameNew(): boolean {
+        return this.currentGame !== undefined && this.currentGame.userGuesses.length === 0;
+    }
+
+    paintBoard(game?: SingleGame, onlyPaintLast?: boolean): void {
+        game = game ?? this.currentGame;
+        onlyPaintLast = onlyPaintLast ?? false;
+        this.boardBinder(game.userGuesses.map(guess => guess.guess),
+            game.userGuesses.map(guess => guess.characterStates), onlyPaintLast);
+    }
+
+    private generateGame(): void {
+        this.currentGame = new SingleGame(this.generateGameOptions(), this.eligibleWords, this.messaging);
+    }
+
+    private generateGameOptions(): GameOptions {
+        return new GameOptions(this.state.hardMode,
+            this.state.maxGuesses,
+            this.state.gameTimerLimitExists,
+            this.state.gameTimerLength);
+    }
+
+    private anotherGame(): void {
         this.state.gameHistory.push(this.currentGame);
         this.score.updateScore(this.currentGame);
 
@@ -81,15 +91,5 @@ export class Session {
 
         this.generateGame();
         this.paintBoard();
-    }
-
-    isCurrentGameNew(): boolean {
-        return this.currentGame !== undefined && this.currentGame.userGuesses.length === 0;
-    }
-
-    paintBoard(game?: SingleGame): void {
-        game = game ?? this.currentGame;
-        this.boardBinder(game.userGuesses.map(guess => guess.guess),
-            game.userGuesses.map(guess => guess.characterStates));
     }
 }

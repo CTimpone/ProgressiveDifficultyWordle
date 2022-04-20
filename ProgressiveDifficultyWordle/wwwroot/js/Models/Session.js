@@ -20,12 +20,6 @@ class Session {
         this.generateGame();
         this.state.startTime = this.currentGame.startTime;
     }
-    generateGame() {
-        this.currentGame = new SingleGame_1.SingleGame(this.generateGameOptions(), this.eligibleWords, this.messaging);
-    }
-    generateGameOptions() {
-        return new GameOptions_1.GameOptions(this.state.hardMode, this.state.maxGuesses, this.state.gameTimerLimitExists, this.state.gameTimerLength);
-    }
     next(input) {
         if (this.state.active) {
             if (this.type === GameType_1.GameType.Single) {
@@ -49,6 +43,20 @@ class Session {
             this.messaging.message = new NotificationWrapper_1.NotificationWrapper(NotificationType_1.NotificationType.Error, "The session has ended. To keep playing, you will need a new session.");
         }
     }
+    isCurrentGameNew() {
+        return this.currentGame !== undefined && this.currentGame.userGuesses.length === 0;
+    }
+    paintBoard(game, onlyPaintLast) {
+        game = game !== null && game !== void 0 ? game : this.currentGame;
+        onlyPaintLast = onlyPaintLast !== null && onlyPaintLast !== void 0 ? onlyPaintLast : false;
+        this.boardBinder(game.userGuesses.map(guess => guess.guess), game.userGuesses.map(guess => guess.characterStates), onlyPaintLast);
+    }
+    generateGame() {
+        this.currentGame = new SingleGame_1.SingleGame(this.generateGameOptions(), this.eligibleWords, this.messaging);
+    }
+    generateGameOptions() {
+        return new GameOptions_1.GameOptions(this.state.hardMode, this.state.maxGuesses, this.state.gameTimerLimitExists, this.state.gameTimerLength);
+    }
     anotherGame() {
         this.state.gameHistory.push(this.currentGame);
         this.score.updateScore(this.currentGame);
@@ -58,13 +66,6 @@ class Session {
         this.generateGame();
         this.paintBoard();
     }
-    isCurrentGameNew() {
-        return this.currentGame !== undefined && this.currentGame.userGuesses.length === 0;
-    }
-    paintBoard(game) {
-        game = game !== null && game !== void 0 ? game : this.currentGame;
-        this.boardBinder(game.userGuesses.map(guess => guess.guess), game.userGuesses.map(guess => guess.characterStates));
-    }
 }
 exports.Session = Session;
-//# sourceMappingURL=Session.js.map
+//# sourceMappingURL=session.js.map
