@@ -1,10 +1,81 @@
 ﻿@page
 @model IndexModel
-@{
-    ViewData["Title"] = "Home page";
-}
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="baseFlex flexCol gameboard">
+    <div class="baseFlex flexRow boardHeader">
+        <div id="help" class="subHeaderOption">
+            <p>Help</p>
+            <i class="bi bi-question-square"></i>
+        </div>
+        <div id="settings" class="subHeaderOption">
+            <p>Settings</p>
+            <i class="bi bi-gear"></i>
+        </div>
+        <div id="scoreHistory" class="subHeaderOption">
+            <p>High Scores</p>
+            <i class="bi bi-bar-chart"></i>
+        </div>
+    </div>
+    <div class="boardMain">
+        <div id="mainGameContainer"  class="baseFlex flexCol rowsContainer">
+            @for (int rows = 0; rows < 6; rows++)
+            {
+            <div class="baseFlex flexRow wordleRow" active-row=@(rows == 0 ? "true":"false") row-index=@(rows)>
+                @for (int tiles = 0; tiles < 5; tiles ++)
+                {
+                <div class="tileContainer">
+                    <div class="tile" tile-index=@(tiles)>
+                        <div class="baseFlex tileBase tileFront">
+                            <span></span>
+                        </div>
+                        <div class="baseFlex tileBase tileBack">
+                            <span></span>
+                        </div>
+                    </div>
+                </div>
+                }
+            </div>
+            }
+            <div class="baseFlex flexCol keyboardContainer" id="keyboard">
+                <div class="baseFlex flexRow keyboardRow">
+                    <div class="baseFlex baseKey" key="q"><span>Q</span></div>
+                    <div class="baseFlex baseKey" key="w"><span>W</span></div>
+                    <div class="baseFlex baseKey" key="e"><span>E</span></div>
+                    <div class="baseFlex baseKey" key="r"><span>R</span></div>
+                    <div class="baseFlex baseKey" key="t"><span>T</span></div>
+                    <div class="baseFlex baseKey" key="y"><span>Y</span></div>
+                    <div class="baseFlex baseKey" key="u"><span>U</span></div>
+                    <div class="baseFlex baseKey" key="i"><span>I</span></div>
+                    <div class="baseFlex baseKey" key="o"><span>O</span></div>
+                    <div class="baseFlex baseKey" key="p"><span>P</span></div>
+                </div>
+                <div class="baseFlex flexrow keyboardRow">
+                    <div class="baseFlex baseKey" key="a"><span>A</span></div>
+                    <div class="baseFlex baseKey" key="s"><span>S</span></div>
+                    <div class="baseFlex baseKey" key="d"><span>D</span></div>
+                    <div class="baseFlex baseKey" key="f"><span>F</span></div>
+                    <div class="baseFlex baseKey" key="g"><span>G</span></div>
+                    <div class="baseFlex baseKey" key="h"><span>H</span></div>
+                    <div class="baseFlex baseKey" key="j"><span>J</span></div>
+                    <div class="baseFlex baseKey" key="k"><span>K</span></div>
+                    <div class="baseFlex baseKey" key="l"><span>L</span></div>
+                </div>
+                <div class="baseFlex flexrow keyboardRow">
+                    <div class="baseFlex bigKey" key="ENTER"><span><i class="bi bi-check2-square"></i></span></div>
+                    <div class="baseFlex baseKey" key="z"><span>Z</span></div>
+                    <div class="baseFlex baseKey" key="x"><span>X</span></div>
+                    <div class="baseFlex baseKey" key="c"><span>C</span></div>
+                    <div class="baseFlex baseKey" key="v"><span>V</span></div>
+                    <div class="baseFlex baseKey" key="b"><span>B</span></div>
+                    <div class="baseFlex baseKey" key="n"><span>N</span></div>
+                    <div class="baseFlex baseKey" key="m"><span>M</span></div>
+                    <div class="baseFlex bigKey" key="BACKSPACE"><span><i class="bi bi-backspace"></i></span></div>
+
+                </div>
+            </div>
+        </div>
+        <div id="helpContainer" class="helpContainer hidden">
+            <p>Suck my dick motherfucker</p>
+        </div>
+    </div>
 </div>

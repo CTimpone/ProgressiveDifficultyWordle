@@ -17,7 +17,6 @@ export class GuessDetails {
         }
 
         this.populateCharacterStates(inputMap, answerMap);
-
         this.fullMatch = this.characterStates.every((state) => state === LetterStatus.ExactMatch);
     }
 
@@ -52,15 +51,15 @@ export class GuessDetails {
                             this.characterStates[charIndex] = LetterStatus.Absent;
                             potentialLocationIndices.push(charIndex);
                         }
-
-                        let locationIncorrectMatches = answerIndices.length - exactMatchCount;
-                        if (locationIncorrectMatches > 0) {
-                            for (locationIncorrectMatches; locationIncorrectMatches > 0; locationIncorrectMatches--) {
-                                this.characterStates[potentialLocationIndices.shift()] = LetterStatus.WrongLocation;
-                            }
-                        }
-
                     }
+
+                    let locationIncorrectMatches = answerIndices.length - exactMatchCount;
+                    if (locationIncorrectMatches > 0) {
+                        for (locationIncorrectMatches; locationIncorrectMatches > 0; locationIncorrectMatches--) {
+                            this.characterStates[potentialLocationIndices.shift()] = LetterStatus.WrongLocation;
+                        }
+                    }
+
                 }
             } else {
                 for (const absentIndex of inputMap.get(key)) {

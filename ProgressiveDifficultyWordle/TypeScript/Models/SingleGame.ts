@@ -6,6 +6,7 @@ import { EligibleWords } from './EligibleWords';
 import { NotificationEventing } from './Notification/NotificationEventing';
 import { NotificationWrapper } from './Notification/NotificationWrapper';
 import { NotificationType } from './Notification/NotificationType';
+import { GuessResult } from './GuessResult';
 
 export class SingleGame {
     chosenWord: string;
@@ -27,14 +28,17 @@ export class SingleGame {
         this.messaging = messaging;
     }
 
-    guessTrigger(input: string): boolean {
+    guessTrigger(input: string): GuessResult {
         input = input.toLowerCase();
 
         if (this.validateGuess(input)) {
             this.finalizeGuess(input);
         }
+        else {
+            return GuessResult.Invalid;
+        }
 
-        return this.endTime !== undefined;
+        return this.endTime === undefined ? GuessResult.Progress : GuessResult.GameComplete;
     }
 
     validateGuess(input: string): boolean {
@@ -82,7 +86,6 @@ export class SingleGame {
     finalizeGuess(input: string): void {
         const currentGuess = new GuessDetails(input, this.chosenWord);
         this.userGuesses.push(currentGuess);
-
         for (let i = 0; i < currentGuess.characterStates.length; i++) {
             switch (currentGuess.characterStates[i]) {
                 case LetterStatus.ExactMatch:

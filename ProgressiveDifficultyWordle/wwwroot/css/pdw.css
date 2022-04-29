@@ -1,0 +1,214 @@
+﻿/*
+  BEGIN Josh's Custom CSS Reset
+  https://www.joshwcomeau.com/css/custom-css-reset/
+*/
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+* {
+    margin: 0;
+}
+
+html, body {
+    height: 100%;
+    font-family: 'Clear Sans', 'Helvetica Neue', Arial, sans-serif;
+}
+
+body {
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    background: var(--offWhite);
+}
+
+img, picture, video, canvas, svg {
+    display: block;
+    max-width: 100%;
+}
+
+input, button, textarea, select {
+    font: inherit;
+}
+
+p, h1, h2, h3, h4, h5, h6 {
+    overflow-wrap: break-word;
+}
+
+/*
+  END Josh's Custom CSS Reset
+  https://www.joshwcomeau.com/css/custom-css-reset/
+*/
+
+:root {
+    --offWhite: #f9f9f9;
+    --offBlack: #2b2b2b;
+    --unknownGrey: #eaeaea;
+    --nightGrey: #d8d8d8;
+    --matchGreen: #67c85e;
+    --absentGrey: #707070;
+    --wrongLocationYellow: #d1bd31;
+}
+
+span {
+    display: inline-flex;
+    align-items: center;
+}
+.baseFlex {
+    display: -webkit-box; /* OLD - iOS 6-, Safari 3.1-6 */
+    display: -moz-box; /* OLD - Firefox 19- (buggy but mostly works) */
+    display: -ms-flexbox; /* TWEENER - IE 10 */
+    display: -webkit-flex; /* NEW - Chrome */
+    display: flex; /* NEW, Spec - Opera 12.1, Firefox 20+ */
+    align-content: center;
+    justify-content: center;
+}
+
+.flexCol {
+    flex-direction: column;
+}
+
+.flexrow {
+    flex-direction: row;
+}
+
+.gameboard {
+    max-width: 500px;
+    border: 3px solid var(--offBlack);
+    border-color: var(--offBlack);
+    margin: 30px auto;
+}
+
+.boardHeader {
+    order: 0;
+    max-width: 100%;
+    min-height: 100px;
+    border-bottom: 3px solid;
+    border-color: var(--offBlack);
+    margin-bottom: 10px;
+}
+
+.subHeaderOption {
+    flex-grow: 1;
+    text-align: center;
+    width: 33%;
+    font-size: 1.75em;
+    border: 3px solid;
+    border-color: var(--offBlack);
+}
+
+.subHeaderOption:hover {
+    opacity: 0.4;
+    cursor: pointer;
+}   
+
+.boardMain {
+    order: 1;
+    max-width: 100%;
+}
+
+.mainGameContainer {
+    width: 100%;
+    min-height: 500px;
+    padding: 10px 0px;
+}
+
+.wordleRow {
+    width: 100%;
+}
+
+.tileContainer {
+    aspect-ratio: 1 / 1;
+    width: 18.5%;
+    margin: 3px;
+    border: 1px solid var(--nightGrey);
+}
+
+.tile {
+    width: 100%;
+    height: 100%;
+    transition: transform 1s;
+    transform-style: preserve-3d;
+    position: relative;
+}
+
+.tile.flipped {
+    transform: rotateY(180deg);
+}
+
+.tileBase {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    color: var(--offBlack);
+    text-align: center;
+    font-weight: bold;
+    font-size: 3em;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+}
+
+.tileFront {
+    background: var(--unknownGrey);
+}
+
+.tileBack {
+    transform: rotateY(180deg);
+}
+
+.hidden {
+    display: none;
+}
+
+.night {
+    background: var(--offBlack);
+}
+
+.night div {
+    background: var(--offBlack);
+    color: var(--nightGrey);
+    border-color: var(--nightGrey);
+}
+
+.exactMatch, .baseKey.exactMatch, .night .exactMatch {
+    background: var(--matchGreen);
+    color: var(--offWhite);
+}
+
+.absent, .baseKey.absent, .night .absent {
+    background: var(--absentGrey);
+    color: var(--offWhite);
+}
+
+.wrongLocation, .baseKey.wrongLocation, .night .wrongLocation {
+    background: var(--wrongLocationYellow);
+    color: var(--offWhite);
+}
+
+.keyboardContainer {
+    padding-top: 10px;
+    margin-top: 10px;
+    border-top: 3px solid;
+    border-color: var(--offBlack);
+}
+
+.baseKey {
+    aspect-ratio: 1 / 1;
+    width: 8.5%;
+}
+
+.bigKey {
+    width: 13%;
+}
+
+.bigKey, .baseKey {
+    background: var(--unknownGrey);
+    border: 1px solid var(--nightGrey);
+    font-weight: bold;
+    margin: 2px;
+    cursor: pointer;
+    border-radius: 3px 3px;
+}
+
+.keyboardRow {
+    margin: 5px 0px;
+}
