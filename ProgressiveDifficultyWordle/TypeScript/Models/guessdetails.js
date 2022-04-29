@@ -45,11 +45,11 @@ class GuessDetails {
                             this.characterStates[charIndex] = LetterStatus_1.LetterStatus.Absent;
                             potentialLocationIndices.push(charIndex);
                         }
-                        let locationIncorrectMatches = answerIndices.length - exactMatchCount;
-                        if (locationIncorrectMatches > 0) {
-                            for (locationIncorrectMatches; locationIncorrectMatches > 0; locationIncorrectMatches--) {
-                                this.characterStates[potentialLocationIndices.shift()] = LetterStatus_1.LetterStatus.WrongLocation;
-                            }
+                    }
+                    let locationIncorrectMatches = answerIndices.length - exactMatchCount;
+                    if (locationIncorrectMatches > 0) {
+                        for (locationIncorrectMatches; locationIncorrectMatches > 0; locationIncorrectMatches--) {
+                            this.characterStates[potentialLocationIndices.shift()] = LetterStatus_1.LetterStatus.WrongLocation;
                         }
                     }
                 }

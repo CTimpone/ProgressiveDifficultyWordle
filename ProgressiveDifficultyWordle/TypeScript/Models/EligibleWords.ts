@@ -34,8 +34,6 @@
         }
 
         let [start, end] = this.guessSearchHelper.get(target[0]);
-        console.log(start);
-        console.log(end);
         while (start <= end) {
             const midPoint = start + Math.floor((end - start) / 2);
             const midVal = this.eligibleGuesses[midPoint];

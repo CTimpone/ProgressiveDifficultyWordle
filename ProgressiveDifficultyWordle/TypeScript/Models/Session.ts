@@ -7,42 +7,40 @@ import { GameOptions } from './GameOptions';
 import { EligibleWords } from './EligibleWords';
 import { NotificationWrapper } from './Notification/NotificationWrapper';
 import { NotificationType } from './Notification/NotificationType';
-import { LetterStatus } from './LetterStatus';
+import { DomManipulator } from '../Interfaces/DomManipulator';
+import { GuessResult } from './GuessResult';
 
 export class Session {
     private currentGame: SingleGame;
-    private boardBinder: (words: string[], letterStatuses: LetterStatus[][], onlyPaintLast?: boolean) => void;
     private eligibleWords: EligibleWords;
-
+    private domManipulator: DomManipulator;
     type: GameType;
     state: SessionState;
     score: ScoreDetails;
     messaging: NotificationEventing;
 
     constructor(type: GameType, hardMode: boolean, eligibleAnswers: string[], eligibleGuesses: string[],
-        notificationTools: NotificationEventing,
-        fn: (words: string[], letterStatuses: LetterStatus[][], onlyPaintLast?: boolean) => void) {
+        notificationTools: NotificationEventing, domManipulator: DomManipulator) {
         this.type = type;
         this.messaging = notificationTools;
         this.score = new ScoreDetails();
         this.state = new SessionState(hardMode);
-        this.boardBinder = fn;
+        this.domManipulator = domManipulator;
         this.eligibleWords = new EligibleWords(eligibleAnswers, eligibleGuesses);
 
         this.generateGame();
         this.state.startTime = this.currentGame.startTime;
     }
 
-    next(input: string) {
+    next(input: string): GuessResult {
+        let guessResult;
         if (this.state.active) {
             if (this.type === GameType.Single) {
-                this.currentGame.finalizeGuess(input);
-                this.paintBoard();
+                guessResult = this.currentGame.guessTrigger(input);
 
                 this.state.active = this.currentGame.endTime === undefined;
             } else {
-                this.currentGame.finalizeGuess(input);
-                this.paintBoard();
+                guessResult = this.currentGame.guessTrigger(input);
 
                 if (this.currentGame.solved()) {
                     this.anotherGame();
@@ -57,6 +55,12 @@ export class Session {
             this.messaging.message = new NotificationWrapper(NotificationType.Error,
                 "The session has ended. To keep playing, you will need a new session.");
         }
+
+        if (guessResult === GuessResult.Progress || guessResult === GuessResult.GameComplete) {
+            this.paintBoard();
+        }
+
+        return guessResult;
     }
 
     isCurrentGameNew(): boolean {
@@ -65,9 +69,10 @@ export class Session {
 
     paintBoard(game?: SingleGame, onlyPaintLast?: boolean): void {
         game = game ?? this.currentGame;
+
         onlyPaintLast = onlyPaintLast ?? false;
-        this.boardBinder(game.userGuesses.map(guess => guess.guess),
-            game.userGuesses.map(guess => guess.characterStates), onlyPaintLast);
+        this.domManipulator.paintBoard(game.userGuesses.map(guess => guess.guess),
+            game.userGuesses.map(guess => guess.characterStates), onlyPaintLast, game.endTime === undefined);
     }
 
     private generateGame(): void {

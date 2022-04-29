@@ -6,6 +6,7 @@ const LetterStatus_1 = require("./LetterStatus");
 const LetterState_1 = require("./LetterState");
 const NotificationWrapper_1 = require("./Notification/NotificationWrapper");
 const NotificationType_1 = require("./Notification/NotificationType");
+const GuessResult_1 = require("./GuessResult");
 class SingleGame {
     constructor(options, eligibleWords, messaging) {
         this.options = options;
@@ -21,7 +22,10 @@ class SingleGame {
         if (this.validateGuess(input)) {
             this.finalizeGuess(input);
         }
-        return this.endTime !== undefined;
+        else {
+            return GuessResult_1.GuessResult.Invalid;
+        }
+        return this.endTime === undefined ? GuessResult_1.GuessResult.Progress : GuessResult_1.GuessResult.GameComplete;
     }
     validateGuess(input) {
         if (this.endTime !== undefined) {
