@@ -2,7 +2,7 @@
 import { DomManipulator } from "../Interfaces/DomManipulator";
 import { LetterStatus } from "../Models/LetterStatus";
 
-export class DomManipulation implements DomManipulator {
+export class GameBoardDomManipulation implements DomManipulator {
     typeLetter(key: string, currentLetterIndex: number): void {
         $(`.wordleRow[active-row=true] .tile[tile-index=${currentLetterIndex}] span`).text(key);
     }
@@ -73,4 +73,7 @@ export class DomManipulation implements DomManipulator {
         }
     }
 
+    paintTimer(seconds: number) {
+        $("#timerVal").text(seconds.toString());
+    }
 }

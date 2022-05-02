@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const DOMConstants_1 = require("../Constants/DOMConstants");
 const fiveletteranswers_1 = require("../constants/words/fiveletteranswers");
 const FiveLetterGuesses_1 = require("../Constants/Words/FiveLetterGuesses");
 const GameType_1 = require("../Models/GameType");
@@ -7,14 +8,14 @@ const GuessResult_1 = require("../Models/GuessResult");
 const LetterStatus_1 = require("../Models/LetterStatus");
 const NotificationEventing_1 = require("../Models/Notification/NotificationEventing");
 const Session_1 = require("../Models/Session");
-const DomManipulation_1 = require("./DomManipulation");
+const GameBoardDomManipulation_1 = require("./GameBoardDomManipulation");
 $(document).ready(function () {
     const notifications = new NotificationEventing_1.NotificationEventing();
     const notifyFn = (notification) => {
         console.log("Not yet implemented.");
     };
     notifications.registerListener(notifyFn);
-    const domManipulation = new DomManipulation_1.DomManipulation();
+    const domManipulation = new GameBoardDomManipulation_1.GameBoardDomManipulation();
     const session = new Session_1.Session(GameType_1.GameType.Single, false, fiveletteranswers_1.FIVE_LETTER_ANSWERS, FiveLetterGuesses_1.FIVE_LETTER_GUESSES, notifications, domManipulation);
     let currentWord = "";
     const activeChords = {
@@ -42,15 +43,19 @@ $(document).ready(function () {
     };
     $("html").keydown(function (event) {
         const currentKey = event.key.toUpperCase();
-        switch (currentKey) {
-            case "CONTROL":
-            case "ALT":
-                activeChords[currentKey] = true;
-                break;
-            default:
-                if (!activeChords.ALT && !activeChords.CONTROL) {
-                    letterFunction(currentKey);
-                }
+        const gameContainerElement = $("#mainGameContainer");
+        if (!gameContainerElement.hasClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME) &&
+            !gameContainerElement.hasClass(DOMConstants_1.domConstants.LOCKED_CLASS_NAME)) {
+            switch (currentKey) {
+                case "CONTROL":
+                case "ALT":
+                    activeChords[currentKey] = true;
+                    break;
+                default:
+                    if (!activeChords.ALT && !activeChords.CONTROL) {
+                        letterFunction(currentKey);
+                    }
+            }
         }
     });
     $("html").keyup(function (event) {
@@ -66,7 +71,9 @@ $(document).ready(function () {
     });
     $(".baseKey, .bigKey").click(function (event) {
         event.preventDefault();
-        letterFunction($(event.currentTarget).attr("key").toUpperCase());
+        if (!$("#mainGameContainer").hasClass(DOMConstants_1.domConstants.LOCKED_CLASS_NAME)) {
+            letterFunction($(event.currentTarget).attr("key").toUpperCase());
+        }
     });
     window.paintBoard = domManipulation.paintBoard;
     window.resetBoard = domManipulation.resetBoard;

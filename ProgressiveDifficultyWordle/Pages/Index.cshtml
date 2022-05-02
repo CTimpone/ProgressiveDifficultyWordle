@@ -3,20 +3,37 @@
 
 <div class="baseFlex flexCol gameboard">
     <div class="baseFlex flexRow boardHeader">
-        <div id="help" class="subHeaderOption">
-            <p>Help</p>
-            <i class="bi bi-question-square"></i>
+        <div id="help" class="baseFlex subHeaderOption">
+            <span>Help   <i class="bi bi-question-square"></i></span>
         </div>
-        <div id="settings" class="subHeaderOption">
-            <p>Settings</p>
-            <i class="bi bi-gear"></i>
+        <div id="settings" class="baseFlex subHeaderOption">
+            <span>Settings   <i class="bi bi-gear"></i></span>
         </div>
-        <div id="scoreHistory" class="subHeaderOption">
-            <p>High Scores</p>
-            <i class="bi bi-bar-chart"></i>
+        <div id="scoreHistory" class="baseFlex subHeaderOption">
+            <span>High Scores   <i class="bi bi-bar-chart"></i></span>
         </div>
     </div>
-    <div class="boardMain">
+    <div class="boardMain baseFlex flexCol">
+        <div id="details" class="detailsSection">
+            <div id="notifications" class="notificationContainer hidden">
+
+            </div>
+
+            <div id="detailsContainer" class="baseFlex flexRow detailsContainer">
+                <div class="baseFlex flexCol detailsColumn">
+                    <div class="gameType"><span id="gameType"></span></div>
+                    <div class="maxGuesses">MaxGuesses=<span class="maxGuesses"></span></div>
+                </div>
+                <div class="baseFlex flexCol detailsColumn">
+                    <div class="gameType"><span class="gameType"></span></div>
+                    <div class="maxGuesses">MaxGuesses=<span class="maxGuesses"></span></div>
+                </div>
+                <div class="baseFlex flexCol detailsColumn">
+                    <div class="timer"><span><i class="bi bi-alarm"></i></span><span id="timerVal"></span></div>
+                    <div class="hardMode">HardMode=<span class="hardMode"></span></div>
+                </div>
+            </div>
+        </div>
         <div id="mainGameContainer"  class="baseFlex flexCol rowsContainer">
             @for (int rows = 0; rows < 6; rows++)
             {
@@ -75,7 +92,10 @@
             </div>
         </div>
         <div id="helpContainer" class="helpContainer hidden">
-            <p>Suck my dick motherfucker</p>
+            <p>Temporary help text</p>
+        </div>
+        <div id="scoreContainer" class="scoreContainer hidden">
+            <p>Temporary score text</p>
         </div>
     </div>
 </div>

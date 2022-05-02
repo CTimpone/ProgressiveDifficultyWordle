@@ -1,4 +1,5 @@
-﻿import { FIVE_LETTER_ANSWERS } from '../constants/words/fiveletteranswers';
+﻿import { domConstants } from '../Constants/DOMConstants';
+import { FIVE_LETTER_ANSWERS } from '../constants/words/fiveletteranswers';
 import { FIVE_LETTER_GUESSES } from '../Constants/Words/FiveLetterGuesses';
 import { GameType } from '../Models/GameType';
 import { GuessResult } from '../Models/GuessResult';
@@ -6,7 +7,7 @@ import { LetterStatus } from '../Models/LetterStatus';
 import { NotificationEventing } from '../Models/Notification/NotificationEventing';
 import { NotificationWrapper } from '../Models/Notification/NotificationWrapper';
 import { Session } from '../Models/Session';
-import { DomManipulation } from './DomManipulation';
+import { GameBoardDomManipulation } from './GameBoardDomManipulation';
 
 $(document).ready(function () {
     const notifications = new NotificationEventing();
@@ -15,7 +16,7 @@ $(document).ready(function () {
     };
     notifications.registerListener(notifyFn);
 
-    const domManipulation = new DomManipulation();
+    const domManipulation = new GameBoardDomManipulation();
     const session = new Session(GameType.Single, false, FIVE_LETTER_ANSWERS, FIVE_LETTER_GUESSES, notifications,
         domManipulation);
 
@@ -48,15 +49,19 @@ $(document).ready(function () {
     }
     $("html").keydown(function (event) {
         const currentKey = event.key.toUpperCase();
-        switch (currentKey) {
-            case "CONTROL":
-            case "ALT":
-                activeChords[currentKey] = true;
-                break;
-            default:
-                if (!activeChords.ALT && !activeChords.CONTROL) {
-                    letterFunction(currentKey);
-                }
+        const gameContainerElement = $("#mainGameContainer");
+        if (!gameContainerElement.hasClass(domConstants.HIDDEN_CLASS_NAME) &&
+            !gameContainerElement.hasClass(domConstants.LOCKED_CLASS_NAME)) {
+            switch (currentKey) {
+                case "CONTROL":
+                case "ALT":
+                    activeChords[currentKey] = true;
+                    break;
+                default:
+                    if (!activeChords.ALT && !activeChords.CONTROL) {
+                        letterFunction(currentKey);
+                    }
+            }
         }
     });
 
@@ -74,7 +79,9 @@ $(document).ready(function () {
 
     $(".baseKey, .bigKey").click(function (event) {
         event.preventDefault();
-        letterFunction($(event.currentTarget).attr("key").toUpperCase());
+        if (!$("#mainGameContainer").hasClass(domConstants.LOCKED_CLASS_NAME)) {
+            letterFunction($(event.currentTarget).attr("key").toUpperCase());
+        }
     });
 
     (<any>window).paintBoard = domManipulation.paintBoard;
