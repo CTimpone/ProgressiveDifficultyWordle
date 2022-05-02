@@ -76,7 +76,8 @@ export class Session {
     }
 
     private generateGame(): void {
-        this.currentGame = new SingleGame(this.generateGameOptions(), this.eligibleWords, this.messaging);
+        this.currentGame = new SingleGame(this.generateGameOptions(), this.eligibleWords, this.messaging,
+            this.domManipulator, true);
     }
 
     private generateGameOptions(): GameOptions {

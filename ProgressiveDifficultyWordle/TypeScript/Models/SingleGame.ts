@@ -7,8 +7,11 @@ import { NotificationEventing } from './Notification/NotificationEventing';
 import { NotificationWrapper } from './Notification/NotificationWrapper';
 import { NotificationType } from './Notification/NotificationType';
 import { GuessResult } from './GuessResult';
+import { DomManipulator } from '../Interfaces/DomManipulator';
 
 export class SingleGame {
+    private timerInterval: NodeJS.Timer | undefined;
+
     chosenWord: string;
     startTime: Date;
     endTime: Date | undefined;
@@ -17,8 +20,10 @@ export class SingleGame {
     options: GameOptions;
     eligibleWords: EligibleWords;
     messaging: NotificationEventing;
+    domManipulator: DomManipulator;
 
-    constructor(options: GameOptions, eligibleWords: EligibleWords, messaging: NotificationEventing) {
+    constructor(options: GameOptions, eligibleWords: EligibleWords, messaging: NotificationEventing,
+        domManipulator: DomManipulator, useTimer?: boolean) {
         this.options = options;
         this.chosenWord = eligibleWords.eligibleAnswers[Math.floor(Math.random() * eligibleWords.eligibleAnswers.length)];
         this.letterState = new LetterState();
@@ -26,6 +31,11 @@ export class SingleGame {
         this.startTime = new Date();
         this.eligibleWords = eligibleWords;
         this.messaging = messaging;
+        this.domManipulator = domManipulator;
+
+        if (useTimer === true) {
+            this.runTimer();
+        }
     }
 
     guessTrigger(input: string): GuessResult {
@@ -110,16 +120,47 @@ export class SingleGame {
 
         if (this.solved()) {
             this.messaging.message = new NotificationWrapper(NotificationType.Info, "Successful solve!");
-
             this.endTime = new Date();
+
+            if (this.timerInterval !== undefined) {
+                clearInterval(this.timerInterval);
+            }
         } else if (this.userGuesses.length >= this.options.maxGuesses && this.endTime === undefined) {
             this.messaging.message = new NotificationWrapper(NotificationType.Error,
                 NotificationWrapper.interpolateMessage("Exceeded max number (REPLACEMENT=>text) of guesses.", this.options.maxGuesses.toString()));
             this.endTime = new Date();
+
+            if (this.timerInterval !== undefined) {
+                clearInterval(this.timerInterval);
+            }
         }
     }
 
     solved(): boolean {
         return this.userGuesses[this.userGuesses.length - 1].fullMatch;
+    }
+
+    runTimer() {
+        let seconds = 0;
+        let increment = 1;
+
+        const options = this.options;
+        const domManipulator = this.domManipulator;
+        if (options.maxTimeLimitExists) {
+            seconds = this.options.maxTimeLimit;
+            increment = -1;
+        }
+
+        this.timerInterval = setInterval(function () {
+            seconds += increment;
+            domManipulator.paintTimer(seconds);
+            if (options.maxTimeLimitExists && seconds <= 0) {
+                this.messaging.message = new NotificationWrapper(NotificationType.Error,
+                    NotificationWrapper.interpolateMessage("The timer has expired; the game has ended.", this.options.maxGuesses.toString()));
+                this.endTime = new Date();
+
+                clearInterval(this);
+            }
+        }, 1000);
     }
 }

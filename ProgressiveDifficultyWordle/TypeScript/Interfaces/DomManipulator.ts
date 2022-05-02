@@ -6,5 +6,6 @@ export interface DomManipulator {
     resetBoard(): void;
     paintWords(length: number, words: string[], letterStatuses: LetterStatus[][], onlyPaintLast: boolean,
         activeGame: boolean): void;
+    paintTimer(seconds: number): void;
 
 }

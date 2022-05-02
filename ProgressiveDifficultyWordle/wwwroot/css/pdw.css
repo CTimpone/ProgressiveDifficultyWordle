@@ -81,25 +81,48 @@ span {
 .boardHeader {
     order: 0;
     max-width: 100%;
-    min-height: 100px;
+    min-height: 60px;
     border-bottom: 3px solid;
     border-color: var(--offBlack);
-    margin-bottom: 10px;
 }
 
 .subHeaderOption {
     flex-grow: 1;
     text-align: center;
     width: 33%;
-    font-size: 1.75em;
+    font-size: 1.25em;
+    font-weight: bold;
     border: 3px solid;
     border-color: var(--offBlack);
+}
+
+.subHeaderOption .bi {
+    padding: 0px 5px;
 }
 
 .subHeaderOption:hover {
     opacity: 0.4;
     cursor: pointer;
-}   
+}
+
+.detailsSection {
+    order: 0;
+    max-width: 100%;
+    min-height: 60px;
+    border-bottom: 3px solid;
+    border-color: var(--offBlack);
+    margin-bottom: 10px;
+}
+
+.detailsColumn {
+    flex-grow: 1;
+    text-align: center;
+    width: 33%;
+    font-size: 1.25em;
+    font-weight: bold;
+    border-bottom: 3px solid;
+    border-color: var(--offBlack);
+}
 
 .boardMain {
     order: 1;
