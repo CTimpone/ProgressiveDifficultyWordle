@@ -17,6 +17,10 @@ $(document).ready(function () {
     const domManipulation = new DomManipulation_1.DomManipulation();
     const session = new Session_1.Session(GameType_1.GameType.Single, false, fiveletteranswers_1.FIVE_LETTER_ANSWERS, FiveLetterGuesses_1.FIVE_LETTER_GUESSES, notifications, domManipulation);
     let currentWord = "";
+    const activeChords = {
+        "CONTROL": false,
+        "ALT": false
+    };
     const letterFunction = function (key) {
         const isLetter = /^[A-Z]$/.test(key);
         const isOk = /^ENTER|ACCEPT|EXECUTE$/.test(key);
@@ -37,8 +41,28 @@ $(document).ready(function () {
         }
     };
     $("html").keydown(function (event) {
-        event.preventDefault();
-        letterFunction(event.key.toUpperCase());
+        const currentKey = event.key.toUpperCase();
+        switch (currentKey) {
+            case "CONTROL":
+            case "ALT":
+                activeChords[currentKey] = true;
+                break;
+            default:
+                if (!activeChords.ALT && !activeChords.CONTROL) {
+                    letterFunction(currentKey);
+                }
+        }
+    });
+    $("html").keyup(function (event) {
+        const currentKey = event.key.toUpperCase();
+        switch (currentKey) {
+            case "CONTROL":
+            case "ALT":
+                activeChords[currentKey] = false;
+                break;
+            default:
+                break;
+        }
     });
     $(".baseKey, .bigKey").click(function (event) {
         event.preventDefault();

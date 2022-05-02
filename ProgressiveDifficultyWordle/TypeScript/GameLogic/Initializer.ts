@@ -20,6 +20,10 @@ $(document).ready(function () {
         domManipulation);
 
     let currentWord = "";
+    const activeChords = {
+        "CONTROL": false,
+        "ALT": false
+    };
 
     const letterFunction = function (key: string): void {
         const isLetter = /^[A-Z]$/.test(key);
@@ -43,8 +47,29 @@ $(document).ready(function () {
 
     }
     $("html").keydown(function (event) {
-        event.preventDefault();
-        letterFunction(event.key.toUpperCase());
+        const currentKey = event.key.toUpperCase();
+        switch (currentKey) {
+            case "CONTROL":
+            case "ALT":
+                activeChords[currentKey] = true;
+                break;
+            default:
+                if (!activeChords.ALT && !activeChords.CONTROL) {
+                    letterFunction(currentKey);
+                }
+        }
+    });
+
+    $("html").keyup(function (event) {
+        const currentKey = event.key.toUpperCase();
+        switch (currentKey) {
+            case "CONTROL":
+            case "ALT":
+                activeChords[currentKey] = false;
+                break;
+            default:
+                break;
+        }
     });
 
     $(".baseKey, .bigKey").click(function (event) {
