@@ -67,8 +67,8 @@ export class GameBoardDomManipulation implements DomManipulator {
         $(".tileBack").removeClass(domConstants.EXACT_MATCH_CLASS_NAME)
             .removeClass(domConstants.ABSENT_LETTER_CLASS_NAME)
             .removeClass(domConstants.WRONG_LOCATION_CLASS_NAME);
-        $(".wordleRow").prop("active-row", false).removeClass(domConstants.HIDDEN_CLASS_NAME);
-        $(".wordleRow[row-index=0]").prop("activeRow", true);
+        $(".wordleRow").attr("active-row", "false").removeClass(domConstants.HIDDEN_CLASS_NAME);
+        $(".wordleRow[row-index=0]").attr("active-row", "true");
     }
 
     paintWords(length: number, words: string[], letterStatuses: LetterStatus[][], onlyPaintLast: boolean,

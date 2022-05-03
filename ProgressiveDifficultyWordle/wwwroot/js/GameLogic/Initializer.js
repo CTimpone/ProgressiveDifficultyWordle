@@ -1,7 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const DOMConstants_1 = require("../Constants/DOMConstants");
-const fiveletteranswers_1 = require("../constants/words/fiveletteranswers");
 const FiveLetterGuesses_1 = require("../Constants/Words/FiveLetterGuesses");
 const GameType_1 = require("../Models/GameType");
 const GuessResult_1 = require("../Models/GuessResult");
@@ -16,7 +15,7 @@ $(document).ready(function () {
     };
     notifications.registerListener(notifyFn);
     const domManipulation = new GameBoardDomManipulation_1.GameBoardDomManipulation();
-    const session = new Session_1.Session(GameType_1.GameType.Single, false, fiveletteranswers_1.FIVE_LETTER_ANSWERS, FiveLetterGuesses_1.FIVE_LETTER_GUESSES, notifications, domManipulation);
+    const session = new Session_1.Session(GameType_1.GameType.Endless, false, ["magic"], FiveLetterGuesses_1.FIVE_LETTER_GUESSES, notifications, domManipulation);
     let currentWord = "";
     const activeChords = {
         "CONTROL": false,
@@ -36,7 +35,7 @@ $(document).ready(function () {
             }
             else if (currentWord.length === 5 && isOk) {
                 const guessResult = session.next(currentWord);
-                if (guessResult === GuessResult_1.GuessResult.Progress) {
+                if (guessResult !== GuessResult_1.GuessResult.Invalid) {
                     currentWord = "";
                 }
             }
