@@ -6,12 +6,30 @@ const GameType_1 = require("../Models/GameType");
 const GuessResult_1 = require("../Models/GuessResult");
 const LetterStatus_1 = require("../Models/LetterStatus");
 const NotificationEventing_1 = require("../Models/Notification/NotificationEventing");
+const NotificationType_1 = require("../Models/Notification/NotificationType");
 const Session_1 = require("../Models/Session");
 const GameBoardDomManipulation_1 = require("./GameBoardDomManipulation");
 $(document).ready(function () {
     const notifications = new NotificationEventing_1.NotificationEventing();
     const notifyFn = (notification) => {
-        console.log("Not yet implemented.");
+        $("#notificationContent").text(notification.message);
+        if (notification.type === NotificationType_1.NotificationType.Info) {
+            $("#notificationsContainer").addClass(DOMConstants_1.domConstants.EXACT_MATCH_CLASS_NAME)
+                .removeClass(DOMConstants_1.domConstants.ERROR_CLASS_NAME)
+                .removeClass(DOMConstants_1.domConstants.INVISIBLE_CLASS_NAME);
+        }
+        else {
+            $("#notificationsContainer").addClass(DOMConstants_1.domConstants.ERROR_CLASS_NAME)
+                .removeClass(DOMConstants_1.domConstants.EXACT_MATCH_CLASS_NAME)
+                .removeClass(DOMConstants_1.domConstants.INVISIBLE_CLASS_NAME);
+        }
+        const timeout = setTimeout(function () {
+            $("#notificationsContainer").addClass(DOMConstants_1.domConstants.INVISIBLE_CLASS_NAME);
+        }, 10000);
+        $(document).one("click", function () {
+            $("#notificationsContainer").addClass(DOMConstants_1.domConstants.INVISIBLE_CLASS_NAME);
+            clearTimeout(timeout);
+        });
     };
     notifications.registerListener(notifyFn);
     const domManipulation = new GameBoardDomManipulation_1.GameBoardDomManipulation();

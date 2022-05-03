@@ -19,7 +19,7 @@ class GameBoardDomManipulation {
     }
     truncateBoard(maxGuesses) {
         for (maxGuesses; maxGuesses < 6; maxGuesses++) {
-            $(`.wordleRow[row-index=${maxGuesses}]`).addClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME);
+            $(`.wordleRow[row-index=${maxGuesses}]`).addClass(DOMConstants_1.domConstants.INVISIBLE_CLASS_NAME);
         }
     }
     paintDetails(type, sessionState, scoreDetails) {

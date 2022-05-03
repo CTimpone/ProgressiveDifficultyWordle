@@ -101,7 +101,7 @@ class SingleGame {
         }
     }
     solved() {
-        return this.userGuesses[this.userGuesses.length - 1].fullMatch;
+        return this.userGuesses.length === 0 ? false : this.userGuesses[this.userGuesses.length - 1].fullMatch;
     }
     runTimer() {
         let seconds = 0;

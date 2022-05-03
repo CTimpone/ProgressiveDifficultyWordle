@@ -137,7 +137,7 @@ export class SingleGame {
     }
 
     solved(): boolean {
-        return this.userGuesses[this.userGuesses.length - 1].fullMatch;
+        return this.userGuesses.length === 0 ? false : this.userGuesses[this.userGuesses.length - 1].fullMatch;
     }
 
     runTimer() {
