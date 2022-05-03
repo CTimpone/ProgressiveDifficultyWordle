@@ -1,10 +1,11 @@
 ﻿import { domConstants } from '../Constants/DOMConstants';
-import { FIVE_LETTER_ANSWERS } from '../constants/words/fiveletteranswers';
+import { FIVE_LETTER_ANSWERS } from '../Constants/Words/FiveLetterAnswers';
 import { FIVE_LETTER_GUESSES } from '../Constants/Words/FiveLetterGuesses';
 import { GameType } from '../Models/GameType';
 import { GuessResult } from '../Models/GuessResult';
 import { LetterStatus } from '../Models/LetterStatus';
 import { NotificationEventing } from '../Models/Notification/NotificationEventing';
+import { NotificationType } from '../Models/Notification/NotificationType';
 import { NotificationWrapper } from '../Models/Notification/NotificationWrapper';
 import { Session } from '../Models/Session';
 import { GameBoardDomManipulation } from './GameBoardDomManipulation';
@@ -12,8 +13,28 @@ import { GameBoardDomManipulation } from './GameBoardDomManipulation';
 $(document).ready(function () {
     const notifications = new NotificationEventing();
     const notifyFn = (notification: NotificationWrapper) => {
-        console.log("Not yet implemented.");
+        $("#notificationContent").text(notification.message);
+
+        if (notification.type === NotificationType.Info) {
+        $("#notificationsContainer").addClass(domConstants.EXACT_MATCH_CLASS_NAME)
+                .removeClass(domConstants.ERROR_CLASS_NAME)
+                .removeClass(domConstants.INVISIBLE_CLASS_NAME);
+        } else {
+            $("#notificationsContainer").addClass(domConstants.ERROR_CLASS_NAME)
+                .removeClass(domConstants.EXACT_MATCH_CLASS_NAME)
+                .removeClass(domConstants.INVISIBLE_CLASS_NAME);
+        }
+
+        const timeout = setTimeout(function () {
+            $("#notificationsContainer").addClass(domConstants.INVISIBLE_CLASS_NAME);
+        }, 10000);
+
+        $(document).one("click", function () {
+            $("#notificationsContainer").addClass(domConstants.INVISIBLE_CLASS_NAME);
+            clearTimeout(timeout);
+        });
     };
+
     notifications.registerListener(notifyFn);
 
     const domManipulation = new GameBoardDomManipulation();

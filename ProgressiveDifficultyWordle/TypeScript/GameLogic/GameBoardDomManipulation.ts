@@ -22,8 +22,7 @@ export class GameBoardDomManipulation implements DomManipulator {
 
     truncateBoard(maxGuesses: number) {
         for (maxGuesses; maxGuesses < 6; maxGuesses++) {
-            $(`.wordleRow[row-index=${maxGuesses}]`).addClass(domConstants.HIDDEN_CLASS_NAME);
-
+            $(`.wordleRow[row-index=${maxGuesses}]`).addClass(domConstants.INVISIBLE_CLASS_NAME);
         }
     }
 

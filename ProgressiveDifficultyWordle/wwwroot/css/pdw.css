@@ -78,6 +78,7 @@ span {
     border: 3px solid var(--offBlack);
     border-color: var(--offBlack);
     margin: 30px auto;
+    position: relative;
 }
 
 .boardHeader {
@@ -122,10 +123,47 @@ span {
     flex-grow: 1;
     text-align: center;
     width: 33%;
-    font-size: 1.25em;
+    font-size: 1vb;
     font-weight: bold;
     border-bottom: 3px solid;
     border-color: var(--offBlack);
+}
+
+.notificationsContainer {
+    position: absolute;
+    background: var(--offBlack);
+    /*min-height: 80px;*/
+    width: 94%;
+    z-index: 1;
+    opacity: 0.97;
+    top: 65px;
+    right: 3%;
+    border: 3px solid;
+    color: var(--unknownGrey);
+    border-radius: 5px 5px;
+    -webkit-transition: all 0s linear;
+    -moz-transition: all 0s linear;
+    -o-transition: all 0s linear;
+    transition: all 0s linear;
+    visibility: visible;
+    padding: 5px 0px;
+}
+
+.notificationsContainer.invisible {
+    -webkit-transition: all 0.3s linear;
+    -moz-transition: all 0.3s linear;
+    -o-transition: all 0.3s linear;
+    transition: all 0.3s linear;
+    opacity: 0;
+}
+
+.notificationsContainer.exactMatch, .night .notificationsContainer.exactMatch {
+    border-color: var(--matchGreen);
+    background: var(--offBlack);
+}
+
+.notificationsContainer.errorRed {
+    border-color: var(--errorRed);
 }
 
 .boardMain {
@@ -184,6 +222,10 @@ span {
 
 .hidden {
     display: none;
+}
+
+.invisible {
+    visibility: hidden;
 }
 
 .night {
