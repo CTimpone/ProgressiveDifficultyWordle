@@ -14,37 +14,31 @@
         </div>
     </div>
     <div class="boardMain baseFlex flexCol">
-        <div id="details" class="detailsSection">
-            <div id="notifications" class="notificationContainer hidden">
-
+        <div id="detailsContainer" class="baseFlex flexRow detailsContainer">
+            <div class="baseFlex flexCol detailsColumn">
+                <div id="gameTypeDisplay"> 
+                    <span id="gameTypeVal"></span>
+                </div>
+                <div id="maxGuessesDisplay">
+                    <span id="maxGuessesVal"></span> Guesses
+                </div>
             </div>
-
-            <div id="detailsContainer" class="baseFlex flexRow detailsContainer">
-                <div class="baseFlex flexCol detailsColumn">
-                    <div id="gameTypeDisplay"> 
-                        <span id="gameTypeVal"></span>
-                    </div>
-                    <div id="maxGuessesDisplay">
-                        <span id="maxGuessesVal"></span> Guesses
-                    </div>
+            <div class="baseFlex flexCol detailsColumn">
+                <div id="currentRoundDisplay">Round - 
+                    <span id="currentRoundVal"></span>
                 </div>
-                <div class="baseFlex flexCol detailsColumn">
-                    <div id="currentRoundDisplay">Round - 
-                        <span id="currentRoundVal"></span>
-                    </div>
-                    <div id="scoreDisplay">Score - 
-                        <span id="scoreVal"></span>
-                    </div>
+                <div id="scoreDisplay">Score - 
+                    <span id="scoreVal"></span>
                 </div>
-                <div class="baseFlex flexCol detailsColumn">
-                    <div id="timerDisplay">
-                        <i class="bi bi-alarm"></i>
-                        <span id="timerVal"></span>
-                    </div>
-                    <div id="hardModeDisplay">HardMode 
-                        <i id="hardModeOnIcon" class="bi bi-check-circle-fill exactMatch"></i>
-                        <i id="hardModeOffIcon" class="bi bi-x-circle-fill errorRed hidden"></i>
-                    </div>
+            </div>
+            <div class="baseFlex flexCol detailsColumn">
+                <div id="timerDisplay">
+                    <i class="bi bi-alarm"></i>
+                    <span id="timerVal"></span>
+                </div>
+                <div id="hardModeDisplay">HardMode 
+                    <i id="hardModeOnIcon" class="bi bi-check-circle-fill exactMatch"></i>
+                    <i id="hardModeOffIcon" class="bi bi-x-circle-fill errorRed hidden"></i>
                 </div>
             </div>
         </div>

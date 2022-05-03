@@ -15,7 +15,7 @@ $(document).ready(function () {
     };
     notifications.registerListener(notifyFn);
     const domManipulation = new GameBoardDomManipulation_1.GameBoardDomManipulation();
-    const session = new Session_1.Session(GameType_1.GameType.Endless, false, ["magic"], FiveLetterGuesses_1.FIVE_LETTER_GUESSES, notifications, domManipulation);
+    const session = new Session_1.Session(GameType_1.GameType.ProgressiveDifficulty, false, ["magic"], FiveLetterGuesses_1.FIVE_LETTER_GUESSES, notifications, domManipulation);
     let currentWord = "";
     const activeChords = {
         "CONTROL": false,
