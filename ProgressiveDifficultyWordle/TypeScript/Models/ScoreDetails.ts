@@ -16,12 +16,12 @@ export class ScoreDetails {
 
     updateScore(game: SingleGame): void {
         if (this.endTime === undefined) {
-            const roundScore = Math.floor(this.calculateRoundScore(game));
+            const roundScore = this.calculateRoundScore(game);
 
             if (roundScore !== 0) {
                 this.totalScore += roundScore;
                 this.roundsCompleted += 1;
-                this.totalScore = this.totalScore * (Math.log(99 + this.roundsCompleted) / Math.log(100));
+                this.totalScore = Math.floor(this.totalScore * (Math.log(99 + this.roundsCompleted) / Math.log(100)));
             } else if (game.endTime !== undefined) {
                 this.endTime = game.endTime;
             }
