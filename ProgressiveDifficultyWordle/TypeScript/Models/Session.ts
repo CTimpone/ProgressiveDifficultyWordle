@@ -49,7 +49,7 @@ export class Session {
                     this.anotherGame();
                 } else if (!this.isCurrentGameActive()) {
                     this.messaging.message = new NotificationWrapper(NotificationType.Error,
-                        "Unsuccessfully solved. To keep playing, you will need a new session.");
+                        `The answer was '${this.currentGame.chosenWord.toUpperCase()}. Create a new session to play again.'`);
                 }
             }
         } else {

@@ -37,7 +37,7 @@ class Session {
                     this.anotherGame();
                 }
                 else if (!this.isCurrentGameActive()) {
-                    this.messaging.message = new NotificationWrapper_1.NotificationWrapper(NotificationType_1.NotificationType.Error, "Unsuccessfully solved. To keep playing, you will need a new session.");
+                    this.messaging.message = new NotificationWrapper_1.NotificationWrapper(NotificationType_1.NotificationType.Error, `The answer was '${this.currentGame.chosenWord.toUpperCase()}. Create a new session to play again.'`);
                 }
             }
         }
@@ -83,4 +83,4 @@ class Session {
     }
 }
 exports.Session = Session;
-//# sourceMappingURL=Session.js.map
+//# sourceMappingURL=session.js.map
