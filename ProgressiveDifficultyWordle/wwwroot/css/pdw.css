@@ -107,11 +107,13 @@ span {
     cursor: pointer;
 }
 
-.detailsSection {
+.detailsContainer {
     order: 0;
     max-width: 100%;
     min-height: 60px;
     border-bottom: 3px solid;
+    border-right: 3px solid;
+    border-left: 3px solid;
     border-color: var(--offBlack);
     margin-bottom: 10px;
 }

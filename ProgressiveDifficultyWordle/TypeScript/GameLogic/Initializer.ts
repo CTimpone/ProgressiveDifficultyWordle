@@ -17,7 +17,7 @@ $(document).ready(function () {
     notifications.registerListener(notifyFn);
 
     const domManipulation = new GameBoardDomManipulation();
-    const session = new Session(GameType.Endless, false, ["magic"], FIVE_LETTER_GUESSES, notifications,
+    const session = new Session(GameType.ProgressiveDifficulty, false, ["magic"], FIVE_LETTER_GUESSES, notifications,
         domManipulation);
 
     let currentWord = "";

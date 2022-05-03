@@ -58,6 +58,9 @@ class GameBoardDomManipulation {
         $(".tileBack").removeClass(DOMConstants_1.domConstants.EXACT_MATCH_CLASS_NAME)
             .removeClass(DOMConstants_1.domConstants.ABSENT_LETTER_CLASS_NAME)
             .removeClass(DOMConstants_1.domConstants.WRONG_LOCATION_CLASS_NAME);
+        $(".baseKey").removeClass(DOMConstants_1.domConstants.ABSENT_LETTER_CLASS_NAME)
+            .removeClass(DOMConstants_1.domConstants.EXACT_MATCH_CLASS_NAME)
+            .removeClass(DOMConstants_1.domConstants.WRONG_LOCATION_CLASS_NAME);
         $(".wordleRow").attr("active-row", "false").removeClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME);
         $(".wordleRow[row-index=0]").attr("active-row", "true");
     }
