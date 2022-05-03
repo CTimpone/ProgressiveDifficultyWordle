@@ -59,7 +59,7 @@ export class SingleGame {
 
         if (this.options.maxGuesses <= this.userGuesses.length) {
             this.messaging.message = new NotificationWrapper(NotificationType.Error,
-                NotificationWrapper.interpolateMessage("Exceeded max number (REPLACEMENT=>text) of guesses.", this.options.maxGuesses.toString()));
+                `Exceeded max number ${this.options.maxGuesses} of guesses.`);
 
             return false;
         }
@@ -85,7 +85,8 @@ export class SingleGame {
         }
 
         if (!this.eligibleWords.guessInWordList(input)) {
-            this.messaging.message = new NotificationWrapper(NotificationType.Error, "Guess is not in word list.");
+            this.messaging.message = new NotificationWrapper(NotificationType.Error,
+                `'${input.toUpperCase()}' is not in word list.`);
 
             return false;
         }
@@ -119,7 +120,7 @@ export class SingleGame {
         }
 
         if (this.solved()) {
-            this.messaging.message = new NotificationWrapper(NotificationType.Info, "Successful solve!");
+            this.messaging.message = new NotificationWrapper(NotificationType.Info, `Successful solve - '${this.chosenWord.toUpperCase()}'!`);
             this.endTime = new Date();
 
             if (this.timerInterval !== undefined) {
@@ -127,7 +128,7 @@ export class SingleGame {
             }
         } else if (this.userGuesses.length >= this.options.maxGuesses && this.endTime === undefined) {
             this.messaging.message = new NotificationWrapper(NotificationType.Error,
-                NotificationWrapper.interpolateMessage("Exceeded max number (REPLACEMENT=>text) of guesses.", this.options.maxGuesses.toString()));
+                `Exceeded max number ${this.options.maxGuesses} of guesses.`);
             this.endTime = new Date();
 
             if (this.timerInterval !== undefined) {

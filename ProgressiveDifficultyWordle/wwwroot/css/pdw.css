@@ -146,7 +146,7 @@ span {
     -o-transition: all 0s linear;
     transition: all 0s linear;
     visibility: visible;
-    padding: 5px 0px;
+    padding: 5px;
 }
 
 .notificationsContainer.invisible {
