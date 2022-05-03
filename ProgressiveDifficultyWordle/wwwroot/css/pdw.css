@@ -47,12 +47,14 @@ p, h1, h2, h3, h4, h5, h6 {
     --matchGreen: #67c85e;
     --absentGrey: #707070;
     --wrongLocationYellow: #d1bd31;
+    --errorRed: #e22c2c;
 }
 
 span {
     display: inline-flex;
     align-items: center;
 }
+
 .baseFlex {
     display: -webkit-box; /* OLD - iOS 6-, Safari 3.1-6 */
     display: -moz-box; /* OLD - Firefox 19- (buggy but mostly works) */
@@ -96,7 +98,7 @@ span {
     border-color: var(--offBlack);
 }
 
-.subHeaderOption .bi {
+.subHeaderOption .bi, .detailsColumn .bi {
     padding: 0px 5px;
 }
 
@@ -205,6 +207,16 @@ span {
 .wrongLocation, .baseKey.wrongLocation, .night .wrongLocation {
     background: var(--wrongLocationYellow);
     color: var(--offWhite);
+}
+
+i.bi.exactMatch {
+    background: inherit;
+    color: var(--matchGreen);
+}
+
+i.bi.errorRed {
+    background: inherit;
+    color: var(--errorRed);
 }
 
 .keyboardContainer {

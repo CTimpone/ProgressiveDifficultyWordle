@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GameBoardDomManipulation = void 0;
 const DOMConstants_1 = require("../Constants/DOMConstants");
+const GameType_1 = require("../Models/GameType");
 const LetterStatus_1 = require("../Models/LetterStatus");
 class GameBoardDomManipulation {
     typeLetter(key, currentLetterIndex) {
@@ -16,13 +17,48 @@ class GameBoardDomManipulation {
             this.resetBoard();
         }
     }
+    truncateBoard(maxGuesses) {
+        for (maxGuesses; maxGuesses < 6; maxGuesses++) {
+            $(`.wordleRow[row-index=${maxGuesses}]`).addClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME);
+        }
+    }
+    paintDetails(type, sessionState, scoreDetails) {
+        switch (type) {
+            case GameType_1.GameType.Endless:
+                $("#gameTypeVal").text("Endless");
+                $("#currentRoundDisplay").removeClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME);
+                $("#currentRoundVal").text(scoreDetails.roundsCompleted + 1);
+                break;
+            case GameType_1.GameType.ProgressiveDifficulty:
+                $("#gameTypeVal").text("Scaling Endless");
+                $("#currentRoundDisplay").removeClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME);
+                $("#currentRoundVal").text(scoreDetails.roundsCompleted + 1);
+                break;
+            case GameType_1.GameType.Single:
+                $("#gameTypeVal").text("Single Game");
+                $("#currentRoundDisplay").addClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME);
+                break;
+            default:
+                break;
+        }
+        $("#maxGuessesVal").text(sessionState.maxGuesses);
+        $("#scoreVal").text(scoreDetails.totalScore);
+        if (sessionState.hardMode === true) {
+            $("#hardModeOnIcon").removeClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME);
+            $("#hardModeOffIcon").addClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME);
+        }
+        else {
+            $("#hardModeOnIcon").addClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME);
+            $("#hardModeOffIcon").removeClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME);
+        }
+    }
     resetBoard() {
         $(".tile span").text("");
         $(".tile").removeClass(DOMConstants_1.domConstants.FLIPPED_CLASS_NAME);
         $(".tileBack").removeClass(DOMConstants_1.domConstants.EXACT_MATCH_CLASS_NAME)
             .removeClass(DOMConstants_1.domConstants.ABSENT_LETTER_CLASS_NAME)
             .removeClass(DOMConstants_1.domConstants.WRONG_LOCATION_CLASS_NAME);
-        $(".wordleRow").prop("active-row", false);
+        $(".wordleRow").prop("active-row", false).removeClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME);
         $(".wordleRow[row-index=0]").prop("activeRow", true);
     }
     paintWords(length, words, letterStatuses, onlyPaintLast, activeGame) {

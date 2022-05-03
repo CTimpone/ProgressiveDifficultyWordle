@@ -27,27 +27,32 @@ $(document).ready(function () {
     };
 
     const letterFunction = function (key: string): void {
-        const isLetter = /^[A-Z]$/.test(key);
-        const isOk = /^ENTER|ACCEPT|EXECUTE$/.test(key);
-        const isDelete = /^BACKSPACE$/.test(key);
-
-        if (currentWord.length < 5 && isLetter) {
-            domManipulation.typeLetter(key, currentWord.length);
-            currentWord += key;
+        if (!session.isCurrentGameActive()) {
+            $("#mainGameContainer").addClass(domConstants.LOCKED_CLASS_NAME);
         }
-        else if (currentWord.length === 5 && isOk) {
-            const guessResult = session.next(currentWord);
-            if (guessResult === GuessResult.Progress) {
-                currentWord = "";
+        else {
+            const isLetter = /^[A-Z]$/.test(key);
+            const isOk = /^ENTER|ACCEPT|EXECUTE$/.test(key);
+            const isDelete = /^BACKSPACE$/.test(key);
+
+            if (currentWord.length < 5 && isLetter) {
+                domManipulation.typeLetter(key, currentWord.length);
+                currentWord += key;
+            }
+            else if (currentWord.length === 5 && isOk) {
+                const guessResult = session.next(currentWord);
+                if (guessResult === GuessResult.Progress) {
+                    currentWord = "";
+                }
+            }
+            else if (isDelete) {
+                currentWord = currentWord.slice(0, -1);
+                domManipulation.typeLetter("", currentWord.length);
             }
         }
-        else if (isDelete) {
-            currentWord = currentWord.slice(0, -1);
-            domManipulation.typeLetter("", currentWord.length);
-        }
+    };
 
-    }
-    $("html").keydown(function (event) {
+    $(document).keydown(function (event) {
         const currentKey = event.key.toUpperCase();
         const gameContainerElement = $("#mainGameContainer");
         if (!gameContainerElement.hasClass(domConstants.HIDDEN_CLASS_NAME) &&
@@ -65,7 +70,7 @@ $(document).ready(function () {
         }
     });
 
-    $("html").keyup(function (event) {
+    $(document).keyup(function (event) {
         const currentKey = event.key.toUpperCase();
         switch (currentKey) {
             case "CONTROL":
