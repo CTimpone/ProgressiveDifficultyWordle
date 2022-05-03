@@ -38,15 +38,16 @@ export class Session {
             if (this.type === GameType.Single) {
                 guessResult = this.currentGame.guessTrigger(input);
 
-                this.state.active = this.currentGame.endTime === undefined;
+                if (!this.isCurrentGameActive()) {
+                    this.score.updateScore(this.currentGame);
+                    this.paintDetails();
+                }
             } else {
                 guessResult = this.currentGame.guessTrigger(input);
 
                 if (this.currentGame.solved()) {
                     this.anotherGame();
-                } else if (this.currentGame.endTime) {
-                    this.state.active = false;
-
+                } else if (!this.isCurrentGameActive()) {
                     this.messaging.message = new NotificationWrapper(NotificationType.Error,
                         "Unsuccessfully solved. To keep playing, you will need a new session.");
                 }
@@ -67,6 +68,12 @@ export class Session {
         return this.currentGame !== undefined && this.currentGame.userGuesses.length === 0;
     }
 
+    isCurrentGameActive(): boolean {
+        this.state.active = this.currentGame.endTime === undefined;
+
+        return this.state.active;
+    }
+
     paintBoard(game?: SingleGame, onlyPaintLast?: boolean): void {
         game = game ?? this.currentGame;
 
@@ -78,6 +85,9 @@ export class Session {
     private generateGame(): void {
         this.currentGame = new SingleGame(this.generateGameOptions(), this.eligibleWords, this.messaging,
             this.domManipulator, true);
+
+        this.paintDetails();
+        this.domManipulator.truncateBoard(this.currentGame.options.maxGuesses);
     }
 
     private generateGameOptions(): GameOptions {
@@ -85,6 +95,10 @@ export class Session {
             this.state.maxGuesses,
             this.state.gameTimerLimitExists,
             this.state.gameTimerLength);
+    }
+
+    private paintDetails(): void {
+        this.domManipulator.paintDetails(this.type, this.state, this.score);
     }
 
     private anotherGame(): void {
@@ -96,6 +110,7 @@ export class Session {
         }
 
         this.generateGame();
+
         this.paintBoard();
     }
 }

@@ -1,6 +1,9 @@
 ﻿import { domConstants } from "../Constants/DOMConstants";
 import { DomManipulator } from "../Interfaces/DomManipulator";
+import { GameType } from "../Models/GameType";
 import { LetterStatus } from "../Models/LetterStatus";
+import { ScoreDetails } from "../Models/ScoreDetails";
+import { SessionState } from "../Models/SessionState";
 
 export class GameBoardDomManipulation implements DomManipulator {
     typeLetter(key: string, currentLetterIndex: number): void {
@@ -16,13 +19,55 @@ export class GameBoardDomManipulation implements DomManipulator {
             this.resetBoard();
         }
     }
+
+    truncateBoard(maxGuesses: number) {
+        for (maxGuesses; maxGuesses < 6; maxGuesses++) {
+            $(`.wordleRow[row-index=${maxGuesses}]`).addClass(domConstants.HIDDEN_CLASS_NAME);
+
+        }
+    }
+
+    paintDetails(type: GameType, sessionState: SessionState, scoreDetails: ScoreDetails) {
+        switch (type) {
+            case GameType.Endless:
+                $("#gameTypeVal").text("Endless");
+                $("#currentRoundDisplay").removeClass(domConstants.HIDDEN_CLASS_NAME);
+                $("#currentRoundVal").text(scoreDetails.roundsCompleted + 1);
+                break;
+            case GameType.ProgressiveDifficulty:
+                $("#gameTypeVal").text("Scaling Endless");
+                $("#currentRoundDisplay").removeClass(domConstants.HIDDEN_CLASS_NAME);
+                $("#currentRoundVal").text(scoreDetails.roundsCompleted + 1);
+                break;
+            case GameType.Single:
+                $("#gameTypeVal").text("Single Game");
+                $("#currentRoundDisplay").addClass(domConstants.HIDDEN_CLASS_NAME);
+                break;
+            default:
+                break;
+        }
+
+        $("#maxGuessesVal").text(sessionState.maxGuesses);
+        $("#scoreVal").text(scoreDetails.totalScore);
+
+        if (sessionState.hardMode === true) {
+            $("#hardModeOnIcon").removeClass(domConstants.HIDDEN_CLASS_NAME);
+            $("#hardModeOffIcon").addClass(domConstants.HIDDEN_CLASS_NAME);
+        }
+        else {
+            $("#hardModeOnIcon").addClass(domConstants.HIDDEN_CLASS_NAME);
+            $("#hardModeOffIcon").removeClass(domConstants.HIDDEN_CLASS_NAME);
+
+        }
+    }
+
     resetBoard() {
         $(".tile span").text("");
         $(".tile").removeClass(domConstants.FLIPPED_CLASS_NAME);
         $(".tileBack").removeClass(domConstants.EXACT_MATCH_CLASS_NAME)
             .removeClass(domConstants.ABSENT_LETTER_CLASS_NAME)
             .removeClass(domConstants.WRONG_LOCATION_CLASS_NAME);
-        $(".wordleRow").prop("active-row", false);
+        $(".wordleRow").prop("active-row", false).removeClass(domConstants.HIDDEN_CLASS_NAME);
         $(".wordleRow[row-index=0]").prop("activeRow", true);
     }
 

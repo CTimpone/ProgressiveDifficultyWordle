@@ -21,16 +21,30 @@
 
             <div id="detailsContainer" class="baseFlex flexRow detailsContainer">
                 <div class="baseFlex flexCol detailsColumn">
-                    <div class="gameType"><span id="gameType"></span></div>
-                    <div class="maxGuesses">MaxGuesses=<span class="maxGuesses"></span></div>
+                    <div id="gameTypeDisplay"> 
+                        <span id="gameTypeVal"></span>
+                    </div>
+                    <div id="maxGuessesDisplay">
+                        <span id="maxGuessesVal"></span> Guesses
+                    </div>
                 </div>
                 <div class="baseFlex flexCol detailsColumn">
-                    <div class="gameType"><span class="gameType"></span></div>
-                    <div class="maxGuesses">MaxGuesses=<span class="maxGuesses"></span></div>
+                    <div id="currentRoundDisplay">Round - 
+                        <span id="currentRoundVal"></span>
+                    </div>
+                    <div id="scoreDisplay">Score - 
+                        <span id="scoreVal"></span>
+                    </div>
                 </div>
                 <div class="baseFlex flexCol detailsColumn">
-                    <div class="timer"><span><i class="bi bi-alarm"></i></span><span id="timerVal"></span></div>
-                    <div class="hardMode">HardMode=<span class="hardMode"></span></div>
+                    <div id="timerDisplay">
+                        <i class="bi bi-alarm"></i>
+                        <span id="timerVal"></span>
+                    </div>
+                    <div id="hardModeDisplay">HardMode 
+                        <i id="hardModeOnIcon" class="bi bi-check-circle-fill exactMatch"></i>
+                        <i id="hardModeOffIcon" class="bi bi-x-circle-fill errorRed hidden"></i>
+                    </div>
                 </div>
             </div>
         </div>

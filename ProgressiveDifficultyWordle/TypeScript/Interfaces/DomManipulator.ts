@@ -1,4 +1,7 @@
-﻿import { LetterStatus } from "../Models/LetterStatus";
+﻿import { GameType } from "../Models/GameType";
+import { LetterStatus } from "../Models/LetterStatus";
+import { ScoreDetails } from "../Models/ScoreDetails";
+import { SessionState } from "../Models/SessionState";
 
 export interface DomManipulator {
     typeLetter(key: string, currentLetterIndex: number): void;
@@ -6,6 +9,8 @@ export interface DomManipulator {
     resetBoard(): void;
     paintWords(length: number, words: string[], letterStatuses: LetterStatus[][], onlyPaintLast: boolean,
         activeGame: boolean): void;
+    paintDetails(type: GameType, sessionState: SessionState, scoreDetails: ScoreDetails);
+    truncateBoard(maxGuesses: number);
     paintTimer(seconds: number): void;
 
 }

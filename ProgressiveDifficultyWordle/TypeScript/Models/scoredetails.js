@@ -9,7 +9,7 @@ class ScoreDetails {
     }
     updateScore(game) {
         if (this.endTime === undefined) {
-            const roundScore = this.calculateRoundScore(game);
+            const roundScore = Math.floor(this.calculateRoundScore(game));
             if (roundScore !== 0) {
                 this.totalScore += roundScore;
                 this.roundsCompleted += 1;

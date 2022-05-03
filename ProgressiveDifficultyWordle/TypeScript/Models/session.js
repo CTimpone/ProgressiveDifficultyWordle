@@ -26,15 +26,17 @@ class Session {
         if (this.state.active) {
             if (this.type === GameType_1.GameType.Single) {
                 guessResult = this.currentGame.guessTrigger(input);
-                this.state.active = this.currentGame.endTime === undefined;
+                if (!this.isCurrentGameActive()) {
+                    this.score.updateScore(this.currentGame);
+                    this.paintDetails();
+                }
             }
             else {
                 guessResult = this.currentGame.guessTrigger(input);
                 if (this.currentGame.solved()) {
                     this.anotherGame();
                 }
-                else if (this.currentGame.endTime) {
-                    this.state.active = false;
+                else if (!this.isCurrentGameActive()) {
                     this.messaging.message = new NotificationWrapper_1.NotificationWrapper(NotificationType_1.NotificationType.Error, "Unsuccessfully solved. To keep playing, you will need a new session.");
                 }
             }
@@ -50,6 +52,10 @@ class Session {
     isCurrentGameNew() {
         return this.currentGame !== undefined && this.currentGame.userGuesses.length === 0;
     }
+    isCurrentGameActive() {
+        this.state.active = this.currentGame.endTime === undefined;
+        return this.state.active;
+    }
     paintBoard(game, onlyPaintLast) {
         game = game !== null && game !== void 0 ? game : this.currentGame;
         onlyPaintLast = onlyPaintLast !== null && onlyPaintLast !== void 0 ? onlyPaintLast : false;
@@ -57,9 +63,14 @@ class Session {
     }
     generateGame() {
         this.currentGame = new SingleGame_1.SingleGame(this.generateGameOptions(), this.eligibleWords, this.messaging, this.domManipulator, true);
+        this.paintDetails();
+        this.domManipulator.truncateBoard(this.currentGame.options.maxGuesses);
     }
     generateGameOptions() {
         return new GameOptions_1.GameOptions(this.state.hardMode, this.state.maxGuesses, this.state.gameTimerLimitExists, this.state.gameTimerLength);
+    }
+    paintDetails() {
+        this.domManipulator.paintDetails(this.type, this.state, this.score);
     }
     anotherGame() {
         this.state.gameHistory.push(this.currentGame);
