@@ -34,12 +34,12 @@ export class GameBoardDomManipulation implements DomManipulator {
                 $("#currentRoundVal").text(scoreDetails.roundsCompleted + 1);
                 break;
             case GameType.ProgressiveDifficulty:
-                $("#gameTypeVal").text("Scaling Endless");
+                $("#gameTypeVal").text("Scaling");
                 $("#currentRoundDisplay").removeClass(domConstants.HIDDEN_CLASS_NAME);
                 $("#currentRoundVal").text(scoreDetails.roundsCompleted + 1);
                 break;
             case GameType.Single:
-                $("#gameTypeVal").text("Single Game");
+                $("#gameTypeVal").text("Single");
                 $("#currentRoundDisplay").addClass(domConstants.HIDDEN_CLASS_NAME);
                 break;
             default:
