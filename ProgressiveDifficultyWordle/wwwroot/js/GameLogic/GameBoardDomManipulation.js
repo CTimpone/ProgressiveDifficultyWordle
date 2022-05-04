@@ -30,12 +30,12 @@ class GameBoardDomManipulation {
                 $("#currentRoundVal").text(scoreDetails.roundsCompleted + 1);
                 break;
             case GameType_1.GameType.ProgressiveDifficulty:
-                $("#gameTypeVal").text("Scaling Endless");
+                $("#gameTypeVal").text("Scaling");
                 $("#currentRoundDisplay").removeClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME);
                 $("#currentRoundVal").text(scoreDetails.roundsCompleted + 1);
                 break;
             case GameType_1.GameType.Single:
-                $("#gameTypeVal").text("Single Game");
+                $("#gameTypeVal").text("Single");
                 $("#currentRoundDisplay").addClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME);
                 break;
             default:
