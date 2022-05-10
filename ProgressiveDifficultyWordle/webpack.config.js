@@ -2,7 +2,7 @@
 
 module.exports = {
     mode: 'development',
-    entry: './TypeScript/GameLogic/Initializer.ts',
+    entry: './TypeScript/Implementation/DocumentInitialization.ts',
     module: {
         rules: [
             {

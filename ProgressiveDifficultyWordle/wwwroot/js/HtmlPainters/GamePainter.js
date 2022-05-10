@@ -1,10 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.GameBoardPainter = void 0;
+exports.GamePainter = void 0;
 const DOMConstants_1 = require("../Constants/DOMConstants");
 const GameType_1 = require("../Models/GameType");
 const LetterStatus_1 = require("../Models/LetterStatus");
-class GameBoardPainter {
+class GamePainter {
     typeLetter(key, currentLetterIndex) {
         $(`.wordleRow[active-row=true] .tile[tile-index=${currentLetterIndex}] span`).text(key);
     }
@@ -109,5 +109,5 @@ class GameBoardPainter {
         $("#timerVal").text(seconds.toString());
     }
 }
-exports.GameBoardPainter = GameBoardPainter;
-//# sourceMappingURL=GameBoardDomManipulation.js.map
+exports.GamePainter = GamePainter;
+//# sourceMappingURL=GamePainter.js.map
