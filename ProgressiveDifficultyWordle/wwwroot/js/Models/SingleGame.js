@@ -93,7 +93,7 @@ class SingleGame {
             }
         }
         else if (this.userGuesses.length >= this.options.maxGuesses && this.endTime === undefined) {
-            this.messaging.message = new NotificationWrapper_1.NotificationWrapper(NotificationType_1.NotificationType.Error, `Exceeded max number ${this.options.maxGuesses} of guesses.`);
+            this.messaging.message = new NotificationWrapper_1.NotificationWrapper(NotificationType_1.NotificationType.Error, `Exceeded max number ${this.options.maxGuesses} of guesses; the correct answer was '${this.chosenWord.toUpperCase()}'`);
             this.endTime = new Date();
             if (this.timerInterval !== undefined) {
                 clearInterval(this.timerInterval);
@@ -106,19 +106,20 @@ class SingleGame {
     runTimer() {
         let seconds = 0;
         let increment = 1;
-        const options = this.options;
-        const domManipulator = this.domManipulator;
-        if (options.maxTimeLimitExists) {
+        if (this.options.maxTimeLimitExists) {
             seconds = this.options.maxTimeLimit;
             increment = -1;
         }
+        const gameScope = this;
         this.timerInterval = setInterval(function () {
             seconds += increment;
-            domManipulator.paintTimer(seconds);
-            if (options.maxTimeLimitExists && seconds <= 0) {
-                this.messaging.message = new NotificationWrapper_1.NotificationWrapper(NotificationType_1.NotificationType.Error, NotificationWrapper_1.NotificationWrapper.interpolateMessage("The timer has expired; the game has ended.", this.options.maxGuesses.toString()));
-                this.endTime = new Date();
-                clearInterval(this);
+            gameScope.domManipulator.paintTimer(seconds);
+            console.log(gameScope.options.maxTimeLimitExists, seconds);
+            if (gameScope.options.maxTimeLimitExists && seconds <= 0) {
+                console.log("triggered");
+                gameScope.messaging.message = new NotificationWrapper_1.NotificationWrapper(NotificationType_1.NotificationType.Error, `The timer has ended; the correct answer was '${gameScope.chosenWord.toUpperCase()}'`);
+                gameScope.endTime = new Date();
+                clearInterval(gameScope.timerInterval);
             }
         }, 1000);
     }

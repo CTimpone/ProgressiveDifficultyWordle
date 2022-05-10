@@ -9,13 +9,22 @@ export class SessionState {
     gameTimerLength: number | undefined;
     maxGuesses: number;
 
-    constructor(hardMode: boolean) {
+    constructor(hardMode: boolean, maxGuesses?: number, timerEnabled?: boolean,
+        timerLength?: number) {
         this.gameHistory = [];
         this.active = true;
         this.startTime = new Date();
-        this.gameTimerLimitExists = false;
+
+        if (timerEnabled === true) {
+            this.gameTimerLimitExists = true;
+            this.gameTimerLength = timerLength;
+        }
+
+        if (maxGuesses !== undefined) {
+            this.maxGuesses = maxGuesses;
+        }
+
         this.hardMode = hardMode;
-        this.maxGuesses = 6;
     }
 
     getHarder(roundsCompleted: number): void {

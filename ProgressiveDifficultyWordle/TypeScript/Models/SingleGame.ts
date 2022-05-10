@@ -128,7 +128,7 @@ export class SingleGame {
             }
         } else if (this.userGuesses.length >= this.options.maxGuesses && this.endTime === undefined) {
             this.messaging.message = new NotificationWrapper(NotificationType.Error,
-                `Exceeded max number ${this.options.maxGuesses} of guesses.`);
+                `Exceeded max number ${this.options.maxGuesses} of guesses; the correct answer was '${this.chosenWord.toUpperCase()}'`);
             this.endTime = new Date();
 
             if (this.timerInterval !== undefined) {
@@ -145,22 +145,25 @@ export class SingleGame {
         let seconds = 0;
         let increment = 1;
 
-        const options = this.options;
-        const domManipulator = this.domManipulator;
-        if (options.maxTimeLimitExists) {
+        if (this.options.maxTimeLimitExists) {
             seconds = this.options.maxTimeLimit;
             increment = -1;
         }
 
+        const gameScope = this;
+
         this.timerInterval = setInterval(function () {
             seconds += increment;
-            domManipulator.paintTimer(seconds);
-            if (options.maxTimeLimitExists && seconds <= 0) {
-                this.messaging.message = new NotificationWrapper(NotificationType.Error,
-                    NotificationWrapper.interpolateMessage("The timer has expired; the game has ended.", this.options.maxGuesses.toString()));
-                this.endTime = new Date();
+            gameScope.domManipulator.paintTimer(seconds);
+            console.log(gameScope.options.maxTimeLimitExists, seconds);
+            if (gameScope.options.maxTimeLimitExists && seconds <= 0) {
+                console.log("triggered");
 
-                clearInterval(this);
+                gameScope.messaging.message = new NotificationWrapper(NotificationType.Error,
+                    `The timer has ended; the correct answer was '${gameScope.chosenWord.toUpperCase()}'`);
+                gameScope.endTime = new Date();
+
+                clearInterval(gameScope.timerInterval);
             }
         }, 1000);
     }
