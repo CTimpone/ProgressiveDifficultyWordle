@@ -1,0 +1,1 @@
+{"version":3,"file":"LetterState.js","sourceRoot":"","sources":["../../../TypeScript/Models/LetterState.ts"],"names":[],"mappings":";;;AAAA,MAAa,WAAW;IAKpB;QACI,IAAI,CAAC,UAAU,GAAG,IAAI,GAAG,EAAkB,CAAC;QAC5C,IAAI,CAAC,mBAAmB,GAAG,IAAI,GAAG,EAAoB,CAAC;QACvD,IAAI,CAAC,MAAM,GAAG,EAAE,CAAC;IACrB,CAAC;CACJ;AAVD,kCAUC"}
