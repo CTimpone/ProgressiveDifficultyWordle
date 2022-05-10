@@ -19,12 +19,14 @@ export class Session {
     score: ScoreDetails;
     messaging: NotificationEventing;
 
-    constructor(type: GameType, hardMode: boolean, eligibleAnswers: string[], eligibleGuesses: string[],
-        notificationTools: NotificationEventing, domManipulator: DomManipulator) {
+    constructor(type: GameType, eligibleAnswers: string[], eligibleGuesses: string[],
+        notificationTools: NotificationEventing, domManipulator: DomManipulator, hardMode: boolean,
+        maxGuesses?: number, timerEnabled?: boolean, timerLength?: number) {
         this.type = type;
         this.messaging = notificationTools;
         this.score = new ScoreDetails();
-        this.state = new SessionState(hardMode);
+        this.state = new SessionState(hardMode, maxGuesses, timerEnabled, timerLength);
+        console.log(this.state);
         this.domManipulator = domManipulator;
         this.eligibleWords = new EligibleWords(eligibleAnswers, eligibleGuesses);
 
@@ -88,6 +90,7 @@ export class Session {
 
         this.paintDetails();
         this.domManipulator.truncateBoard(this.currentGame.options.maxGuesses);
+        this.paintBoard();
     }
 
     private generateGameOptions(): GameOptions {
@@ -110,7 +113,5 @@ export class Session {
         }
 
         this.generateGame();
-
-        this.paintBoard();
     }
 }

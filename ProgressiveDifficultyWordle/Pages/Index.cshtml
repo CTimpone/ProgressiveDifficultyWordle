@@ -3,21 +3,24 @@
 
 <div class="baseFlex flexCol gameboard">
     <div class="baseFlex flexRow boardHeader">
-        <div id="help" class="baseFlex subHeaderOption">
-            <span>Help   <i class="bi bi-question-square"></i></span>
+        <div id="helpSelector" class="baseFlex subHeaderOption">
+            <span>Help<i class="bi bi-question-square"></i></span>
         </div>
-        <div id="settings" class="baseFlex subHeaderOption">
-            <span>Settings   <i class="bi bi-gear"></i></span>
+        <div id="settingsSelector" class="baseFlex subHeaderOption">
+            <span>Settings<i class="bi bi-gear"></i></span>
         </div>
-        <div id="scoreHistory" class="baseFlex subHeaderOption">
-            <span>High Scores   <i class="bi bi-bar-chart"></i></span>
+        <div id="scoreHistorySelector" class="baseFlex subHeaderOption">
+            <span>High Scores<i class="bi bi-bar-chart"></i></span>
         </div>
     </div>
     <div class="boardMain baseFlex flexCol">
         <div id="notificationsContainer" class="baseFlex notificationsContainer invisible">
             <span id="notificationContent"></span>
         </div>
-        <div id="detailsContainer" class="baseFlex flexRow detailsContainer">
+        <div id="detailsContainer" class="baseFlex flexRow detailsContainer absoluteParent">
+            <div id="returnToBoard" class="returnToBoardButton baseFlex hidden">
+                <span>Return to Board</span>
+            </div>
             <div class="baseFlex flexCol detailsColumn">
                 <div id="gameTypeDisplay"> 
                     <span id="gameTypeVal"></span>
@@ -42,25 +45,265 @@
                 <div id="hardModeDisplay">HardMode<i id="hardModeOnIcon" class="bi bi-check-circle-fill exactMatch"></i><i id="hardModeOffIcon" class="bi bi-x-circle-fill errorRed hidden"></i></div>
             </div>
         </div>
-        <div id="mainGameContainer"  class="baseFlex flexCol rowsContainer">
-            @for (int rows = 0; rows < 6; rows++)
-            {
-            <div class="baseFlex flexRow wordleRow" active-row=@(rows == 0 ? "true":"false") row-index=@(rows)>
-                @for (int tiles = 0; tiles < 5; tiles ++)
-                {
-                <div class="tileContainer">
-                    <div class="tile" tile-index=@(tiles)>
-                        <div class="baseFlex tileBase tileFront">
-                            <span></span>
+        <div id="mainGameContainer"  class="baseFlex flexCol absoluteParent">
+            <div id="helpContainer" class="helpContainer scrollable hidden">
+                <p>For an individual game of <strong>Wordle</strong>, a "common" five-letter word is chosen, and you have to guess it by the time you exceed the given maximum guess limit.</p>
+                <p>Your guesses must be valid words; no just entering random characters for one of the guesses.</p>
+                <p>To actually submit a guess, you can type either by using an actual keyboard, or by clicking on the keys on the virtual keyboard on the page.</p>
+                <p>Use the 'Enter/Return' key to submit your guess, and the backspace key to delete a letter if you make a mistake.</p>
+                <p>To make the process possible, your incorrect guesses will provide details about whether the characters in your guesses are present in the actual answer.</p>
+                <div class="sampleRow baseFlex flexRow">
+                    <div class="tileContainer small baseFlex absent"><span>R</span></div>
+                    <div class="tileContainer small baseFlex absent"><span>I</span></div>
+                    <div class="tileContainer small baseFlex wrongLocation"><span>S</span></div>
+                    <div class="tileContainer small baseFlex absent"><span>E</span></div>
+                    <div class="tileContainer small baseFlex absent"><span>N</span></div>
+                </div>
+                <div class="sampleRow baseFlex flexRow">
+                    <div class="tileContainer small baseFlex wrongLocation"><span>S</span></div>
+                    <div class="tileContainer small baseFlex wrongLocation"><span>T</span></div>
+                    <div class="tileContainer small baseFlex exactMatch"><span>A</span></div>
+                    <div class="tileContainer small baseFlex wrongLocation"><span>L</span></div>
+                    <div class="tileContainer small baseFlex absent"><span>L</span></div>
+                </div>
+                <div class="sampleRow baseFlex flexRow">
+                    <div class="tileContainer small baseFlex exactMatch"><span>B</span></div>
+                    <div class="tileContainer small baseFlex exactMatch"><span>L</span></div>
+                    <div class="tileContainer small baseFlex exactMatch"><span>A</span></div>
+                    <div class="tileContainer small baseFlex exactMatch"><span>S</span></div>
+                    <div class="tileContainer small baseFlex exactMatch"><span>T</span></div>
+                </div>
+                <p>All letters except the 'S' in the first guess above are not present in the actual answer. The 'S' is present, but not in the same location.</p>
+                <p>The second guess shows the 'S', 'T', and first 'L' are present in the correct answer, but again, not in the same location. The 'A', however, is exactly where it will be in the answer.</p>
+                <p>In addition, the second guess shows that there is only one 'L' in the answer, as the second is shown as absent. The 'S' and 'T' however, are just known be present AT LEAST once.</p>
+                <p>The third guess shows that the <strong>Wordle</strong> round has been successfully solved.</p>
+                <p>Enabling <strong>Hard Mode</strong> requires that all future guesses utilize all letters whose exact position are known.</p>
+            </div>
+            <div id="settingsContainer" class="settingsContainer hidden scrollable">
+                <div class="baseFlex settingsToggleContainer flexRow">
+                    <div id="nightToggle" class="toggle">
+                        <input type="checkbox" id="nightDisplay">
+                        <label for="nightDisplay">Dark Theme</label>
+                    </div>
+                </div>
+                <div class="baseFlex settingsToggleContainer flexRow">
+                    <div class="toggle">
+                        <input type="checkbox" id="hardMode">
+                        <label for="hardMode">Hard Mode</label>
+                    </div>
+                </div>
+
+                <div id="radioContainer" class="baseFlex flexRow radioContainer">
+                    <input type="radio" id="gameTypeSelector1" name="gameType" value="single">
+                    <label for="gameTypeSelector1">Single</label>
+
+                    <input type="radio" id="gameTypeSelector2" name="gameType" value="endless">
+                    <label for="gameTypeSelector2">Endless</label>
+                    
+                    <input type="radio" id="gameTypeSelector3" name="gameType" value="scaling">
+                    <label for="gameTypeSelector3">Scaling</label>
+                </div>
+                <div id="gameTypeDescriptionContainer" class="baseFlex flexCol innerMargin">
+                    <p id="singleGameDesc">The traditional <strong>Wordle</strong> game type. Solve for a single answer and move on with your day. Can be additionally customized for a more difficult experience.</p>
+                    <p id="endlessGameDesc" class="hidden"><strong>Wordle</strong> that never ends. Every time you successfully solve a puzzle, a new game is generated. Challenge yourself to get high-scores by solving as many puzzles consecutively as possible. Can be additionally customized for a more difficult experience.</p>
+                    <div id="scalingGameDesc" class="hidden">
+                        <p>An endless <strong>Wordle</strong> experience that gets progressively more difficult as you solve additional puzzles.</p>
+                        <table id="scalingRules">
+                            <tr>
+                                <th>
+                                    Rounds Completed
+                                </th>
+                                <th>
+                                    Change
+                                </th>
+                            </tr>
+                            <tr>
+                                <td>
+                                    3
+                                </td>
+                                <td>
+                                    600 second timer
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    5
+                                </td>
+                                <td>
+                                    540 second timer
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    5
+                                </td>
+                                <td>
+                                    480 second timer
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    7
+                                </td>
+                                <td>
+                                    420 second timer
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    9
+                                </td>
+                                <td>
+                                    5 guesses max to solve
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    11
+                                </td>
+                                <td>
+                                    360 second timer
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    13
+                                </td>
+                                <td>
+                                    300 second timer
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    15
+                                </td>
+                                <td>
+                                    4 guesses max to solve
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    17
+                                </td>
+                                <td>
+                                    240 second timer
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    19
+                                </td>
+                                <td>
+                                    270 second timer
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    21
+                                </td>
+                                <td>
+                                    240 second timer
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    23
+                                </td>
+                                <td>
+                                    210 second timer
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    25
+                                </td>
+                                <td>
+                                    180 second timer
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    27
+                                </td>
+                                <td>
+                                    150 second timer
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    29
+                                </td>
+                                <td>
+                                    120 second timer
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    30
+                                </td>
+                                <td>
+                                    3 guesses max to solve
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div id="advancedSettings" class="baseFlex flexRow innerMargin advancedSettings hidden">
+                        <div class="advancedSettingsCol baseFlex flexCol">
+                            <div class="advancedSettingsTitle baseFlex">
+                                <span>Timer (sec)</span>
+                            </div>
+                            <div class="advancedSettingsSelector baseFlex">
+                                <div id="timerEnableToggle" class="toggle">
+                                    <input type="checkbox" id="timerEnable">
+                                    <label for="timerEnable"></label>
+                                </div>
+                                <input id="timerLengthInput" disabled type="number" min="60" max="3600" value="600">
+                            </div>
                         </div>
-                        <div class="baseFlex tileBase tileBack">
-                            <span></span>
+                        <div class="advancedSettingsCol baseFlex flexCol">
+                            <div class="advancedSettingsTitle baseFlex">
+                                <span>Max Guesses</span>
+                            </div>
+                            <div class="advancedSettingsSelector baseFlex">
+                                <select name="maxGuesses" id="maxGuessesSelect">
+                                  <option value="6" selected>6</option>
+                                  <option value="5">5</option>
+                                  <option value="4">4</option>
+                                  <option value="3">3</option>
+                                  <option value="2">2</option>
+                                  <option value="1">1</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
                 </div>
+            </div>
+            <div id="scoreContainer" class="scoreContainer hidden">
+                <p>Temporary score text</p>
+            </div>
+            <div id="rowsContainer" class="absoluteParent">
+                <div id="playButton" class="playButton baseFlex">
+                    <i class="bi bi-play-fill"></i>
+                </div>
+                @for (int rows = 0; rows < 6; rows++)
+                {
+                <div class="baseFlex flexRow wordleRow" active-row=@(rows == 0 ? "true":"false") row-index=@(rows)>
+                    @for (int tiles = 0; tiles < 5; tiles ++)
+                    {
+                    <div class="tileContainer">
+                        <div class="tile" tile-index=@(tiles)>
+                            <div class="baseFlex tileBase tileFront">
+                                <span></span>
+                            </div>
+                            <div class="baseFlex tileBase tileBack">
+                                <span></span>
+                            </div>
+                        </div>
+                    </div>
+                    }
+                </div>
                 }
             </div>
-            }
             <div class="baseFlex flexCol keyboardContainer" id="keyboard">
                 <div class="baseFlex flexRow keyboardRow">
                     <div class="baseFlex baseKey" key="q"><span>Q</span></div>
@@ -98,12 +341,6 @@
 
                 </div>
             </div>
-        </div>
-        <div id="helpContainer" class="helpContainer hidden">
-            <p>Temporary help text</p>
-        </div>
-        <div id="scoreContainer" class="scoreContainer hidden">
-            <p>Temporary score text</p>
         </div>
     </div>
 </div>

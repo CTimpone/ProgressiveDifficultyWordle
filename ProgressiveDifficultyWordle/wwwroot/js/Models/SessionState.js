@@ -2,13 +2,18 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SessionState = void 0;
 class SessionState {
-    constructor(hardMode) {
+    constructor(hardMode, maxGuesses, timerEnabled, timerLength) {
         this.gameHistory = [];
         this.active = true;
         this.startTime = new Date();
-        this.gameTimerLimitExists = false;
+        if (timerEnabled === true) {
+            this.gameTimerLimitExists = true;
+            this.gameTimerLength = timerLength;
+        }
+        if (maxGuesses !== undefined) {
+            this.maxGuesses = maxGuesses;
+        }
         this.hardMode = hardMode;
-        this.maxGuesses = 6;
     }
     getHarder(roundsCompleted) {
         switch (roundsCompleted) {

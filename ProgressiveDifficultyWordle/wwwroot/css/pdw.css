@@ -55,6 +55,129 @@ span {
     align-items: center;
 }
 
+/*
+    Scrolls bar customization
+*/
+
+/* Works on Firefox */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: var(--offBlack) var(--absentGrey);
+}
+
+/* Works on Chrome, Edge, and Safari */
+*::-webkit-scrollbar {
+    width: 12px;
+}
+
+*::-webkit-scrollbar-track {
+    background: var(--offWhite);
+    border-radius: 20px;
+}
+
+*::-webkit-scrollbar-thumb {
+    background-color: var(--nightGrey);
+    border-radius: 20px;
+}
+
+.night *::-webkit-scrollbar-track {
+    background: var(--offBlack);
+    border-radius: 20px;
+}
+.night *::-webkit-scrollbar-thumb {
+    background-color: var(--nightGrey);
+    border-radius: 20px;
+}
+
+/*
+    End scrolls bar customization
+*/
+
+/*
+    Toggle switch, adapted from work of Aditya Bhandari
+*/
+
+input[type="checkbox"] {
+    display: none;
+}
+
+label {
+    color: var(--offBlack);
+    position: relative;
+}
+
+input[type="checkbox"] + label::before {
+    content: ' ';
+    display: block;
+    height: 18px;
+    width: 45px;
+    border: 1px solid var(--unknownGrey);
+    border-radius: 9px;
+    position: absolute;
+    top: 0px;
+    left: -65px;
+    background: var(--unknownGrey);
+}
+
+input[type="checkbox"] + label::after {
+    content: ' ';
+    display: block;
+    height: 30px;
+    width: 30px;
+    border: 1px solid var(--errorRed);
+    border-radius: 50%;
+    position: absolute;
+    top: -6px;
+    left: -75px;
+    background: var(--errorRed);
+    transition: all 0.3s ease-in;
+}
+
+input[type="checkbox"]:checked + label::after {
+    left: -40px;
+    transition: all 0.3s ease-in;
+    background: var(--matchGreen);
+    border-color: var(--matchGreen);
+}
+/*
+    End toggle switch implementation
+*/
+
+/*
+    Begin radio button customization
+    Adapted from work of Mark Heath
+    https://markheath.net/post/customize-radio-button-css
+*/
+
+.radioContainer { 
+    padding: 10px 10px;
+}
+
+.radioContainer input[type="radio"] {
+    opacity: 0;
+    position: fixed;
+    width: 0;
+}
+
+.radioContainer label, .fakeButton {
+    width: calc(33% - 26px);
+    margin: 0px 5px;
+    padding: 5px;
+    border-radius: 5px 5px;
+}
+
+
+.radioContainer input[type="radio"]:focus + label, .radioContainer input[type="radio"]:checked + label {
+    opacity: 0.8;
+    background: var(--matchGreen);
+    color: var(--offWhite);
+    cursor: pointer;
+}
+
+/*
+    End radio button customization
+*/
+
 .baseFlex {
     display: -webkit-box; /* OLD - iOS 6-, Safari 3.1-6 */
     display: -moz-box; /* OLD - Firefox 19- (buggy but mostly works) */
@@ -76,7 +199,7 @@ span {
 .gameboard {
     width: 40%;
     min-width: 330px;
-    max-width: 550px;
+    max-width: 539px;
     border: 3px solid var(--offBlack);
     border-color: var(--offBlack);
     margin: 30px auto;
@@ -91,11 +214,12 @@ span {
     border-color: var(--offBlack);
 }
 
-.subHeaderOption {
+.subHeaderOption, .radioContainer label, .fakeButton {
     flex-grow: 1;
     text-align: center;
-    width: 33%;
+    vertical-align: middle;
     font-size: 1em;
+    width: calc(33% - 6px);
     font-weight: bold;
     border: 3px solid;
     border-color: var(--offBlack);
@@ -105,7 +229,7 @@ span {
     padding: 0px 5px;
 }
 
-.subHeaderOption:hover {
+.subHeaderOption:hover, .radioContainer label:hover, .fakeButton:hover, .returnToBoardButton:hover {
     opacity: 0.8;
     background: var(--matchGreen);
     color: var(--offWhite);
@@ -153,6 +277,23 @@ span {
     padding: 5px;
 }
 
+.helpContainer, .scoreContainer, .settingsContainer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10;
+}
+
+.scrollable {
+    overflow-y: scroll;
+}
+
+.helpContainer p {
+    margin: 3px;
+}
+
 .notificationsContainer.invisible {
     -webkit-transition: all 0.3s linear;
     -moz-transition: all 0.3s linear;
@@ -192,6 +333,12 @@ span {
     max-width: 92px;
     margin: 3px;
     border: 1px solid var(--nightGrey);
+}
+
+.tileContainer.small {
+    max-width: 46px;
+    aspect-ratio: 1 / 1;
+    font-weight: bold;
 }
 
 .tile {
@@ -238,7 +385,7 @@ span {
     background: var(--offBlack);
 }
 
-.night div {
+.night div, .night label {
     background: var(--offBlack);
     color: var(--nightGrey);
     border-color: var(--nightGrey);
@@ -296,4 +443,135 @@ i.bi.errorRed {
 
 .keyboardRow {
     margin: 5px 0px;
+}
+
+.absoluteParent {
+    position: relative;
+}
+
+table {
+    margin: 10px auto;
+    border: 3px solid;
+    border-color: var(--offBlack);
+    border-collapse: collapse;
+    font-size: 0.9em;
+}
+
+
+table td, table th {
+    padding: 3px;
+    border: 1px solid;
+    border-color: var(--offBlack);
+}
+
+.night table, .night td, .night th {
+    border-color: var(--nightGrey);
+}
+
+.settingsToggleContainer {
+    display: block;
+    width: 30%;
+    font-weight: bold;
+    font-size: 1em;
+    margin: 10px auto;
+}
+
+.toggle {
+    position: relative;
+}
+
+p, .settingsToggleContainer label{
+    width: 100%;
+    display: block;
+}
+
+.innerMargin {
+    margin: 20px;
+}
+
+.fakeButton {
+    margin: 10px auto;
+}
+
+.playButton {
+    font-size: 500%;
+    position: absolute;
+    top: 20%;
+    left: calc(30% - 3px);
+    margin: auto;
+    width: 40%;
+    border: 3px solid var(--matchGreen);
+    border-radius: 10px;     
+    background: var(--offBlack);
+    color: var(--matchGreen);
+    z-index: 20;
+    cursor: pointer;
+}
+
+.night .playButton {
+    color: var(--matchGreen);
+    border: 3px solid var(--matchGreen);
+    background: var(--offBlack);
+}
+
+.advancedSettings {
+    border: 3px solid;
+    border-color: var(--offBlack);
+}
+
+.advancedSettings {
+    border: 3px solid;
+    border-color: var(--offBlack);
+    border-radius: 10px;
+    font-weight: bold;
+}
+
+.advancedSettingsCol {
+    width: calc(50%);
+    min-height: 130px;
+}
+
+.advancedSettingsTitle {
+    height: 25%;
+}
+
+.advancedSettingsSelector {
+    height: 75%;
+}
+
+.advancedSettingsSelector input, .advancedSettingsSelector select {
+    margin-top: 35px;
+    height: 37.5%;
+}
+
+
+.advancedSettingsCol span {
+    margin: 10px auto;
+}
+
+.advancedSettingsCol:first-child {
+    border-right: 3px solid;
+}
+
+.advancedSettings .toggle {
+    left: calc(50% + 10px);
+}
+
+.advancedSettingsCol select, .advancedSettingsCol input {
+    width: 80%;
+    font-size: 1.5em;
+    text-indent: 50%;
+    align-content: center;
+}
+
+.returnToBoardButton {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: calc(100%);
+    border-bottom: 3px solid;
+    border-color: var(--offBlack);
+    font-size: 2em;
+    font-weight: bold;
 }

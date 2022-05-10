@@ -11,11 +11,12 @@ const NotificationWrapper_1 = require("./Notification/NotificationWrapper");
 const NotificationType_1 = require("./Notification/NotificationType");
 const GuessResult_1 = require("./GuessResult");
 class Session {
-    constructor(type, hardMode, eligibleAnswers, eligibleGuesses, notificationTools, domManipulator) {
+    constructor(type, eligibleAnswers, eligibleGuesses, notificationTools, domManipulator, hardMode, maxGuesses, timerEnabled, timerLength) {
         this.type = type;
         this.messaging = notificationTools;
         this.score = new ScoreDetails_1.ScoreDetails();
-        this.state = new SessionState_1.SessionState(hardMode);
+        this.state = new SessionState_1.SessionState(hardMode, maxGuesses, timerEnabled, timerLength);
+        console.log(this.state);
         this.domManipulator = domManipulator;
         this.eligibleWords = new EligibleWords_1.EligibleWords(eligibleAnswers, eligibleGuesses);
         this.generateGame();
@@ -65,6 +66,7 @@ class Session {
         this.currentGame = new SingleGame_1.SingleGame(this.generateGameOptions(), this.eligibleWords, this.messaging, this.domManipulator, true);
         this.paintDetails();
         this.domManipulator.truncateBoard(this.currentGame.options.maxGuesses);
+        this.paintBoard();
     }
     generateGameOptions() {
         return new GameOptions_1.GameOptions(this.state.hardMode, this.state.maxGuesses, this.state.gameTimerLimitExists, this.state.gameTimerLength);
@@ -79,8 +81,7 @@ class Session {
             this.state.getHarder(this.score.roundsCompleted);
         }
         this.generateGame();
-        this.paintBoard();
     }
 }
 exports.Session = Session;
-//# sourceMappingURL=session.js.map
+//# sourceMappingURL=Session.js.map
