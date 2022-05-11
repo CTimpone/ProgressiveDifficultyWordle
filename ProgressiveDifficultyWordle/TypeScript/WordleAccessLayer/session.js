@@ -16,7 +16,6 @@ class Session {
         this.messaging = notificationTools;
         this.score = new ScoreDetails_1.ScoreDetails();
         this.state = new SessionState_1.SessionState(hardMode, maxGuesses, timerEnabled, timerLength);
-        console.log(this.state);
         this.gamePainter = gamePainter;
         this.eligibleWords = new EligibleWords_1.EligibleWords(eligibleAnswers, eligibleGuesses);
         this.generateGame();

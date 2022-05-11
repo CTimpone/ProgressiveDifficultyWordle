@@ -8,7 +8,7 @@ class SessionState {
         this.startTime = new Date();
         if (timerEnabled === true) {
             this.gameTimerLimitExists = true;
-            this.gameTimerLength = timerLength;
+            this.gameTimerLength = timerLength !== null && timerLength !== void 0 ? timerLength : 600;
         }
         else {
             this.gameTimerLimitExists = false;

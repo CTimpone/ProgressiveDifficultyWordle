@@ -17,7 +17,7 @@ export class SessionState {
 
         if (timerEnabled === true) {
             this.gameTimerLimitExists = true;
-            this.gameTimerLength = timerLength;
+            this.gameTimerLength = timerLength ?? 600;
         }
         else {
             this.gameTimerLimitExists = false;
