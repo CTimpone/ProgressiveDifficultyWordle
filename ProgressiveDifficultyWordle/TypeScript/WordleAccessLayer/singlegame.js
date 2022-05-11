@@ -77,7 +77,10 @@ class SingleGame {
                     }
                     break;
                 case LetterStatus_1.LetterStatus.Absent:
-                    if (this.letterState.Absent.indexOf(input[i]) === -1) {
+                    if (!this.letterState.Absent.includes(input[i]) &&
+                        !Array.from(this.letterState.ExactMatch.values()).includes(input[i]) &&
+                        !this.letterState.PresentBadLocations.has(input[i]) &&
+                        i === input.lastIndexOf(input[i])) {
                         this.letterState.Absent.push(input[i]);
                     }
                     break;
@@ -114,9 +117,7 @@ class SingleGame {
         this.timerInterval = setInterval(function () {
             seconds += increment;
             gameScope.gamePainter.paintTimer(seconds);
-            console.log(gameScope.options.maxTimeLimitExists, seconds);
             if (gameScope.options.maxTimeLimitExists && seconds <= 0) {
-                console.log("triggered");
                 gameScope.messaging.message = new NotificationWrapper_1.NotificationWrapper(NotificationType_1.NotificationType.Error, `The timer has ended; the correct answer was '${gameScope.chosenWord.toUpperCase()}'`);
                 gameScope.endTime = new Date();
                 clearInterval(gameScope.timerInterval);

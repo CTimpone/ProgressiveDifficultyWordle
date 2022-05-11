@@ -47,4 +47,4 @@ class ScoreDetails {
 }
 exports.ScoreDetails = ScoreDetails;
 ScoreDetails.ROUND_SCORE_GUESS_MULTIPLIERS = [2, 1.5, 1.25, 1, 0.8, 0.5];
-//# sourceMappingURL=scoredetails.js.map
+//# sourceMappingURL=ScoreDetails.js.map

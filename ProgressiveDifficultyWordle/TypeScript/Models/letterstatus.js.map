@@ -1,1 +1,1 @@
-{"version":3,"file":"letterstatus.js","sourceRoot":"","sources":["letterstatus.ts"],"names":[],"mappings":";;;AAAA,IAAY,YAKX;AALD,WAAY,YAAY;IACpB,qDAAa,CAAA;IACb,2DAAgB,CAAA;IAChB,iEAAmB,CAAA;IACnB,mDAAY,CAAA;AAChB,CAAC,EALW,YAAY,GAAZ,oBAAY,KAAZ,oBAAY,QAKvB"}
+{"version":3,"file":"LetterStatus.js","sourceRoot":"","sources":["LetterStatus.ts"],"names":[],"mappings":";;;AAAA,IAAY,YAKX;AALD,WAAY,YAAY;IACpB,qDAAa,CAAA;IACb,2DAAgB,CAAA;IAChB,iEAAmB,CAAA;IACnB,mDAAY,CAAA;AAChB,CAAC,EALW,YAAY,GAAZ,oBAAY,KAAZ,oBAAY,QAKvB"}

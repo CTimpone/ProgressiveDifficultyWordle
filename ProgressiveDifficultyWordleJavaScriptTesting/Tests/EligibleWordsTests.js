@@ -3,9 +3,9 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const assert = require("assert");
 const sinon = require("sinon");
-const FiveLetterAnswers_1 = require("../../progressivedifficultywordle/typescript/Constants/Words/FiveLetterAnswers");
-const FiveLetterGuesses_1 = require("../../progressivedifficultywordle/typescript/Constants/Words/FiveLetterGuesses");
-const eligiblewords_1 = require("../../progressivedifficultywordle/typescript/models/eligiblewords");
+const FiveLetterAnswers_1 = require("../../ProgressiveDifficultyWordle/TypeScript/Constants/Words/FiveLetterAnswers");
+const FiveLetterGuesses_1 = require("../../ProgressiveDifficultyWordle/TypeScript/Constants/Words/FiveLetterGuesses");
+const EligibleWords_1 = require("../../ProgressiveDifficultyWordle/TypeScript/WordleAccessLayer/EligibleWords");
 describe("EligibleWords", () => {
     var consoleSpy;
     beforeEach(() => {
@@ -18,7 +18,7 @@ describe("EligibleWords", () => {
         it('should use the submitted parameters to populate lists when both are present.', () => {
             let answerList = ['first'];
             let guessList = ['first', 'again'];
-            let ew = new eligiblewords_1.EligibleWords(answerList, guessList);
+            let ew = new EligibleWords_1.EligibleWords(answerList, guessList);
             assert.equal(answerList.length, ew.eligibleAnswers.length);
             assert.equal(answerList[0], ew.eligibleAnswers[0]);
             assert.equal(guessList.length, ew.eligibleGuesses.length);
@@ -30,7 +30,7 @@ describe("EligibleWords", () => {
     });
     describe("#buildGuessSearchHelper", () => {
         it('should build a character-based bsearch-localizing map.', () => {
-            let ew = new eligiblewords_1.EligibleWords(FiveLetterAnswers_1.FIVE_LETTER_ANSWERS, FiveLetterGuesses_1.FIVE_LETTER_GUESSES);
+            let ew = new EligibleWords_1.EligibleWords(FiveLetterAnswers_1.FIVE_LETTER_ANSWERS, FiveLetterGuesses_1.FIVE_LETTER_GUESSES);
             assert.equal(FiveLetterAnswers_1.FIVE_LETTER_ANSWERS.length, ew.eligibleAnswers.length);
             assert.equal(FiveLetterGuesses_1.FIVE_LETTER_GUESSES.length, ew.eligibleGuesses.length);
             //Resetting the guessSearchHelper to allow for direct testing of the function, rather than relying on call initiated in constuctor
@@ -60,7 +60,7 @@ describe("EligibleWords", () => {
         it('should build a character-based bsearch-localizing map when there is only a single eligibleGuess.', () => {
             let answerList = ['apple'];
             let guessList = ['apple'];
-            let ew = new eligiblewords_1.EligibleWords(answerList, guessList);
+            let ew = new EligibleWords_1.EligibleWords(answerList, guessList);
             assert.equal(1, ew.eligibleAnswers.length);
             assert.equal(1, ew.eligibleGuesses.length);
             //Resetting the guessSearchHelper to allow for direct testing of the function, rather than relying on call initiated in constuctor
@@ -75,7 +75,7 @@ describe("EligibleWords", () => {
         it('should build a character-based bsearch-localizing map when all items in eligibleGuesses start with the same character.', () => {
             let answerList = ['apple'];
             let guessList = ['abbot', 'abhor', 'abide', 'abode', 'apple'];
-            let ew = new eligiblewords_1.EligibleWords(answerList, guessList);
+            let ew = new EligibleWords_1.EligibleWords(answerList, guessList);
             assert.equal(1, ew.eligibleAnswers.length);
             assert.equal(5, ew.eligibleGuesses.length);
             //Resetting the guessSearchHelper to allow for direct testing of the function, rather than relying on call initiated in constuctor
@@ -90,7 +90,7 @@ describe("EligibleWords", () => {
         it('does not care about any intersection of the contents of eligibleAnswers and eligibleGuesses when building the search map.', () => {
             let answerList = ['apple'];
             let guessList = ['abbot', 'abhor', 'abide', 'abode'];
-            let ew = new eligiblewords_1.EligibleWords(answerList, guessList);
+            let ew = new EligibleWords_1.EligibleWords(answerList, guessList);
             assert.equal(1, ew.eligibleAnswers.length);
             assert.equal(4, ew.eligibleGuesses.length);
             //Resetting the guessSearchHelper to allow for direct testing of the function, rather than relying on call initiated in constuctor
@@ -105,7 +105,7 @@ describe("EligibleWords", () => {
         it('performs no length checks against items in eligibleGuesses when building the map.', () => {
             let answerList = ['apple'];
             let guessList = ['abbot', 'abhor', 'abhorrent', 'abide', 'abode', 'apple', 'applied'];
-            let ew = new eligiblewords_1.EligibleWords(answerList, guessList);
+            let ew = new EligibleWords_1.EligibleWords(answerList, guessList);
             assert.equal(1, ew.eligibleAnswers.length);
             assert.equal(7, ew.eligibleGuesses.length);
             //Resetting the guessSearchHelper to allow for direct testing of the function, rather than relying on call initiated in constuctor
@@ -122,7 +122,7 @@ describe("EligibleWords", () => {
         it('should locate any word in the eligibleGuesses list, returning true.', () => {
             let answerList = ['apple'];
             let guessList = ['abbot', 'abhor', 'abide', 'abode', 'apple'];
-            let ew = new eligiblewords_1.EligibleWords(answerList, guessList);
+            let ew = new EligibleWords_1.EligibleWords(answerList, guessList);
             for (let guess of guessList) {
                 assert.equal(true, ew.guessInWordList(guess));
             }
@@ -130,13 +130,13 @@ describe("EligibleWords", () => {
         it('should locate fail to find a word not in the eligibleGuesses list, returning false.', () => {
             let answerList = ['apple'];
             let guessList = ['abbot', 'abhor', 'abide', 'abode', 'apple'];
-            let ew = new eligiblewords_1.EligibleWords(answerList, guessList);
+            let ew = new EligibleWords_1.EligibleWords(answerList, guessList);
             assert.equal(false, ew.guessInWordList('again'));
         });
         it('relies on the contents of the guessSearchHelper to return accurate returns, resulting in improper setup not finding values that are present in eligibleGuesses.', () => {
             let answerList = ['apple'];
             let guessList = ['abbot', 'abhor', 'abide', 'abode', 'apple', 'birch'];
-            let ew = new eligiblewords_1.EligibleWords(answerList, guessList);
+            let ew = new EligibleWords_1.EligibleWords(answerList, guessList);
             ew.guessSearchHelper = new Map();
             ew.guessSearchHelper.set('a', [0, 4]);
             assert.equal(false, ew.guessInWordList('birch'));

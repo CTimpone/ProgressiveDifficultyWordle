@@ -9,4 +9,4 @@ class LetterState {
     }
 }
 exports.LetterState = LetterState;
-//# sourceMappingURL=letterstate.js.map
+//# sourceMappingURL=LetterState.js.map

@@ -3,8 +3,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const assert = require("assert");
 const sinon = require("sinon");
-const GuessDetails_1 = require("../../progressivedifficultywordle/typescript/models/GuessDetails");
-const letterstatus_1 = require("../../progressivedifficultywordle/typescript/models/letterstatus");
+const GuessDetails_1 = require("../../ProgressiveDifficultyWordle/TypeScript/WordleAccessLayer/GuessDetails");
+const LetterStatus_1 = require("../../ProgressiveDifficultyWordle/TypeScript/Models/LetterStatus");
 describe("GuessDetails", () => {
     var consoleSpy;
     beforeEach(() => {
@@ -71,7 +71,7 @@ describe("GuessDetails", () => {
             answerMap.set('t', [4]);
             gd.populateCharacterStates(guessMap, answerMap);
             for (let i = 0; i < 5; i++) {
-                assert.equal(letterstatus_1.LetterStatus.ExactMatch, gd.characterStates[i]);
+                assert.equal(LetterStatus_1.LetterStatus.ExactMatch, gd.characterStates[i]);
             }
         });
         it('fills character states array entirely with Absent status when input maps have no intersection.', () => {
@@ -91,7 +91,7 @@ describe("GuessDetails", () => {
             answerMap.set('e', [4]);
             gd.populateCharacterStates(guessMap, answerMap);
             for (let i = 0; i < 5; i++) {
-                assert.equal(letterstatus_1.LetterStatus.Absent, gd.characterStates[i]);
+                assert.equal(LetterStatus_1.LetterStatus.Absent, gd.characterStates[i]);
             }
         });
         it('fills character states array entirely with WrongLocation status when input maps have no intersection.', () => {
@@ -111,7 +111,7 @@ describe("GuessDetails", () => {
             answerMap.set('t', [4]);
             gd.populateCharacterStates(guessMap, answerMap);
             for (let i = 0; i < 5; i++) {
-                assert.equal(letterstatus_1.LetterStatus.WrongLocation, gd.characterStates[i]);
+                assert.equal(LetterStatus_1.LetterStatus.WrongLocation, gd.characterStates[i]);
             }
         });
         it('fills character states array entirely with all statuses to accurately represent intersection.', () => {
@@ -130,11 +130,11 @@ describe("GuessDetails", () => {
             guessMap.set('n', [4]);
             answerMap.set('r', [4]);
             gd.populateCharacterStates(guessMap, answerMap);
-            assert.equal(letterstatus_1.LetterStatus.WrongLocation, gd.characterStates[0]);
-            assert.equal(letterstatus_1.LetterStatus.Absent, gd.characterStates[1]);
-            assert.equal(letterstatus_1.LetterStatus.Absent, gd.characterStates[2]);
-            assert.equal(letterstatus_1.LetterStatus.ExactMatch, gd.characterStates[3]);
-            assert.equal(letterstatus_1.LetterStatus.Absent, gd.characterStates[4]);
+            assert.equal(LetterStatus_1.LetterStatus.WrongLocation, gd.characterStates[0]);
+            assert.equal(LetterStatus_1.LetterStatus.Absent, gd.characterStates[1]);
+            assert.equal(LetterStatus_1.LetterStatus.Absent, gd.characterStates[2]);
+            assert.equal(LetterStatus_1.LetterStatus.ExactMatch, gd.characterStates[3]);
+            assert.equal(LetterStatus_1.LetterStatus.Absent, gd.characterStates[4]);
         });
     });
 });

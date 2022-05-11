@@ -7,4 +7,4 @@ var GameType;
     GameType[GameType["Endless"] = 1] = "Endless";
     GameType[GameType["ProgressiveDifficulty"] = 2] = "ProgressiveDifficulty";
 })(GameType = exports.GameType || (exports.GameType = {}));
-//# sourceMappingURL=gametype.js.map
+//# sourceMappingURL=GameType.js.map

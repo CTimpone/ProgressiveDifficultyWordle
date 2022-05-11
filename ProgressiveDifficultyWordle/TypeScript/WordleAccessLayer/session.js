@@ -1,15 +1,15 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Session = void 0;
-const GameType_1 = require("./GameType");
+const GameType_1 = require("../Models/GameType");
 const ScoreDetails_1 = require("./ScoreDetails");
 const SingleGame_1 = require("./SingleGame");
-const SessionState_1 = require("./SessionState");
-const GameOptions_1 = require("./GameOptions");
+const SessionState_1 = require("../Models/SessionState");
+const GameOptions_1 = require("../Models/GameOptions");
 const EligibleWords_1 = require("./EligibleWords");
-const NotificationWrapper_1 = require("./Notification/NotificationWrapper");
-const NotificationType_1 = require("./Notification/NotificationType");
-const GuessResult_1 = require("./GuessResult");
+const NotificationWrapper_1 = require("../Notification/NotificationWrapper");
+const NotificationType_1 = require("../Models/NotificationType");
+const GuessResult_1 = require("../Models/GuessResult");
 class Session {
     constructor(type, eligibleAnswers, eligibleGuesses, notificationTools, gamePainter, hardMode, maxGuesses, timerEnabled, timerLength) {
         this.type = type;

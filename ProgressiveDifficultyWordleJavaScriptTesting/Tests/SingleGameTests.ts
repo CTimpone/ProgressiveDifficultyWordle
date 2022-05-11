@@ -2,20 +2,26 @@
 
 import assert = require('assert');
 import sinon = require('sinon');
-import { FIVE_LETTER_ANSWERS } from '../../progressivedifficultywordle/typescript/Constants/Words/FiveLetterAnswers';
-import { FIVE_LETTER_GUESSES } from '../../progressivedifficultywordle/typescript/Constants/Words/FiveLetterGuesses';
-import { EligibleWords } from '../../progressivedifficultywordle/typescript/models/eligiblewords';
-import { GameOptions } from '../../progressivedifficultywordle/typescript/models/gameoptions';
-import { GuessDetails } from '../../progressivedifficultywordle/typescript/models/GuessDetails';
-import { NotificationEventing } from '../../progressivedifficultywordle/typescript/models/Notification/NotificationEventing';
-import { NotificationType } from '../../progressivedifficultywordle/typescript/models/Notification/NotificationType';
-import { NotificationWrapper } from '../../progressivedifficultywordle/typescript/models/Notification/NotificationWrapper';
-import { SingleGame } from '../../progressivedifficultywordle/typescript/models/singlegame';
+import * as TypeMoq from "typemoq";
+
+import { EligibleWords } from '../../ProgressiveDifficultyWordle/TypeScript/WordleAccessLayer/eligiblewords';
+import { GameOptions } from '../../ProgressiveDifficultyWordle/TypeScript/models/gameoptions';
+import { GuessDetails } from '../../ProgressiveDifficultyWordle/TypeScript/WordleAccessLayer/GuessDetails';
+import { NotificationEventing } from '../../ProgressiveDifficultyWordle/TypeScript/Notification/NotificationEventing';
+import { NotificationType } from '../../ProgressiveDifficultyWordle/TypeScript/Models/NotificationType';
+import { NotificationWrapper } from '../../ProgressiveDifficultyWordle/TypeScript/Notification/NotificationWrapper';
+import { SingleGame } from '../../ProgressiveDifficultyWordle/TypeScript/WordleAccessLayer/singlegame';
+import { GamePainterInterface } from '../../progressivedifficultywordle/typescript/Interfaces/GamePainterInterface';
 
 describe("SingleGame", () => {
     var consoleSpy;
+    var notify;
+    let gamePainterMock: TypeMoq.IMock<GamePainterInterface>;
+
     beforeEach(() => {
         consoleSpy = sinon.spy(console, 'log');
+        notify = new NotificationEventing();
+        gamePainterMock = TypeMoq.Mock.ofType<GamePainterInterface>();
     });
 
     afterEach(() => {
@@ -23,22 +29,59 @@ describe("SingleGame", () => {
     });
 
     describe("#constructor", () => {
-        it('should choose a random word as answer from the input EligibleWords.eligibleAnswers', () => {
+        it('should choose a random word as answer from the input EligibleWords eligibleAnswers', () => {
             let answerList = ['apple'];
             let guessList = ['abbot', 'abhor', 'abide', 'abode', 'apple'];
 
             let ew = new EligibleWords(answerList, guessList);
             let options = new GameOptions();
-            let notify = new NotificationEventing();
-            notify.internalEventListener = function (wrapper: NotificationWrapper) {
+            notify.registerListener(function (wrapper: NotificationWrapper) {
                 assert.fail("No notification should occur");
-            }
+            });
 
-            let game = new SingleGame(options, ew, notify);
+            let game = new SingleGame(options, ew, notify, gamePainterMock.object, false);
+            assert.notEqual(undefined, game.chosenWord);
+            assert.equal(true, ew.eligibleAnswers.indexOf(game.chosenWord) !== -1);
+
+            gamePainterMock.verify(x => x.typeLetter(TypeMoq.It.isAny(), TypeMoq.It.isAny()), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.paintBoard(TypeMoq.It.isAny(), TypeMoq.It.isAny(), TypeMoq.It.isAny(),
+                TypeMoq.It.isAny()), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.resetBoard(), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.paintWords(TypeMoq.It.isAny(), TypeMoq.It.isAny(), TypeMoq.It.isAny(),
+                TypeMoq.It.isAny(), TypeMoq.It.isAny()), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.paintDetails(TypeMoq.It.isAny(), TypeMoq.It.isAny(), TypeMoq.It.isAny()), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.truncateBoard(TypeMoq.It.isAny()), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.paintTimer(TypeMoq.It.isAny()), TypeMoq.Times.never());
+        });
+
+        it('should continuously paint the timer when the parameter is set as true', async () => {
+            let answerList = ['apple'];
+            let guessList = ['abbot', 'abhor', 'abide', 'abode', 'apple'];
+
+            let ew = new EligibleWords(answerList, guessList);
+            let options = new GameOptions();
+            notify.registerListener(function (wrapper: NotificationWrapper) {
+                assert.fail("No notification should occur");
+            });
+            
+            let game = new SingleGame(options, ew, notify, gamePainterMock.object, true);
+
+            await new Promise(r => setTimeout(r, 1100));
 
             assert.notEqual(undefined, game.chosenWord);
             assert.equal(true, ew.eligibleAnswers.indexOf(game.chosenWord) !== -1);
+
+            gamePainterMock.verify(x => x.typeLetter(TypeMoq.It.isAny(), TypeMoq.It.isAny()), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.paintBoard(TypeMoq.It.isAny(), TypeMoq.It.isAny(), TypeMoq.It.isAny(),
+                TypeMoq.It.isAny()), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.resetBoard(), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.paintWords(TypeMoq.It.isAny(), TypeMoq.It.isAny(), TypeMoq.It.isAny(),
+                TypeMoq.It.isAny(), TypeMoq.It.isAny()), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.paintDetails(TypeMoq.It.isAny(), TypeMoq.It.isAny(), TypeMoq.It.isAny()), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.truncateBoard(TypeMoq.It.isAny()), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.paintTimer(TypeMoq.It.isAnyNumber()), TypeMoq.Times.atLeastOnce());
         });
+
     });
 
     describe("#validateGuess", () => {
@@ -48,14 +91,22 @@ describe("SingleGame", () => {
 
             let ew = new EligibleWords(answerList, guessList);
             let options = new GameOptions();
-            let notify = new NotificationEventing();
             notify.internalEventListener = function (wrapper: NotificationWrapper) {
                 assert.fail("No notification should occur");
             }
 
-            let game = new SingleGame(options, ew, notify);
+            let game = new SingleGame(options, ew, notify, gamePainterMock.object, false);
 
             assert.equal(true, game.validateGuess("abbot"));
+
+            gamePainterMock.verify(x => x.typeLetter(TypeMoq.It.isAny(), TypeMoq.It.isAny()), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.paintBoard(TypeMoq.It.isAny(), TypeMoq.It.isAny(), TypeMoq.It.isAny(),
+                TypeMoq.It.isAny()), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.resetBoard(), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.paintWords(TypeMoq.It.isAny(), TypeMoq.It.isAny(), TypeMoq.It.isAny(),
+                TypeMoq.It.isAny(), TypeMoq.It.isAny()), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.paintDetails(TypeMoq.It.isAny(), TypeMoq.It.isAny(), TypeMoq.It.isAny()), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.truncateBoard(TypeMoq.It.isAny()), TypeMoq.Times.never());
         });
 
         it('does not update the game\'s userGuesses list regardless of whether the guess is valid or invalid.', () => {
@@ -64,10 +115,9 @@ describe("SingleGame", () => {
 
             let ew = new EligibleWords(answerList, guessList);
             let options = new GameOptions();
-            let notify = new NotificationEventing();
             notify.internalEventListener = function (wrapper: NotificationWrapper) { };
 
-            let game = new SingleGame(options, ew, notify);
+            let game = new SingleGame(options, ew, notify, gamePainterMock.object, false);
 
             assert.equal(true, game.validateGuess("abbot"));
             assert.equal(0, game.userGuesses);
@@ -75,6 +125,14 @@ describe("SingleGame", () => {
             assert.equal(false, game.validateGuess("abuzz"));
             assert.equal(0, game.userGuesses);
 
+            gamePainterMock.verify(x => x.typeLetter(TypeMoq.It.isAny(), TypeMoq.It.isAny()), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.paintBoard(TypeMoq.It.isAny(), TypeMoq.It.isAny(), TypeMoq.It.isAny(),
+                TypeMoq.It.isAny()), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.resetBoard(), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.paintWords(TypeMoq.It.isAny(), TypeMoq.It.isAny(), TypeMoq.It.isAny(),
+                TypeMoq.It.isAny(), TypeMoq.It.isAny()), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.paintDetails(TypeMoq.It.isAny(), TypeMoq.It.isAny(), TypeMoq.It.isAny()), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.truncateBoard(TypeMoq.It.isAny()), TypeMoq.Times.never());
         });
 
         it('should return false if the game has ended.', () => {
@@ -83,16 +141,24 @@ describe("SingleGame", () => {
 
             let ew = new EligibleWords(answerList, guessList);
             let options = new GameOptions();
-            let notify = new NotificationEventing();
             notify.internalEventListener = function (wrapper: NotificationWrapper) {
                 assert.equal(NotificationType.Error, wrapper.type);
                 assert.equal("The game has already ended.", wrapper.message);
             }
 
-            let game = new SingleGame(options, ew, notify);
+            let game = new SingleGame(options, ew, notify, gamePainterMock.object, false);
             game.endTime = new Date();
 
             assert.equal(false, game.validateGuess("wrong"));
+
+            gamePainterMock.verify(x => x.typeLetter(TypeMoq.It.isAny(), TypeMoq.It.isAny()), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.paintBoard(TypeMoq.It.isAny(), TypeMoq.It.isAny(), TypeMoq.It.isAny(),
+                TypeMoq.It.isAny()), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.resetBoard(), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.paintWords(TypeMoq.It.isAny(), TypeMoq.It.isAny(), TypeMoq.It.isAny(),
+                TypeMoq.It.isAny(), TypeMoq.It.isAny()), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.paintDetails(TypeMoq.It.isAny(), TypeMoq.It.isAny(), TypeMoq.It.isAny()), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.truncateBoard(TypeMoq.It.isAny()), TypeMoq.Times.never());
         });
 
         it('should return false if the user has already submitted guesses equal to the configured max guesses.', () => {
@@ -101,17 +167,25 @@ describe("SingleGame", () => {
 
             let ew = new EligibleWords(answerList, guessList);
             let options = new GameOptions(false, 1);
-            let notify = new NotificationEventing();
             notify.internalEventListener = function (wrapper: NotificationWrapper) {
                 assert.equal(NotificationType.Error, wrapper.type);
-                assert.equal("Exceeded max number (1) of guesses.", wrapper.message);
+                assert.equal("Exceeded max number 1 of guesses.", wrapper.message);
             }
 
-            let game = new SingleGame(options, ew, notify);
+            let game = new SingleGame(options, ew, notify, gamePainterMock.object, false);
             game.userGuesses.push(new GuessDetails("other", game.chosenWord));
 
             assert.equal(game.options.maxGuesses, game.userGuesses.length);
             assert.equal(false, game.validateGuess("wrong"));
+
+            gamePainterMock.verify(x => x.typeLetter(TypeMoq.It.isAny(), TypeMoq.It.isAny()), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.paintBoard(TypeMoq.It.isAny(), TypeMoq.It.isAny(), TypeMoq.It.isAny(),
+                TypeMoq.It.isAny()), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.resetBoard(), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.paintWords(TypeMoq.It.isAny(), TypeMoq.It.isAny(), TypeMoq.It.isAny(),
+                TypeMoq.It.isAny(), TypeMoq.It.isAny()), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.paintDetails(TypeMoq.It.isAny(), TypeMoq.It.isAny(), TypeMoq.It.isAny()), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.truncateBoard(TypeMoq.It.isAny()), TypeMoq.Times.never());
         });
 
         it('should return false if the user has already submitted guesses greater than the configured max guesses.', () => {
@@ -120,18 +194,26 @@ describe("SingleGame", () => {
 
             let ew = new EligibleWords(answerList, guessList);
             let options = new GameOptions(false, 1);
-            let notify = new NotificationEventing();
             notify.internalEventListener = function (wrapper: NotificationWrapper) {
                 assert.equal(NotificationType.Error, wrapper.type);
-                assert.equal("Exceeded max number (1) of guesses.", wrapper.message);
+                assert.equal("Exceeded max number 1 of guesses.", wrapper.message);
             }
 
-            let game = new SingleGame(options, ew, notify);
+            let game = new SingleGame(options, ew, notify, gamePainterMock.object, false);
             game.userGuesses.push(new GuessDetails("other", game.chosenWord));
             game.userGuesses.push(new GuessDetails("again", game.chosenWord));
 
             assert.ok(game.options.maxGuesses < game.userGuesses.length);
             assert.equal(false, game.validateGuess("wrong"));
+
+            gamePainterMock.verify(x => x.typeLetter(TypeMoq.It.isAny(), TypeMoq.It.isAny()), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.paintBoard(TypeMoq.It.isAny(), TypeMoq.It.isAny(), TypeMoq.It.isAny(),
+                TypeMoq.It.isAny()), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.resetBoard(), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.paintWords(TypeMoq.It.isAny(), TypeMoq.It.isAny(), TypeMoq.It.isAny(),
+                TypeMoq.It.isAny(), TypeMoq.It.isAny()), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.paintDetails(TypeMoq.It.isAny(), TypeMoq.It.isAny(), TypeMoq.It.isAny()), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.truncateBoard(TypeMoq.It.isAny()), TypeMoq.Times.never());
         });
 
         it('should return false if the input is not all lower-case letters.', () => {
@@ -140,19 +222,27 @@ describe("SingleGame", () => {
 
             let ew = new EligibleWords(answerList, guessList);
             let options = new GameOptions();
-            let notify = new NotificationEventing();
             notify.internalEventListener = function (wrapper: NotificationWrapper) {
                 assert.equal(NotificationType.Error, wrapper.type);
                 assert.equal("Invalid input.", wrapper.message);
             }
 
-            let game = new SingleGame(options, ew, notify);
+            let game = new SingleGame(options, ew, notify, gamePainterMock.object, false);
 
             assert.equal(false, game.validateGuess("WRONG"));
             assert.equal(false, game.validateGuess("WRoNG"));
             assert.equal(false, game.validateGuess("wrOng"));
             assert.equal(false, game.validateGuess("!rong"));
             assert.equal(false, game.validateGuess("wr0ng"));
+
+            gamePainterMock.verify(x => x.typeLetter(TypeMoq.It.isAny(), TypeMoq.It.isAny()), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.paintBoard(TypeMoq.It.isAny(), TypeMoq.It.isAny(), TypeMoq.It.isAny(),
+                TypeMoq.It.isAny()), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.resetBoard(), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.paintWords(TypeMoq.It.isAny(), TypeMoq.It.isAny(), TypeMoq.It.isAny(),
+                TypeMoq.It.isAny(), TypeMoq.It.isAny()), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.paintDetails(TypeMoq.It.isAny(), TypeMoq.It.isAny(), TypeMoq.It.isAny()), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.truncateBoard(TypeMoq.It.isAny()), TypeMoq.Times.never());
         });
 
         it('should return false if the input does not match the length of the answer.', () => {
@@ -161,19 +251,27 @@ describe("SingleGame", () => {
 
             let ew = new EligibleWords(answerList, guessList);
             let options = new GameOptions();
-            let notify = new NotificationEventing();
             notify.internalEventListener = function (wrapper: NotificationWrapper) {
                 assert.equal(NotificationType.Error, wrapper.type);
                 assert.equal("Invalid input.", wrapper.message);
             }
 
-            let game = new SingleGame(options, ew, notify);
+            let game = new SingleGame(options, ew, notify, gamePainterMock.object, false);
 
             assert.equal(false, game.validateGuess("abbo"));
             assert.equal(false, game.validateGuess("abho"));
             assert.equal(false, game.validateGuess("abid"));
             assert.equal(false, game.validateGuess("ab"));
             assert.equal(false, game.validateGuess("appple"));
+
+            gamePainterMock.verify(x => x.typeLetter(TypeMoq.It.isAny(), TypeMoq.It.isAny()), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.paintBoard(TypeMoq.It.isAny(), TypeMoq.It.isAny(), TypeMoq.It.isAny(),
+                TypeMoq.It.isAny()), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.resetBoard(), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.paintWords(TypeMoq.It.isAny(), TypeMoq.It.isAny(), TypeMoq.It.isAny(),
+                TypeMoq.It.isAny(), TypeMoq.It.isAny()), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.paintDetails(TypeMoq.It.isAny(), TypeMoq.It.isAny(), TypeMoq.It.isAny()), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.truncateBoard(TypeMoq.It.isAny()), TypeMoq.Times.never());
         });
 
         it('should return false if the game is configured for hard-mode, and the guess does not have all completely known characters present.', () => {
@@ -182,18 +280,26 @@ describe("SingleGame", () => {
 
             let ew = new EligibleWords(answerList, guessList);
             let options = new GameOptions(true);
-            let notify = new NotificationEventing();
             notify.internalEventListener = function (wrapper: NotificationWrapper) {
                 assert.equal(NotificationType.Error, wrapper.type);
                 assert.equal("Hard mode rules violated: 'b' must be present at character index 1 of 4.", wrapper.message);
             }
 
-            let game = new SingleGame(options, ew, notify);
+            let game = new SingleGame(options, ew, notify, gamePainterMock.object, false);
             game.letterState.ExactMatch.set(0, 'a');
             game.letterState.ExactMatch.set(1, 'b');
             game.letterState.ExactMatch.set(2, 'h');
 
             assert.equal(false, game.validateGuess("apple"));
+
+            gamePainterMock.verify(x => x.typeLetter(TypeMoq.It.isAny(), TypeMoq.It.isAny()), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.paintBoard(TypeMoq.It.isAny(), TypeMoq.It.isAny(), TypeMoq.It.isAny(),
+                TypeMoq.It.isAny()), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.resetBoard(), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.paintWords(TypeMoq.It.isAny(), TypeMoq.It.isAny(), TypeMoq.It.isAny(),
+                TypeMoq.It.isAny(), TypeMoq.It.isAny()), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.paintDetails(TypeMoq.It.isAny(), TypeMoq.It.isAny(), TypeMoq.It.isAny()), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.truncateBoard(TypeMoq.It.isAny()), TypeMoq.Times.never());
         });
 
         it('should return true if the game is configured for hard-mode, and the guess does have all completely known characters present, but ignores characters known to be present, but not the exact location.', () => {
@@ -202,37 +308,53 @@ describe("SingleGame", () => {
 
             let ew = new EligibleWords(answerList, guessList);
             let options = new GameOptions(true);
-            let notify = new NotificationEventing();
             notify.internalEventListener = function (wrapper: NotificationWrapper) {
                 assert.fail("No notification should occur");
             }
 
-            let game = new SingleGame(options, ew, notify);
+            let game = new SingleGame(options, ew, notify, gamePainterMock.object, false);
             game.letterState.ExactMatch.set(0, 'a');
             game.letterState.ExactMatch.set(1, 'b');
             game.letterState.PresentBadLocations.set('o', [3]);
 
             assert.equal(true, game.validateGuess("abuzz"));
+
+            gamePainterMock.verify(x => x.typeLetter(TypeMoq.It.isAny(), TypeMoq.It.isAny()), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.paintBoard(TypeMoq.It.isAny(), TypeMoq.It.isAny(), TypeMoq.It.isAny(),
+                TypeMoq.It.isAny()), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.resetBoard(), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.paintWords(TypeMoq.It.isAny(), TypeMoq.It.isAny(), TypeMoq.It.isAny(),
+                TypeMoq.It.isAny(), TypeMoq.It.isAny()), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.paintDetails(TypeMoq.It.isAny(), TypeMoq.It.isAny(), TypeMoq.It.isAny()), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.truncateBoard(TypeMoq.It.isAny()), TypeMoq.Times.never());
         });
 
-        it('should return false if the guess in not in the EligibleWords.eligibleGuesses list.', () => {
+        it('should return false if the guess is not in the EligibleWords eligibleGuesses list.', () => {
             let answerList = ['abhor'];
             let guessList = ['abbot', 'abhor', 'abide', 'abode', 'apple'];
 
             let ew = new EligibleWords(answerList, guessList);
             let options = new GameOptions(true);
-            let notify = new NotificationEventing();
             notify.internalEventListener = function (wrapper: NotificationWrapper) {
                 assert.equal(NotificationType.Error, wrapper.type);
-                assert.equal("Guess is not in word list.", wrapper.message);
+                assert.equal("'ABUZZ' is not in word list.", wrapper.message);
             }
 
-            let game = new SingleGame(options, ew, notify);
+            let game = new SingleGame(options, ew, notify, gamePainterMock.object, false);
             game.letterState.ExactMatch.set(0, 'a');
             game.letterState.ExactMatch.set(1, 'b');
 
             assert.equal(false, game.validateGuess("abuzz"));
             assert.equal(-1, game.eligibleWords.eligibleGuesses.indexOf("abuzz"));
+
+            gamePainterMock.verify(x => x.typeLetter(TypeMoq.It.isAny(), TypeMoq.It.isAny()), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.paintBoard(TypeMoq.It.isAny(), TypeMoq.It.isAny(), TypeMoq.It.isAny(),
+                TypeMoq.It.isAny()), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.resetBoard(), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.paintWords(TypeMoq.It.isAny(), TypeMoq.It.isAny(), TypeMoq.It.isAny(),
+                TypeMoq.It.isAny(), TypeMoq.It.isAny()), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.paintDetails(TypeMoq.It.isAny(), TypeMoq.It.isAny(), TypeMoq.It.isAny()), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.truncateBoard(TypeMoq.It.isAny()), TypeMoq.Times.never());
         });
 
     });
@@ -244,13 +366,12 @@ describe("SingleGame", () => {
 
             let ew = new EligibleWords(answerList, guessList);
             let options = new GameOptions();
-            let notify = new NotificationEventing();
             notify.internalEventListener = function (wrapper: NotificationWrapper) {
                 assert.equal(NotificationType.Info, wrapper.type);
-                assert.equal("Successful solve!", wrapper.message);
+                assert.equal("Successful solve - 'APPLE'!", wrapper.message);
             }
 
-            let game = new SingleGame(options, ew, notify);
+            let game = new SingleGame(options, ew, notify, gamePainterMock.object, false);
 
             let guess = game.chosenWord;
             game.finalizeGuess(guess);
@@ -264,6 +385,15 @@ describe("SingleGame", () => {
 
             assert.equal(0, game.letterState.Absent.length);
             assert.equal(0, game.letterState.PresentBadLocations.size);
+
+            gamePainterMock.verify(x => x.typeLetter(TypeMoq.It.isAny(), TypeMoq.It.isAny()), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.paintBoard(TypeMoq.It.isAny(), TypeMoq.It.isAny(), TypeMoq.It.isAny(),
+                TypeMoq.It.isAny()), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.resetBoard(), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.paintWords(TypeMoq.It.isAny(), TypeMoq.It.isAny(), TypeMoq.It.isAny(),
+                TypeMoq.It.isAny(), TypeMoq.It.isAny()), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.paintDetails(TypeMoq.It.isAny(), TypeMoq.It.isAny(), TypeMoq.It.isAny()), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.truncateBoard(TypeMoq.It.isAny()), TypeMoq.Times.never());
         });
 
         it('should set endTime when a number of guesses surpasses gameOptions configured value regardless of being correct.', () => {
@@ -272,13 +402,12 @@ describe("SingleGame", () => {
 
             let ew = new EligibleWords(answerList, guessList);
             let options = new GameOptions(false, 1);
-            let notify = new NotificationEventing();
             notify.internalEventListener = function (wrapper: NotificationWrapper) {
                 assert.equal(NotificationType.Error, wrapper.type);
-                assert.equal("Exceeded max number (1) of guesses.", wrapper.message);
+                assert.equal("Exceeded max number 1 of guesses; the correct answer was 'APPLE'", wrapper.message);
             }
 
-            let game = new SingleGame(options, ew, notify);
+            let game = new SingleGame(options, ew, notify, gamePainterMock.object, false);
 
             let guess = game.eligibleWords.eligibleGuesses[0];
 
@@ -287,6 +416,15 @@ describe("SingleGame", () => {
             assert.equal(false, game.userGuesses[0].fullMatch);
             assert.notEqual(undefined, game.endTime);
             assert.ok(new Date() >= game.endTime);
+
+            gamePainterMock.verify(x => x.typeLetter(TypeMoq.It.isAny(), TypeMoq.It.isAny()), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.paintBoard(TypeMoq.It.isAny(), TypeMoq.It.isAny(), TypeMoq.It.isAny(),
+                TypeMoq.It.isAny()), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.resetBoard(), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.paintWords(TypeMoq.It.isAny(), TypeMoq.It.isAny(), TypeMoq.It.isAny(),
+                TypeMoq.It.isAny(), TypeMoq.It.isAny()), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.paintDetails(TypeMoq.It.isAny(), TypeMoq.It.isAny(), TypeMoq.It.isAny()), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.truncateBoard(TypeMoq.It.isAny()), TypeMoq.Times.never());
         });
 
         it('should add each guess to the userGuesses array until the game has ended.', () => {
@@ -295,13 +433,12 @@ describe("SingleGame", () => {
 
             let ew = new EligibleWords(answerList, guessList);
             let options = new GameOptions();
-            let notify = new NotificationEventing();
             notify.internalEventListener = function (wrapper: NotificationWrapper) {
                 assert.equal(NotificationType.Error, wrapper.type);
-                assert.equal("Exceeded max number (6) of guesses.", wrapper.message);
+                assert.equal("Exceeded max number 6 of guesses; the correct answer was 'APPLE'", wrapper.message);
             }
 
-            let game = new SingleGame(options, ew, notify);
+            let game = new SingleGame(options, ew, notify, gamePainterMock.object, false);
 
             let guess = game.eligibleWords.eligibleGuesses[0];
 
@@ -316,6 +453,15 @@ describe("SingleGame", () => {
                     assert.equal(undefined, game.endTime);
                 }
             }
+
+            gamePainterMock.verify(x => x.typeLetter(TypeMoq.It.isAny(), TypeMoq.It.isAny()), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.paintBoard(TypeMoq.It.isAny(), TypeMoq.It.isAny(), TypeMoq.It.isAny(),
+                TypeMoq.It.isAny()), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.resetBoard(), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.paintWords(TypeMoq.It.isAny(), TypeMoq.It.isAny(), TypeMoq.It.isAny(),
+                TypeMoq.It.isAny(), TypeMoq.It.isAny()), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.paintDetails(TypeMoq.It.isAny(), TypeMoq.It.isAny(), TypeMoq.It.isAny()), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.truncateBoard(TypeMoq.It.isAny()), TypeMoq.Times.never());
         });
 
         it('populates letter states properly when all characters in input are absent.', () => {
@@ -324,12 +470,11 @@ describe("SingleGame", () => {
 
             let ew = new EligibleWords(answerList, guessList);
             let options = new GameOptions();
-            let notify = new NotificationEventing();
             notify.internalEventListener = function (wrapper: NotificationWrapper) {
                 assert.fail("No notification should occur");
             }
 
-            let game = new SingleGame(options, ew, notify);
+            let game = new SingleGame(options, ew, notify, gamePainterMock.object, false);
 
             let guess = 'risen';
             game.finalizeGuess(guess);
@@ -338,6 +483,14 @@ describe("SingleGame", () => {
             for (let char of guess) {
                 assert.ok(game.letterState.Absent.indexOf(char) !== -1);
             }
+            gamePainterMock.verify(x => x.typeLetter(TypeMoq.It.isAny(), TypeMoq.It.isAny()), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.paintBoard(TypeMoq.It.isAny(), TypeMoq.It.isAny(), TypeMoq.It.isAny(),
+                TypeMoq.It.isAny()), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.resetBoard(), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.paintWords(TypeMoq.It.isAny(), TypeMoq.It.isAny(), TypeMoq.It.isAny(),
+                TypeMoq.It.isAny(), TypeMoq.It.isAny()), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.paintDetails(TypeMoq.It.isAny(), TypeMoq.It.isAny(), TypeMoq.It.isAny()), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.truncateBoard(TypeMoq.It.isAny()), TypeMoq.Times.never());
         });
 
         it('does not duplicate population of absent characters in letterState across guesses.', () => {
@@ -346,12 +499,11 @@ describe("SingleGame", () => {
 
             let ew = new EligibleWords(answerList, guessList);
             let options = new GameOptions();
-            let notify = new NotificationEventing();
             notify.internalEventListener = function (wrapper: NotificationWrapper) {
                 assert.fail("No notification should occur");
             }
 
-            let game = new SingleGame(options, ew, notify);
+            let game = new SingleGame(options, ew, notify, gamePainterMock.object, false);
 
             let guess = 'risen';
             game.finalizeGuess(guess);
@@ -368,6 +520,8 @@ describe("SingleGame", () => {
             for (let char of guess) {
                 assert.ok(game.letterState.Absent.indexOf(char) !== -1);
             }
+
+
         });
 
         it('does not reset population of absent characters in letterState when not all letters are shared between guesses.', () => {
@@ -376,12 +530,11 @@ describe("SingleGame", () => {
 
             let ew = new EligibleWords(answerList, guessList);
             let options = new GameOptions();
-            let notify = new NotificationEventing();
             notify.internalEventListener = function (wrapper: NotificationWrapper) {
                 assert.fail("No notification should occur");
             }
 
-            let game = new SingleGame(options, ew, notify);
+            let game = new SingleGame(options, ew, notify, gamePainterMock.object, false);
 
             let guess = 'risen';
             game.finalizeGuess(guess);
@@ -398,6 +551,15 @@ describe("SingleGame", () => {
             for (let char of guess) {
                 assert.ok(game.letterState.Absent.indexOf(char) !== -1);
             }
+
+            gamePainterMock.verify(x => x.typeLetter(TypeMoq.It.isAny(), TypeMoq.It.isAny()), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.paintBoard(TypeMoq.It.isAny(), TypeMoq.It.isAny(), TypeMoq.It.isAny(),
+                TypeMoq.It.isAny()), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.resetBoard(), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.paintWords(TypeMoq.It.isAny(), TypeMoq.It.isAny(), TypeMoq.It.isAny(),
+                TypeMoq.It.isAny(), TypeMoq.It.isAny()), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.paintDetails(TypeMoq.It.isAny(), TypeMoq.It.isAny(), TypeMoq.It.isAny()), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.truncateBoard(TypeMoq.It.isAny()), TypeMoq.Times.never());
         });
 
         it('populates letter states properly when all characters in present but in the wrong location.', () => {
@@ -406,12 +568,11 @@ describe("SingleGame", () => {
 
             let ew = new EligibleWords(answerList, guessList);
             let options = new GameOptions();
-            let notify = new NotificationEventing();
             notify.internalEventListener = function (wrapper: NotificationWrapper) {
                 assert.fail("No notification should occur");
             }
 
-            let game = new SingleGame(options, ew, notify);
+            let game = new SingleGame(options, ew, notify, gamePainterMock.object, false);
 
             let guess = 'later';
             game.finalizeGuess(guess);
@@ -420,6 +581,15 @@ describe("SingleGame", () => {
             for (let char of game.letterState.PresentBadLocations.keys()) {
                 assert.equal(guess.indexOf(char), game.letterState.PresentBadLocations.get(char)[0]);
             }
+
+            gamePainterMock.verify(x => x.typeLetter(TypeMoq.It.isAny(), TypeMoq.It.isAny()), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.paintBoard(TypeMoq.It.isAny(), TypeMoq.It.isAny(), TypeMoq.It.isAny(),
+                TypeMoq.It.isAny()), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.resetBoard(), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.paintWords(TypeMoq.It.isAny(), TypeMoq.It.isAny(), TypeMoq.It.isAny(),
+                TypeMoq.It.isAny(), TypeMoq.It.isAny()), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.paintDetails(TypeMoq.It.isAny(), TypeMoq.It.isAny(), TypeMoq.It.isAny()), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.truncateBoard(TypeMoq.It.isAny()), TypeMoq.Times.never());
         });
 
         it('does not reset or modify existing wrong location letter state data on subsequent guesses.', () => {
@@ -428,12 +598,11 @@ describe("SingleGame", () => {
 
             let ew = new EligibleWords(answerList, guessList);
             let options = new GameOptions();
-            let notify = new NotificationEventing();
             notify.internalEventListener = function (wrapper: NotificationWrapper) {
                 assert.fail("No notification should occur");
             }
 
-            let game = new SingleGame(options, ew, notify);
+            let game = new SingleGame(options, ew, notify, gamePainterMock.object, false);
 
             let guess = 'later';
             game.finalizeGuess(guess);
@@ -455,6 +624,15 @@ describe("SingleGame", () => {
             for (let char of game.letterState.PresentBadLocations.keys()) {
                 assert.equal(guess.indexOf(char), game.letterState.PresentBadLocations.get(char)[0]);
             }
+
+            gamePainterMock.verify(x => x.typeLetter(TypeMoq.It.isAny(), TypeMoq.It.isAny()), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.paintBoard(TypeMoq.It.isAny(), TypeMoq.It.isAny(), TypeMoq.It.isAny(),
+                TypeMoq.It.isAny()), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.resetBoard(), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.paintWords(TypeMoq.It.isAny(), TypeMoq.It.isAny(), TypeMoq.It.isAny(),
+                TypeMoq.It.isAny(), TypeMoq.It.isAny()), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.paintDetails(TypeMoq.It.isAny(), TypeMoq.It.isAny(), TypeMoq.It.isAny()), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.truncateBoard(TypeMoq.It.isAny()), TypeMoq.Times.never());
         });
 
         it('updates letter state wrong location with multiple values when both guess and answer have same count.', () => {
@@ -463,12 +641,11 @@ describe("SingleGame", () => {
 
             let ew = new EligibleWords(answerList, guessList);
             let options = new GameOptions();
-            let notify = new NotificationEventing();
             notify.internalEventListener = function (wrapper: NotificationWrapper) {
                 assert.fail("No notification should occur");
             }
 
-            let game = new SingleGame(options, ew, notify);
+            let game = new SingleGame(options, ew, notify, gamePainterMock.object, false);
 
             let guess = 'aorta';
             game.finalizeGuess(guess);
@@ -484,6 +661,15 @@ describe("SingleGame", () => {
             for (let char of 'ort') {
                 assert.ok(game.letterState.Absent.indexOf(char) !== -1);
             }
+
+            gamePainterMock.verify(x => x.typeLetter(TypeMoq.It.isAny(), TypeMoq.It.isAny()), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.paintBoard(TypeMoq.It.isAny(), TypeMoq.It.isAny(), TypeMoq.It.isAny(),
+                TypeMoq.It.isAny()), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.resetBoard(), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.paintWords(TypeMoq.It.isAny(), TypeMoq.It.isAny(), TypeMoq.It.isAny(),
+                TypeMoq.It.isAny(), TypeMoq.It.isAny()), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.paintDetails(TypeMoq.It.isAny(), TypeMoq.It.isAny(), TypeMoq.It.isAny()), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.truncateBoard(TypeMoq.It.isAny()), TypeMoq.Times.never());
         });
 
         it('only updates wrong location list for as many characters are actually present in the actual word.', () => {
@@ -492,12 +678,11 @@ describe("SingleGame", () => {
 
             let ew = new EligibleWords(answerList, guessList);
             let options = new GameOptions();
-            let notify = new NotificationEventing();
             notify.internalEventListener = function (wrapper: NotificationWrapper) {
                 assert.fail("No notification should occur");
             }
 
-            let game = new SingleGame(options, ew, notify);
+            let game = new SingleGame(options, ew, notify, gamePainterMock.object, false);
 
             let guess = 'aorta';
             game.finalizeGuess(guess);
@@ -512,9 +697,16 @@ describe("SingleGame", () => {
 
             assert.equal(1, game.letterState.Absent.length);
             assert.ok(game.letterState.Absent.indexOf('r') !== -1);
+
+            gamePainterMock.verify(x => x.typeLetter(TypeMoq.It.isAny(), TypeMoq.It.isAny()), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.paintBoard(TypeMoq.It.isAny(), TypeMoq.It.isAny(), TypeMoq.It.isAny(),
+                TypeMoq.It.isAny()), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.resetBoard(), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.paintWords(TypeMoq.It.isAny(), TypeMoq.It.isAny(), TypeMoq.It.isAny(),
+                TypeMoq.It.isAny(), TypeMoq.It.isAny()), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.paintDetails(TypeMoq.It.isAny(), TypeMoq.It.isAny(), TypeMoq.It.isAny()), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.truncateBoard(TypeMoq.It.isAny()), TypeMoq.Times.never());
         });
-
-
     });
 
 });

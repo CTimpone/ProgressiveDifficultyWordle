@@ -2,10 +2,8 @@
 
 import assert = require('assert');
 import sinon = require('sinon');
-import { FIVE_LETTER_ANSWERS } from '../../progressivedifficultywordle/typescript/Constants/Words/FiveLetterAnswers';
-import { FIVE_LETTER_GUESSES } from '../../progressivedifficultywordle/typescript/Constants/Words/FiveLetterGuesses';
-import { GuessDetails } from '../../progressivedifficultywordle/typescript/models/GuessDetails';
-import { LetterStatus } from '../../progressivedifficultywordle/typescript/models/letterstatus';
+import { GuessDetails } from '../../ProgressiveDifficultyWordle/TypeScript/WordleAccessLayer/GuessDetails';
+import { LetterStatus } from '../../ProgressiveDifficultyWordle/TypeScript/Models/LetterStatus';
 
 describe("GuessDetails", () => {
     var consoleSpy;

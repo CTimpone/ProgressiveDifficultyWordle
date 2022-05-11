@@ -1,1 +1,1 @@
-{"version":3,"file":"gametype.js","sourceRoot":"","sources":["gametype.ts"],"names":[],"mappings":";;;AAAA,IAAY,QAIX;AAJD,WAAY,QAAQ;IAChB,2CAAY,CAAA;IACZ,6CAAa,CAAA;IACb,yEAA2B,CAAA;AAC/B,CAAC,EAJW,QAAQ,GAAR,gBAAQ,KAAR,gBAAQ,QAInB"}
+{"version":3,"file":"GameType.js","sourceRoot":"","sources":["GameType.ts"],"names":[],"mappings":";;;AAAA,IAAY,QAIX;AAJD,WAAY,QAAQ;IAChB,2CAAY,CAAA;IACZ,6CAAa,CAAA;IACb,yEAA2B,CAAA;AAC/B,CAAC,EAJW,QAAQ,GAAR,gBAAQ,KAAR,gBAAQ,QAInB"}

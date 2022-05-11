@@ -10,8 +10,14 @@ class SessionState {
             this.gameTimerLimitExists = true;
             this.gameTimerLength = timerLength;
         }
+        else {
+            this.gameTimerLimitExists = false;
+        }
         if (maxGuesses !== undefined) {
             this.maxGuesses = maxGuesses;
+        }
+        else {
+            this.maxGuesses = 6;
         }
         this.hardMode = hardMode;
     }
@@ -48,4 +54,4 @@ class SessionState {
     }
 }
 exports.SessionState = SessionState;
-//# sourceMappingURL=sessionstate.js.map
+//# sourceMappingURL=SessionState.js.map
