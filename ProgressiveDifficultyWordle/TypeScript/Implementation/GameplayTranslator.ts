@@ -158,6 +158,10 @@ export class GameplayTranslator implements GameplayTranslationInterface {
                 }
             });
 
+            window.onfocus = function () {
+                scope.controlChord = false;
+                scope.altChord = false;
+            }
         }
     }
 
@@ -173,12 +177,11 @@ export class GameplayTranslator implements GameplayTranslationInterface {
             }
             else if (this.currentWord.length === 5 && isOk) {
                 const guessResult = this.session.next(this.currentWord);
-                if (guessResult === GuessResult.Progress) {
-                    this.currentWord = "";
-                } else if (guessResult === GuessResult.GameComplete) {
-                    this.currentWord = "";
+                if (!this.session.isCurrentGameActive()) {
                     $("#playButton").removeClass(domConstants.HIDDEN_CLASS_NAME);
                     //TO DO SHOW SCORING
+                } else if (guessResult === GuessResult.GameComplete || guessResult === GuessResult.Progress) {
+                    this.currentWord = "";
                 }
             }
             else if (isDelete) {
@@ -192,6 +195,8 @@ export class GameplayTranslator implements GameplayTranslationInterface {
     }
 
     startSession(type: GameType, hardMode: boolean, maxGuesses: number, timerEnabled: boolean, timerLength?: number): void {
+        this.currentWord = "";
+
         this.session = new Session(type, this.validAnswers, this.validAnswers,
             this.notificationPainter.notificationEventing, this.gamePainter, hardMode,
             maxGuesses, timerEnabled, timerLength);

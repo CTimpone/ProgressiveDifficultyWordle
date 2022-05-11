@@ -119,6 +119,10 @@ class GameplayTranslator {
                         break;
                 }
             });
+            window.onfocus = function () {
+                scope.controlChord = false;
+                scope.altChord = false;
+            };
         }
     }
     inputLetter(key) {
@@ -132,13 +136,12 @@ class GameplayTranslator {
             }
             else if (this.currentWord.length === 5 && isOk) {
                 const guessResult = this.session.next(this.currentWord);
-                if (guessResult === GuessResult_1.GuessResult.Progress) {
-                    this.currentWord = "";
-                }
-                else if (guessResult === GuessResult_1.GuessResult.GameComplete) {
-                    this.currentWord = "";
+                if (!this.session.isCurrentGameActive()) {
                     $("#playButton").removeClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME);
                     //TO DO SHOW SCORING
+                }
+                else if (guessResult === GuessResult_1.GuessResult.GameComplete || guessResult === GuessResult_1.GuessResult.Progress) {
+                    this.currentWord = "";
                 }
             }
             else if (isDelete) {
@@ -152,6 +155,7 @@ class GameplayTranslator {
         }
     }
     startSession(type, hardMode, maxGuesses, timerEnabled, timerLength) {
+        this.currentWord = "";
         this.session = new Session_1.Session(type, this.validAnswers, this.validAnswers, this.notificationPainter.notificationEventing, this.gamePainter, hardMode, maxGuesses, timerEnabled, timerLength);
     }
 }

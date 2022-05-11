@@ -10,12 +10,13 @@
     margin: 0;
 }
 
-html, body {
+html {
     height: 100%;
     font-family: 'Clear Sans', 'Helvetica Neue', Arial, sans-serif;
 }
 
 body {
+    height: fit-content;
     line-height: 1.5;
     -webkit-font-smoothing: antialiased;
     background: var(--offWhite);
@@ -281,9 +282,11 @@ input[type="checkbox"]:checked + label::after {
     position: absolute;
     top: 0;
     left: 0;
-    width: 100%;
+    width: calc(100% - 10px);
     height: 100%;
     z-index: 10;
+    padding: 5px;
+    overflow-x: hidden;
 }
 
 .scrollable {
