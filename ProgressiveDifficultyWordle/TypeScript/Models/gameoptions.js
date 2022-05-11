@@ -10,4 +10,4 @@ class GameOptions {
     }
 }
 exports.GameOptions = GameOptions;
-//# sourceMappingURL=gameoptions.js.map
+//# sourceMappingURL=GameOptions.js.map

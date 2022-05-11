@@ -19,9 +19,15 @@ export class SessionState {
             this.gameTimerLimitExists = true;
             this.gameTimerLength = timerLength;
         }
+        else {
+            this.gameTimerLimitExists = false;
+        }
 
         if (maxGuesses !== undefined) {
             this.maxGuesses = maxGuesses;
+        }
+        else {
+            this.maxGuesses = 6;
         }
 
         this.hardMode = hardMode;

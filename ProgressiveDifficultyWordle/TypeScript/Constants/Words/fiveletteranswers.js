@@ -2318,4 +2318,4 @@ exports.FIVE_LETTER_ANSWERS = [
     "zesty",
     "zonal"
 ];
-//# sourceMappingURL=fiveletteranswers.js.map
+//# sourceMappingURL=FiveLetterAnswers.js.map

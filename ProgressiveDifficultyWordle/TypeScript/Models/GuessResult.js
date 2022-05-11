@@ -1,11 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.LetterStatus = void 0;
-var LetterStatus;
-(function (LetterStatus) {
-    LetterStatus[LetterStatus["Unknown"] = 0] = "Unknown";
-    LetterStatus[LetterStatus["ExactMatch"] = 1] = "ExactMatch";
-    LetterStatus[LetterStatus["WrongLocation"] = 2] = "WrongLocation";
-    LetterStatus[LetterStatus["Absent"] = 3] = "Absent";
-})(LetterStatus = exports.LetterStatus || (exports.LetterStatus = {}));
-//# sourceMappingURL=letterstatus.js.map
+exports.GuessResult = void 0;
+var GuessResult;
+(function (GuessResult) {
+    GuessResult[GuessResult["Progress"] = 0] = "Progress";
+    GuessResult[GuessResult["Invalid"] = 1] = "Invalid";
+    GuessResult[GuessResult["GameComplete"] = 2] = "GameComplete";
+})(GuessResult = exports.GuessResult || (exports.GuessResult = {}));
+//# sourceMappingURL=GuessResult.js.map

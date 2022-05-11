@@ -8,4 +8,4 @@ var LetterStatus;
     LetterStatus[LetterStatus["WrongLocation"] = 2] = "WrongLocation";
     LetterStatus[LetterStatus["Absent"] = 3] = "Absent";
 })(LetterStatus = exports.LetterStatus || (exports.LetterStatus = {}));
-//# sourceMappingURL=letterstatus.js.map
+//# sourceMappingURL=LetterStatus.js.map
