@@ -1,1 +1,1 @@
-{"version":3,"file":"CookieConstants.js","sourceRoot":"","sources":["../../../TypeScript/Constants/CookieConstants.ts"],"names":[],"mappings":";;;AAAa,QAAA,eAAe,GAAG;IAC3B,iBAAiB,EAAE,WAAW;CACjC,CAAC"}
+{"version":3,"file":"CookieConstants.js","sourceRoot":"","sources":["../../../TypeScript/Constants/CookieConstants.ts"],"names":[],"mappings":";;;AAAa,QAAA,eAAe,GAAG;IAC3B,iBAAiB,EAAE,WAAW;IAC9B,iBAAiB,EAAE,cAAc;CACpC,CAAC"}

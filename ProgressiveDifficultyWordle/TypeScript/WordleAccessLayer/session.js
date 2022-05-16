@@ -11,12 +11,13 @@ const NotificationWrapper_1 = require("../Notification/NotificationWrapper");
 const NotificationType_1 = require("../Models/NotificationType");
 const GuessResult_1 = require("../Models/GuessResult");
 class Session {
-    constructor(type, eligibleAnswers, eligibleGuesses, notificationTools, gamePainter, hardMode, maxGuesses, timerEnabled, timerLength) {
+    constructor(type, eligibleAnswers, eligibleGuesses, notificationTools, gamePainter, scoreHandler, hardMode, maxGuesses, timerEnabled, timerLength) {
         this.type = type;
         this.messaging = notificationTools;
         this.score = new ScoreDetails_1.ScoreDetails();
         this.state = new SessionState_1.SessionState(hardMode, maxGuesses, timerEnabled, timerLength);
         this.gamePainter = gamePainter;
+        this.scoreHandler = scoreHandler;
         this.eligibleWords = new EligibleWords_1.EligibleWords(eligibleAnswers, eligibleGuesses);
         this.generateGame();
         this.state.startTime = this.currentGame.startTime;
@@ -29,6 +30,7 @@ class Session {
                 if (!this.isCurrentGameActive()) {
                     this.score.updateScore(this.currentGame);
                     this.paintDetails();
+                    this.scoreHandler.updateHighScores(this.type, this.score, this.currentGame.solved(), this.currentGame.userGuesses.length);
                 }
             }
             else {
@@ -38,6 +40,8 @@ class Session {
                 }
                 else if (!this.isCurrentGameActive()) {
                     this.messaging.message = new NotificationWrapper_1.NotificationWrapper(NotificationType_1.NotificationType.Error, `The answer was '${this.currentGame.chosenWord.toUpperCase()}. Create a new session to play again.'`);
+                    this.score.endTime = this.currentGame.endTime;
+                    this.scoreHandler.updateHighScores(this.type, this.score);
                 }
             }
         }

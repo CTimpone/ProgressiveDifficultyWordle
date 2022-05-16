@@ -8,25 +8,32 @@ import { EligibleWords } from './EligibleWords';
 import { NotificationWrapper } from '../Notification/NotificationWrapper';
 import { NotificationType } from '../Models/NotificationType';
 import { GuessResult } from '../Models/GuessResult';
+
 import { GamePainterInterface } from '../Interfaces/GamePainterInterface';
+import { ScoreHandlingInterface } from '../Interfaces/ScoreHandlingInterface';
 
 export class Session {
     private currentGame: SingleGame;
     private eligibleWords: EligibleWords;
+
     private gamePainter: GamePainterInterface;
+    private scoreHandler: ScoreHandlingInterface;
+
     type: GameType;
     state: SessionState;
     score: ScoreDetails;
     messaging: NotificationEventing;
 
     constructor(type: GameType, eligibleAnswers: string[], eligibleGuesses: string[],
-        notificationTools: NotificationEventing, gamePainter: GamePainterInterface, hardMode: boolean,
+        notificationTools: NotificationEventing, gamePainter: GamePainterInterface,
+        scoreHandler: ScoreHandlingInterface, hardMode: boolean,
         maxGuesses?: number, timerEnabled?: boolean, timerLength?: number) {
         this.type = type;
         this.messaging = notificationTools;
         this.score = new ScoreDetails();
         this.state = new SessionState(hardMode, maxGuesses, timerEnabled, timerLength);
         this.gamePainter = gamePainter;
+        this.scoreHandler = scoreHandler;
         this.eligibleWords = new EligibleWords(eligibleAnswers, eligibleGuesses);
 
         this.generateGame();
@@ -42,6 +49,9 @@ export class Session {
                 if (!this.isCurrentGameActive()) {
                     this.score.updateScore(this.currentGame);
                     this.paintDetails();
+
+                    this.scoreHandler.updateHighScores(this.type, this.score,
+                        this.currentGame.solved(), this.currentGame.userGuesses.length);
                 }
             } else {
                 guessResult = this.currentGame.guessTrigger(input);
@@ -51,6 +61,10 @@ export class Session {
                 } else if (!this.isCurrentGameActive()) {
                     this.messaging.message = new NotificationWrapper(NotificationType.Error,
                         `The answer was '${this.currentGame.chosenWord.toUpperCase()}. Create a new session to play again.'`);
+
+                    this.score.endTime = this.currentGame.endTime;
+
+                    this.scoreHandler.updateHighScores(this.type, this.score);
                 }
             }
         } else {

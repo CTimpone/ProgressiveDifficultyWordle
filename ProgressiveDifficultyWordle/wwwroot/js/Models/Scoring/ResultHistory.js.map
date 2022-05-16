@@ -1,1 +1,1 @@
-{"version":3,"file":"ResultHistory.js","sourceRoot":"","sources":["../../../../TypeScript/Models/Scoring/ResultHistory.ts"],"names":[],"mappings":";;;AAAA,MAAa,aAAa;CAKzB;AALD,sCAKC"}
+{"version":3,"file":"ResultHistory.js","sourceRoot":"","sources":["../../../../TypeScript/Models/Scoring/ResultHistory.ts"],"names":[],"mappings":";;;AAAA,MAAa,aAAa;IAMtB;QACI,IAAI,CAAC,WAAW,GAAG,CAAC,CAAC;QACrB,IAAI,CAAC,YAAY,GAAG,CAAC,CAAC;QACtB,IAAI,CAAC,gBAAgB,GAAG,CAAC,CAAC;QAC1B,IAAI,CAAC,QAAQ,GAAG,IAAI,GAAG,EAAkB,CAAC;IAC9C,CAAC;CACJ;AAZD,sCAYC"}

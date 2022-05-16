@@ -7,6 +7,7 @@ const GuessResult_1 = require("../Models/GuessResult");
 const Session_1 = require("../WordleAccessLayer/Session");
 const GamePainter_1 = require("../HtmlPainters/GamePainter");
 const NotificationPainter_1 = require("../HtmlPainters/NotificationPainter");
+const ScoreHandler_1 = require("./ScoreHandler");
 class GameplayTranslator {
     constructor(validAnswers, validGuesses) {
         this.controlChord = false;
@@ -15,6 +16,7 @@ class GameplayTranslator {
         this.validAnswers = validAnswers;
         this.validGuesses = validGuesses;
         this.gamePainter = new GamePainter_1.GamePainter();
+        this.scoreHandler = new ScoreHandler_1.ScoreHandler();
         this.notificationPainter = new NotificationPainter_1.NotificationPainter();
         this.registerPlayClickEvent();
         this.registerKeydownEvent();
@@ -156,7 +158,7 @@ class GameplayTranslator {
     }
     startSession(type, hardMode, maxGuesses, timerEnabled, timerLength) {
         this.currentWord = "";
-        this.session = new Session_1.Session(type, this.validAnswers, this.validAnswers, this.notificationPainter.notificationEventing, this.gamePainter, hardMode, maxGuesses, timerEnabled, timerLength);
+        this.session = new Session_1.Session(type, this.validAnswers, this.validAnswers, this.notificationPainter.notificationEventing, this.gamePainter, this.scoreHandler, hardMode, maxGuesses, timerEnabled, timerLength);
     }
 }
 exports.GameplayTranslator = GameplayTranslator;
