@@ -1,264 +1,274 @@
-/////// <reference path="../PDWIndex.ts" />
-
-////import assert = require('assert');
-////import sinon = require('sinon');
-////import { EligibleWords } from '../../ProgressiveDifficultyWordle/TypeScript/WordleAccessLayer/EligibleWords';
-////import { GameOptions } from '../../ProgressiveDifficultyWordle/TypeScript/Models/GameOptions';
-////import { NotificationEventing } from '../../ProgressiveDifficultyWordle/TypeScript/Notification/NotificationEventing';
-////import { NotificationWrapper } from '../../ProgressiveDifficultyWordle/TypeScript/Notification/NotificationWrapper';
-////import { ScoreDetails } from '../../ProgressiveDifficultyWordle/TypeScript/WordleAccessLayer/ScoreDetails';
-////import { SingleGame } from '../../ProgressiveDifficultyWordle/TypeScript/WordleAccessLayer/SingleGame';
-
-////describe("ScoreDetails", () => {
-////    var consoleSpy;
-////    var game: SingleGame;
-////    var ew: EligibleWords;
-////    var options: GameOptions;
-////    var notify: NotificationEventing;
-////    beforeEach(() => {
-////        consoleSpy = sinon.spy(console, 'log');
-
-////        let answerList = ['apple'];
-////        let guessList = ['abbot', 'abhor', 'abide', 'abode', 'apple', 'other', 'wrong'];
-
-////        ew = new EligibleWords(answerList, guessList);
-////        options = new GameOptions();
-////        notify = new NotificationEventing();
-////        notify.internalEventListener = function (wrapper: NotificationWrapper) { }
-
-////        game = new SingleGame(options, ew, notify);
-
-////    });
-
-////    afterEach(() => {
-////        consoleSpy.restore();
-////    });
-
-////    describe("#constructor", () => {
-////        it('initializes parameters to allow for scoring.', () => {
-////            let scoreDetails = new ScoreDetails();
-////            assert.equal(undefined, scoreDetails.endTime);
-////            assert.equal(0, scoreDetails.roundsCompleted);
-////            assert.equal(0, scoreDetails.startingGuesses.size);
-////            assert.equal(0, scoreDetails.totalScore);
-////        });
-////    });
-
-////    describe("#updateScore", () => {
-////        it('throws error if has populated endTime.', () => {
-////            let scoreDetails = new ScoreDetails();
-////            assert.equal(undefined, scoreDetails.endTime);
-////            assert.equal(0, scoreDetails.roundsCompleted);
-////            assert.equal(0, scoreDetails.startingGuesses.size);
-////            assert.equal(0, scoreDetails.totalScore);
-
-////            scoreDetails.endTime = new Date();
-////            try {
-////                scoreDetails.updateScore(game);
-////            }
-////            catch (error: unknown) {
-////                let trueError = error as Error;
-////                assert.equal("Cannot update score when not active.", trueError.message);
-////            }
-////        });
-
-////        it('sets endTime if individual game has ended, but was not solved.', () => {
-////            let scoreDetails = new ScoreDetails();
-////            assert.equal(undefined, scoreDetails.endTime);
-////            assert.equal(0, scoreDetails.roundsCompleted);
-////            assert.equal(0, scoreDetails.startingGuesses.size);
-////            assert.equal(0, scoreDetails.totalScore);
-
-////            game.options.maxGuesses = 1;
-////            game.finalizeGuess("wrong");
-
-////            scoreDetails.updateScore(game);
-
-////            assert.notEqual(undefined, scoreDetails.endTime);
-////            assert.equal(game.endTime, scoreDetails.endTime);
-////        });
-
-////        it('increments roundsCompleted when the game is solved.', () => {
-////            let scoreDetails = new ScoreDetails();
-////            assert.equal(undefined, scoreDetails.endTime);
-////            assert.equal(0, scoreDetails.roundsCompleted);
-////            assert.equal(0, scoreDetails.startingGuesses.size);
-////            assert.equal(0, scoreDetails.totalScore);
-
-////            game.options.maxGuesses = 1;
-////            game.finalizeGuess("apple");
-
-////            const initialRounds = scoreDetails.roundsCompleted;
-////            scoreDetails.updateScore(game);
-
-////            assert.equal(initialRounds + 1, scoreDetails.roundsCompleted);
-////        });
-
-////        it('increments totalScore when the game is solved.', () => {
-////            let scoreDetails = new ScoreDetails();
-////            assert.equal(undefined, scoreDetails.endTime);
-////            assert.equal(0, scoreDetails.roundsCompleted);
-////            assert.equal(0, scoreDetails.startingGuesses.size);
-////            assert.equal(0, scoreDetails.totalScore);
+/// <reference path="../PDWIndex.ts" />
+
+import assert = require('assert');
+import sinon = require('sinon');
+import * as TypeMoq from 'typemoq';
+
+import { EligibleWords } from '../../ProgressiveDifficultyWordle/TypeScript/WordleAccessLayer/EligibleWords';
+import { GameOptions } from '../../ProgressiveDifficultyWordle/TypeScript/Models/GameOptions';
+import { NotificationEventing } from '../../ProgressiveDifficultyWordle/TypeScript/Notification/NotificationEventing';
+import { NotificationWrapper } from '../../ProgressiveDifficultyWordle/TypeScript/Notification/NotificationWrapper';
+import { ScoreDetails } from '../../ProgressiveDifficultyWordle/TypeScript/WordleAccessLayer/ScoreDetails';
+import { SingleGame } from '../../ProgressiveDifficultyWordle/TypeScript/WordleAccessLayer/SingleGame';
+import { GamePainterInterface } from '../../ProgressiveDifficultyWordle/TypeScript/Interfaces/GamePainterInterface';
+
+describe("ScoreDetails", () => {
+    var consoleSpy;
+    var game: SingleGame;
+    var ew: EligibleWords;
+    var options: GameOptions;
+    var notify: NotificationEventing;
+    let gamePainterMock: TypeMoq.IMock<GamePainterInterface>;
+
+    beforeEach(() => {
+        consoleSpy = sinon.spy(console, 'log');
+
+        let answerList = ['apple'];
+        let guessList = ['abbot', 'abhor', 'abide', 'abode', 'apple', 'other', 'wrong'];
+
+        ew = new EligibleWords(answerList, guessList);
+        options = new GameOptions();
+        notify = new NotificationEventing();
+        notify.internalEventListener = function (wrapper: NotificationWrapper) { }
+        gamePainterMock = TypeMoq.Mock.ofType<GamePainterInterface>();
+
+        game = new SingleGame(options, ew, notify, gamePainterMock.object, false);
+
+    });
+
+    afterEach(() => {
+        consoleSpy.restore();
+    });
+
+    describe("#constructor", () => {
+        it('initializes parameters to allow for scoring.', () => {
+            let scoreDetails = new ScoreDetails();
+            assert.equal(undefined, scoreDetails.endTime);
+            assert.equal(0, scoreDetails.roundsCompleted);
+            assert.equal(0, scoreDetails.startingGuesses.size);
+            assert.equal(0, scoreDetails.totalScore);
+        });
+    });
+
+    describe("#updateScore", () => {
+        it('throws error if has populated endTime.', () => {
+            let scoreDetails = new ScoreDetails();
+            assert.equal(undefined, scoreDetails.endTime);
+            assert.equal(0, scoreDetails.roundsCompleted);
+            assert.equal(0, scoreDetails.startingGuesses.size);
+            assert.equal(0, scoreDetails.totalScore);
+
+            scoreDetails.endTime = new Date();
+            try {
+                scoreDetails.updateScore(game);
+            }
+            catch (error: unknown) {
+                let trueError = error as Error;
+                assert.equal("Cannot update score when not active.", trueError.message);
+            }
+        });
+
+        it('sets endTime if individual game has ended, but was not solved.', () => {
+            let scoreDetails = new ScoreDetails();
+            assert.equal(undefined, scoreDetails.endTime);
+            assert.equal(0, scoreDetails.roundsCompleted);
+            assert.equal(0, scoreDetails.startingGuesses.size);
+            assert.equal(0, scoreDetails.totalScore);
+
+            game.options.maxGuesses = 1;
+            game.finalizeGuess("wrong");
+
+            scoreDetails.updateScore(game);
+
+            assert.notEqual(undefined, scoreDetails.endTime);
+            assert.equal(game.endTime, scoreDetails.endTime);
+        });
+
+        it('increments roundsCompleted when the game is solved.', () => {
+            let scoreDetails = new ScoreDetails();
+            assert.equal(undefined, scoreDetails.endTime);
+            assert.equal(0, scoreDetails.roundsCompleted);
+            assert.equal(0, scoreDetails.startingGuesses.size);
+            assert.equal(0, scoreDetails.totalScore);
+
+            game.options.maxGuesses = 1;
+            game.finalizeGuess("apple");
+
+            const initialRounds = scoreDetails.roundsCompleted;
+            scoreDetails.updateScore(game);
+
+            assert.equal(initialRounds + 1, scoreDetails.roundsCompleted);
+        });
 
-////            game.options.maxGuesses = 1;
-////            game.finalizeGuess("apple");
-
-////            const initialScore = scoreDetails.totalScore;
-////            scoreDetails.updateScore(game);
-////            scoreDetails.startingGuesses = new Set<string>();
-////            assert.equal(initialScore + scoreDetails.calculateRoundScore(game), scoreDetails.totalScore);
-////        });
+        it('increments totalScore when the game is solved.', () => {
+            let scoreDetails = new ScoreDetails();
+            assert.equal(undefined, scoreDetails.endTime);
+            assert.equal(0, scoreDetails.roundsCompleted);
+            assert.equal(0, scoreDetails.startingGuesses.size);
+            assert.equal(0, scoreDetails.totalScore);
 
-////        it('totalScore increases additionally as more games are solved successfully.', () => {
-////            let scoreDetails = new ScoreDetails();
-////            assert.equal(undefined, scoreDetails.endTime);
-////            assert.equal(0, scoreDetails.roundsCompleted);
-////            assert.equal(0, scoreDetails.startingGuesses.size);
-////            assert.equal(0, scoreDetails.totalScore);
+            game.options.maxGuesses = 1;
+            game.finalizeGuess("apple");
 
-////            game.options.maxGuesses = 1;
-////            game.finalizeGuess("apple");
+            const initialScore = scoreDetails.totalScore;
+            scoreDetails.updateScore(game);
+            scoreDetails.startingGuesses = new Set<string>();
+            assert.equal(initialScore + scoreDetails.calculateRoundScore(game), scoreDetails.totalScore);
+        });
 
-////            const initialScore = scoreDetails.totalScore;
-////            scoreDetails.updateScore(game);
-////            scoreDetails.startingGuesses = new Set<string>();
-////            const scoreAfterOne = scoreDetails.totalScore;
-////            scoreDetails.updateScore(game);
-////            scoreDetails.startingGuesses = new Set<string>();
-////            const scoreAfterTwo = scoreDetails.totalScore;
-////            scoreDetails.updateScore(game);
-////            scoreDetails.startingGuesses = new Set<string>();
-////            const scoreAfterThree = scoreDetails.totalScore;
+        it('totalScore increases additionally as more games are solved successfully.', () => {
+            let scoreDetails = new ScoreDetails();
+            assert.equal(undefined, scoreDetails.endTime);
+            assert.equal(0, scoreDetails.roundsCompleted);
+            assert.equal(0, scoreDetails.startingGuesses.size);
+            assert.equal(0, scoreDetails.totalScore);
 
-////            const roundScore = scoreDetails.calculateRoundScore(game);
+            game.options.maxGuesses = 1;
+            game.finalizeGuess("apple");
 
-////            assert.equal(initialScore + roundScore, scoreAfterOne);
-////            assert.ok(scoreAfterOne + roundScore < scoreAfterTwo);
-////            assert.ok(scoreAfterTwo - scoreAfterOne < scoreAfterThree - scoreAfterTwo);
+            const initialScore = scoreDetails.totalScore;
+            scoreDetails.updateScore(game);
+            scoreDetails.startingGuesses = new Set<string>();
+            const scoreAfterOne = scoreDetails.totalScore;
+            scoreDetails.updateScore(game);
+            scoreDetails.startingGuesses = new Set<string>();
+            const scoreAfterTwo = scoreDetails.totalScore;
+            scoreDetails.updateScore(game);
+            scoreDetails.startingGuesses = new Set<string>();
+            const scoreAfterThree = scoreDetails.totalScore;
 
-////        });
-////    });
+            const roundScore = scoreDetails.calculateRoundScore(game);
 
-////    describe("#calculateRoundScore", () => {
-////        it('generates the same score when multiple follow the same guess pattern (with different starting words).', () => {
-////            let scoreDetails = new ScoreDetails();
+            assert.equal(initialScore + roundScore, scoreAfterOne);
+            assert.ok(scoreAfterOne + roundScore < scoreAfterTwo);
+            assert.ok(scoreAfterTwo - scoreAfterOne < scoreAfterThree - scoreAfterTwo);
 
-////            game.finalizeGuess("abbot");
-////            game.finalizeGuess("apple");
-////            let scoreOne = scoreDetails.calculateRoundScore(game);
+        });
+    });
 
-////            game = new SingleGame(options, ew, notify);
-////            game.finalizeGuess("abhor");
-////            game.finalizeGuess("apple");
+    describe("#calculateRoundScore", () => {
+        it('generates the same score when multiple follow the same guess pattern (with different starting words).', () => {
+            let scoreDetails = new ScoreDetails();
 
-////            let scoreTwo = scoreDetails.calculateRoundScore(game);
+            game.finalizeGuess("abbot");
+            game.finalizeGuess("apple");
+            let scoreOne = scoreDetails.calculateRoundScore(game);
 
-////            assert.equal(scoreOne, scoreTwo);
+            game = new SingleGame(options, ew, notify, gamePainterMock.object, false);
 
-////        });
+            game.finalizeGuess("abhor");
+            game.finalizeGuess("apple");
 
-////        it('generates a higher score when fewer guesses are used to solve when starting words differ.', () => {
-////            let scoreDetails = new ScoreDetails();
+            let scoreTwo = scoreDetails.calculateRoundScore(game);
 
-////            assert.equal(6, options.maxGuesses);
-////            game.finalizeGuess("abbot");
-////            game.finalizeGuess("wrong");
-////            game.finalizeGuess("wrong");
-////            game.finalizeGuess("wrong");
-////            game.finalizeGuess("wrong");
-////            game.finalizeGuess("apple");
-////            let sixGuessScore = scoreDetails.calculateRoundScore(game);
+            assert.equal(scoreOne, scoreTwo);
 
-////            game = new SingleGame(options, ew, notify);
-////            game.finalizeGuess("abhor");
-////            game.finalizeGuess("wrong");
-////            game.finalizeGuess("wrong");
-////            game.finalizeGuess("wrong");
-////            game.finalizeGuess("apple");
+        });
 
-////            let fiveGuessScore = scoreDetails.calculateRoundScore(game);
+        it('generates a higher score when fewer guesses are used to solve when starting words differ.', () => {
+            let scoreDetails = new ScoreDetails();
 
-////            assert.ok(fiveGuessScore > sixGuessScore);
+            assert.equal(6, options.maxGuesses);
+            game.finalizeGuess("abbot");
+            game.finalizeGuess("wrong");
+            game.finalizeGuess("wrong");
+            game.finalizeGuess("wrong");
+            game.finalizeGuess("wrong");
+            game.finalizeGuess("apple");
+            let sixGuessScore = scoreDetails.calculateRoundScore(game);
 
-////            game = new SingleGame(options, ew, notify);
-////            game.finalizeGuess("abide");
-////            game.finalizeGuess("wrong");
-////            game.finalizeGuess("wrong");
-////            game.finalizeGuess("apple");
+            game = new SingleGame(options, ew, notify, gamePainterMock.object, false);
 
-////            let fourGuessScore = scoreDetails.calculateRoundScore(game);
+            game.finalizeGuess("abhor");
+            game.finalizeGuess("wrong");
+            game.finalizeGuess("wrong");
+            game.finalizeGuess("wrong");
+            game.finalizeGuess("apple");
 
-////            assert.ok(fourGuessScore > fiveGuessScore);
+            let fiveGuessScore = scoreDetails.calculateRoundScore(game);
 
-////            game = new SingleGame(options, ew, notify);
-////            game.finalizeGuess("abode");
-////            game.finalizeGuess("wrong");
-////            game.finalizeGuess("apple");
+            assert.ok(fiveGuessScore > sixGuessScore);
 
-////            let threeGuessScore = scoreDetails.calculateRoundScore(game);
+            game = new SingleGame(options, ew, notify, gamePainterMock.object, false);
 
-////            assert.ok(threeGuessScore > fourGuessScore);
+            game.finalizeGuess("abide");
+            game.finalizeGuess("wrong");
+            game.finalizeGuess("wrong");
+            game.finalizeGuess("apple");
 
-////            game = new SingleGame(options, ew, notify);
-////            game.finalizeGuess("other");
-////            game.finalizeGuess("apple");
+            let fourGuessScore = scoreDetails.calculateRoundScore(game);
 
-////            let twoGuessScore = scoreDetails.calculateRoundScore(game);
+            assert.ok(fourGuessScore > fiveGuessScore);
 
-////            assert.ok(twoGuessScore > threeGuessScore);
+            game = new SingleGame(options, ew, notify, gamePainterMock.object, false);
 
-////            game = new SingleGame(options, ew, notify);
-////            game.finalizeGuess("apple");
+            game.finalizeGuess("abode");
+            game.finalizeGuess("wrong");
+            game.finalizeGuess("apple");
 
-////            let oneGuessScore = scoreDetails.calculateRoundScore(game);
+            let threeGuessScore = scoreDetails.calculateRoundScore(game);
 
-////            assert.ok(oneGuessScore > threeGuessScore);
+            assert.ok(threeGuessScore > fourGuessScore);
 
-////        });
+            game = new SingleGame(options, ew, notify, gamePainterMock.object, false);
 
-////        it('generates a higher score when using an original starting guesses, but both use the same number of guesses.', () => {
-////            let scoreDetails = new ScoreDetails();
+            game.finalizeGuess("other");
+            game.finalizeGuess("apple");
 
-////            game.finalizeGuess("abbot");
-////            game.finalizeGuess("apple");
+            let twoGuessScore = scoreDetails.calculateRoundScore(game);
 
-////            let originalStarter = scoreDetails.calculateRoundScore(game);
+            assert.ok(twoGuessScore > threeGuessScore);
 
-////            game = new SingleGame(options, ew, notify);
-////            game.finalizeGuess("abbot");
-////            game.finalizeGuess("apple");
+            game = new SingleGame(options, ew, notify, gamePainterMock.object, false);
 
-////            let duplicateStarter = scoreDetails.calculateRoundScore(game);
+            game.finalizeGuess("apple");
 
-////            assert.ok(originalStarter > duplicateStarter);
-////        });
+            let oneGuessScore = scoreDetails.calculateRoundScore(game);
 
-////        it('generates a higher score when equivalent guess patterns (with differing starters), but it was solved a minute faster.', () => {
-////            let scoreDetails = new ScoreDetails();
-////            let baseDate = new Date();
-////            let baseDatePlusOne = new Date(baseDate.getTime() + 60000);
-////            let baseDatePlusTwo = new Date(baseDate.getTime() + 120000);
+            assert.ok(oneGuessScore > threeGuessScore);
 
+        });
 
-////            game.finalizeGuess("abbot");
-////            game.finalizeGuess("apple");
-////            game.startTime = baseDate;
-////            game.endTime = baseDatePlusOne;
+        it('generates a higher score when using an original starting guesses, but both use the same number of guesses.', () => {
+            let scoreDetails = new ScoreDetails();
 
-////            let oneMinuteSolve = scoreDetails.calculateRoundScore(game);
+            game.finalizeGuess("abbot");
+            game.finalizeGuess("apple");
 
-////            game = new SingleGame(options, ew, notify);
-////            game.finalizeGuess("abhor");
-////            game.finalizeGuess("apple");
+            let originalStarter = scoreDetails.calculateRoundScore(game);
 
-////            game.startTime = baseDate;
-////            game.endTime = baseDatePlusTwo;
+            game.finalizeGuess("abbot");
+            game.finalizeGuess("apple");
 
-////            let twoMinuteSolve = scoreDetails.calculateRoundScore(game);
+            let duplicateStarter = scoreDetails.calculateRoundScore(game);
 
-////            assert.ok(oneMinuteSolve > twoMinuteSolve);
-////        });
+            assert.ok(originalStarter > duplicateStarter);
+        });
 
-////    });
-////});
+        it('generates a higher score when equivalent guess patterns (with differing starters), but it was solved a minute faster.', () => {
+            let scoreDetails = new ScoreDetails();
+            let baseDate = new Date();
+            let baseDatePlusOne = new Date(baseDate.getTime() + 60000);
+            let baseDatePlusTwo = new Date(baseDate.getTime() + 120000);
+
+
+            game.finalizeGuess("abbot");
+            game.finalizeGuess("apple");
+            game.startTime = baseDate;
+            game.endTime = baseDatePlusOne;
+
+            let oneMinuteSolve = scoreDetails.calculateRoundScore(game);
+
+            game.finalizeGuess("abhor");
+            game.finalizeGuess("apple");
+
+            game.startTime = baseDate;
+            game.endTime = baseDatePlusTwo;
+
+            let twoMinuteSolve = scoreDetails.calculateRoundScore(game);
+
+            assert.ok(oneMinuteSolve > twoMinuteSolve);
+        });
+
+    });
+});
