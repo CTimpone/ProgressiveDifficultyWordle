@@ -1,4 +1,6 @@
 ﻿import { domConstants } from "../Constants/DOMConstants";
+import { cookieConstants } from '../Constants/CookieConstants';
+import { getCookie, removeCookie, setCookie } from "typescript-cookie";
 
 export class ElementVisibilityPainter {
 
@@ -16,6 +18,19 @@ export class ElementVisibilityPainter {
         this.registerNightToggle();
         this.registerGameTypeDetailsClick();
         this.registerTimerInputEvent();
+
+        this.handleDarkMode(Boolean(getCookie(cookieConstants.NIGHT_COOKIE_NAME)));
+    }
+
+    private handleDarkMode(inDarkMode: boolean) {
+        if (inDarkMode) {
+            $("body").addClass("night");
+        } else {
+            $("body").removeClass("night");
+        }
+
+        removeCookie(cookieConstants.NIGHT_COOKIE_NAME);
+        setCookie(cookieConstants.NIGHT_COOKIE_NAME, inDarkMode, { expires: 365 });
     }
 
     private registerHelpSelectorClick() {
@@ -81,8 +96,11 @@ export class ElementVisibilityPainter {
         if (!this.nightToggleRegistered) {
             this.nightToggleRegistered = true;
 
+            const scope = this;
             $("#nightDisplay").click(function () {
                 $("body").toggleClass("night");
+
+                scope.handleDarkMode($("body").hasClass("night"));
             });
         }
     }
