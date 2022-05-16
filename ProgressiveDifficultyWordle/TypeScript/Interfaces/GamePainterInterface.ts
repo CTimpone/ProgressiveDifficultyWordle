@@ -1,7 +1,7 @@
 ﻿import { GameType } from "../Models/GameType";
 import { LetterStatus } from "../Models/LetterStatus";
 import { ScoreDetails } from "../WordleAccessLayer/ScoreDetails";
-import { SessionState } from "../Models/SessionState";
+import { SessionState } from "../WordleAccessLayer/SessionState";
 
 export interface GamePainterInterface {
     typeLetter(key: string, currentLetterIndex: number): void;

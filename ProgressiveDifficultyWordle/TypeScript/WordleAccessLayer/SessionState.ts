@@ -1,4 +1,4 @@
-﻿import { SingleGame } from '../WordleAccessLayer/SingleGame';
+﻿import { SingleGame } from "./SingleGame";
 
 export class SessionState {
     gameHistory: SingleGame[];

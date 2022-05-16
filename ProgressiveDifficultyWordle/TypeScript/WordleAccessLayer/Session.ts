@@ -1,7 +1,7 @@
 ﻿import { GameType } from '../Models/GameType';
 import { ScoreDetails } from './ScoreDetails';
 import { SingleGame } from './SingleGame';
-import { SessionState } from '../Models/SessionState';
+import { SessionState } from './SessionState';
 import { NotificationEventing } from '../Notification/NotificationEventing';
 import { GameOptions } from '../Models/GameOptions';
 import { EligibleWords } from './EligibleWords';

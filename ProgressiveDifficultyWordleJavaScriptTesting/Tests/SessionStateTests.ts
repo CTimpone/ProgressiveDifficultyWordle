@@ -2,7 +2,7 @@
 
 import assert = require('assert');
 import sinon = require('sinon');
-import { SessionState } from '../../ProgressiveDifficultyWordle/TypeScript/Models/SessionState';
+import { SessionState } from '../../ProgressiveDifficultyWordle/TypeScript/WordleAccessLayer/SessionState';
 
 describe("SessionState", () => {
     var consoleSpy;
