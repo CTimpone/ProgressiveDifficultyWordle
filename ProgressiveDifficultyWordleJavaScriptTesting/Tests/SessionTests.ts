@@ -7,20 +7,17 @@ import * as TypeMoq from "typemoq";
 import { EligibleWords } from '../../ProgressiveDifficultyWordle/TypeScript/WordleAccessLayer/eligiblewords';
 import { GameOptions } from '../../ProgressiveDifficultyWordle/TypeScript/Models/gameoptions';
 import { GameType } from '../../ProgressiveDifficultyWordle/TypeScript/Models/gametype';
-import { LetterStatus } from '../../ProgressiveDifficultyWordle/TypeScript/Models/letterstatus';
 import { NotificationEventing } from '../../ProgressiveDifficultyWordle/TypeScript/Notification/NotificationEventing';
 import { NotificationWrapper } from '../../ProgressiveDifficultyWordle/TypeScript/Notification/NotificationWrapper';
 import { Session } from '../../ProgressiveDifficultyWordle/TypeScript/WordleAccessLayer/session';
-import { SingleGame } from '../../ProgressiveDifficultyWordle/TypeScript/WordleAccessLayer/SingleGame';
 import { GamePainterInterface } from '../../ProgressiveDifficultyWordle/TypeScript/Interfaces/GamePainterInterface';
 
 describe("Session", () => {
     var consoleSpy;
     var answerList: string[];
     var guessList: string[];
-    var ew: EligibleWords;
-    var options: GameOptions;
     var notify: NotificationEventing;
+
     let gamePainterMock: TypeMoq.IMock<GamePainterInterface>;
 
     beforeEach(() => {
@@ -29,8 +26,6 @@ describe("Session", () => {
         answerList = ['apple'];
         guessList = ['abbot', 'abhor', 'abide', 'abode', 'apple', 'other', 'wrong'];
 
-        ew = new EligibleWords(answerList, guessList);
-        options = new GameOptions();
         notify = new NotificationEventing();
         notify.internalEventListener = function (wrapper: NotificationWrapper) { }
 

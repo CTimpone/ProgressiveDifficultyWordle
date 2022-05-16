@@ -4,8 +4,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const assert = require("assert");
 const sinon = require("sinon");
 const TypeMoq = require("typemoq");
-const eligiblewords_1 = require("../../ProgressiveDifficultyWordle/TypeScript/WordleAccessLayer/eligiblewords");
-const gameoptions_1 = require("../../ProgressiveDifficultyWordle/TypeScript/Models/gameoptions");
 const gametype_1 = require("../../ProgressiveDifficultyWordle/TypeScript/Models/gametype");
 const NotificationEventing_1 = require("../../ProgressiveDifficultyWordle/TypeScript/Notification/NotificationEventing");
 const session_1 = require("../../ProgressiveDifficultyWordle/TypeScript/WordleAccessLayer/session");
@@ -13,16 +11,12 @@ describe("Session", () => {
     var consoleSpy;
     var answerList;
     var guessList;
-    var ew;
-    var options;
     var notify;
     let gamePainterMock;
     beforeEach(() => {
         consoleSpy = sinon.spy(console, 'log');
         answerList = ['apple'];
         guessList = ['abbot', 'abhor', 'abide', 'abode', 'apple', 'other', 'wrong'];
-        ew = new eligiblewords_1.EligibleWords(answerList, guessList);
-        options = new gameoptions_1.GameOptions();
         notify = new NotificationEventing_1.NotificationEventing();
         notify.internalEventListener = function (wrapper) { };
         gamePainterMock = TypeMoq.Mock.ofType();
