@@ -36,134 +36,132 @@ describe("Session", () => {
         consoleSpy.restore();
     });
 
-        describe("#constructor", () => {
-            it('initializes session with new game, when GameType is Single.', () => {
-                let hardMode = false;
-                let type = GameType.Single;
-                let session = new Session(type, answerList, guessList, notify, gamePainterMock.object,
-                    hardMode);
+    describe("#constructor", () => {
+        it('initializes session with new game, when GameType is Single.', () => {
+            let hardMode = false;
+            let type = GameType.Single;
+            let session = new Session(type, answerList, guessList, notify, gamePainterMock.object,
+                hardMode);
 
-                assert.equal(true, session.isCurrentGameNew());
-                assert.equal(0, session.score.totalScore);
-                assert.equal(0, session.score.roundsCompleted);
-                assert.equal(type, session.type);
-                assert.equal(hardMode, session.state.hardMode);
-                assert.equal(6, session.state.maxGuesses);
+            assert.equal(true, session.isCurrentGameNew());
+            assert.equal(0, session.score.totalScore);
+            assert.equal(0, session.score.roundsCompleted);
+            assert.equal(type, session.type);
+            assert.equal(hardMode, session.state.hardMode);
+            assert.equal(6, session.state.maxGuesses);
 
-                gamePainterMock.verify(x => x.paintBoard(TypeMoq.It.isAny(), TypeMoq.It.isAny(), TypeMoq.It.isAny(),
-                    TypeMoq.It.isAny()), TypeMoq.Times.once());
-                gamePainterMock.verify(x => x.paintDetails(TypeMoq.It.isAny(), TypeMoq.It.isAny(), TypeMoq.It.isAny()),
-                    TypeMoq.Times.once());
-                gamePainterMock.verify(x => x.truncateBoard(TypeMoq.It.isAny()), TypeMoq.Times.once());
+            gamePainterMock.verify(x => x.paintBoard(TypeMoq.It.isAny(), TypeMoq.It.isAny(), TypeMoq.It.isAny(),
+                TypeMoq.It.isAny()), TypeMoq.Times.once());
+            gamePainterMock.verify(x => x.paintDetails(TypeMoq.It.isAny(), TypeMoq.It.isAny(), TypeMoq.It.isAny()),
+                TypeMoq.Times.once());
+            gamePainterMock.verify(x => x.truncateBoard(TypeMoq.It.isAny()), TypeMoq.Times.once());
 
-                gamePainterMock.verify(x => x.typeLetter(TypeMoq.It.isAny(), TypeMoq.It.isAny()), TypeMoq.Times.never());
-                gamePainterMock.verify(x => x.resetBoard(), TypeMoq.Times.never());
-                gamePainterMock.verify(x => x.paintWords(TypeMoq.It.isAny(), TypeMoq.It.isAny(), TypeMoq.It.isAny(),
-                    TypeMoq.It.isAny(), TypeMoq.It.isAny()), TypeMoq.Times.never());
-                gamePainterMock.verify(x => x.paintTimer(TypeMoq.It.isAnyNumber()), TypeMoq.Times.never());
-
-            });
-
-            it('initializes session with new game, when GameType is Endless.', () => {
-                let hardMode = false;
-                let type = GameType.Endless;
-                let session = new Session(type, answerList, guessList, notify, gamePainterMock.object,
-                    hardMode);
-
-                assert.equal(true, session.isCurrentGameNew());
-                assert.equal(0, session.score.totalScore);
-                assert.equal(0, session.score.roundsCompleted);
-                assert.equal(type, session.type);
-                assert.equal(hardMode, session.state.hardMode);
-                assert.equal(6, session.state.maxGuesses);
-            });
-
-            it('initializes session with new game, when GameType is ProgressiveDifficulty.', () => {
-                let hardMode = false;
-                let type = GameType.ProgressiveDifficulty;
-                let session = new Session(type, answerList, guessList, notify, gamePainterMock.object,
-                    hardMode);
-
-                assert.equal(true, session.isCurrentGameNew());
-                assert.equal(0, session.score.totalScore);
-                assert.equal(0, session.score.roundsCompleted);
-                assert.equal(type, session.type);
-                assert.equal(hardMode, session.state.hardMode);
-                assert.equal(6, session.state.maxGuesses);
-            });
-
-            it('initializes session with new game, when Hard Mode is enabled.', () => {
-                let hardMode = true;
-                let type = GameType.ProgressiveDifficulty;
-                let session = new Session(type, answerList, guessList, notify, gamePainterMock.object,
-                    hardMode);
-
-                assert.equal(true, session.isCurrentGameNew());
-                assert.equal(0, session.score.totalScore);
-                assert.equal(0, session.score.roundsCompleted);
-                assert.equal(type, session.type);
-                assert.equal(hardMode, session.state.hardMode);
-                assert.equal(6, session.state.maxGuesses);
-            });
-
-            it('initializes session with new game, when Max Guesses are explicitly specified.', () => {
-                let hardMode = false;
-                let maxGuesses = 5;
-                let type = GameType.ProgressiveDifficulty;
-                let session = new Session(type, answerList, guessList, notify, gamePainterMock.object,
-                    hardMode, maxGuesses);
-
-                assert.equal(true, session.isCurrentGameNew());
-                assert.equal(0, session.score.totalScore);
-                assert.equal(0, session.score.roundsCompleted);
-                assert.equal(type, session.type);
-                assert.equal(hardMode, session.state.hardMode);
-                assert.equal(maxGuesses, session.state.maxGuesses);
-            });
-
-            it('initializes session with new game, when the Timer is enabled and a length is not explicitly specified.', () => {
-                let hardMode = false;
-                let maxGuesses = 5;
-                let timerEnabled = true;
-
-                let type = GameType.ProgressiveDifficulty;
-                let session = new Session(type, answerList, guessList, notify, gamePainterMock.object,
-                    hardMode, maxGuesses, timerEnabled);
-
-                assert.equal(true, session.isCurrentGameNew());
-                assert.equal(0, session.score.totalScore);
-                assert.equal(0, session.score.roundsCompleted);
-                assert.equal(type, session.type);
-                assert.equal(hardMode, session.state.hardMode);
-                assert.equal(maxGuesses, session.state.maxGuesses);
-                assert.equal(timerEnabled, session.state.gameTimerLimitExists);
-                assert.equal(600, session.state.gameTimerLength);
-
-            });
-
-            it('initializes session with new game, when the Timer is enabled and a length is explicitly specified.', () => {
-                let hardMode = false;
-                let maxGuesses = 5;
-                let timerEnabled = true;
-                let timerLength = 100;
-
-                let type = GameType.ProgressiveDifficulty;
-                let session = new Session(type, answerList, guessList, notify, gamePainterMock.object,
-                    hardMode, maxGuesses, timerEnabled, timerLength);
-
-                assert.equal(true, session.isCurrentGameNew());
-                assert.equal(0, session.score.totalScore);
-                assert.equal(0, session.score.roundsCompleted);
-                assert.equal(type, session.type);
-                assert.equal(hardMode, session.state.hardMode);
-                assert.equal(maxGuesses, session.state.maxGuesses);
-                assert.equal(timerEnabled, session.state.gameTimerLimitExists);
-                assert.equal(timerLength, session.state.gameTimerLength);
-
-            });
-
+            gamePainterMock.verify(x => x.typeLetter(TypeMoq.It.isAny(), TypeMoq.It.isAny()), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.resetBoard(), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.paintWords(TypeMoq.It.isAny(), TypeMoq.It.isAny(), TypeMoq.It.isAny(),
+                TypeMoq.It.isAny(), TypeMoq.It.isAny()), TypeMoq.Times.never());
+            gamePainterMock.verify(x => x.paintTimer(TypeMoq.It.isAnyNumber()), TypeMoq.Times.never());
 
         });
+
+        it('initializes session with new game, when GameType is Endless.', () => {
+            let hardMode = false;
+            let type = GameType.Endless;
+            let session = new Session(type, answerList, guessList, notify, gamePainterMock.object,
+                hardMode);
+
+            assert.equal(true, session.isCurrentGameNew());
+            assert.equal(0, session.score.totalScore);
+            assert.equal(0, session.score.roundsCompleted);
+            assert.equal(type, session.type);
+            assert.equal(hardMode, session.state.hardMode);
+            assert.equal(6, session.state.maxGuesses);
+        });
+
+        it('initializes session with new game, when GameType is ProgressiveDifficulty.', () => {
+            let hardMode = false;
+            let type = GameType.ProgressiveDifficulty;
+            let session = new Session(type, answerList, guessList, notify, gamePainterMock.object,
+                hardMode);
+
+            assert.equal(true, session.isCurrentGameNew());
+            assert.equal(0, session.score.totalScore);
+            assert.equal(0, session.score.roundsCompleted);
+            assert.equal(type, session.type);
+            assert.equal(hardMode, session.state.hardMode);
+            assert.equal(6, session.state.maxGuesses);
+        });
+
+        it('initializes session with new game, when Hard Mode is enabled.', () => {
+            let hardMode = true;
+            let type = GameType.ProgressiveDifficulty;
+            let session = new Session(type, answerList, guessList, notify, gamePainterMock.object,
+                hardMode);
+
+            assert.equal(true, session.isCurrentGameNew());
+            assert.equal(0, session.score.totalScore);
+            assert.equal(0, session.score.roundsCompleted);
+            assert.equal(type, session.type);
+            assert.equal(hardMode, session.state.hardMode);
+            assert.equal(6, session.state.maxGuesses);
+        });
+
+        it('initializes session with new game, when Max Guesses are explicitly specified.', () => {
+            let hardMode = false;
+            let maxGuesses = 5;
+            let type = GameType.ProgressiveDifficulty;
+            let session = new Session(type, answerList, guessList, notify, gamePainterMock.object,
+                hardMode, maxGuesses);
+
+            assert.equal(true, session.isCurrentGameNew());
+            assert.equal(0, session.score.totalScore);
+            assert.equal(0, session.score.roundsCompleted);
+            assert.equal(type, session.type);
+            assert.equal(hardMode, session.state.hardMode);
+            assert.equal(maxGuesses, session.state.maxGuesses);
+        });
+
+        it('initializes session with new game, when the Timer is enabled and a length is not explicitly specified.', () => {
+            let hardMode = false;
+            let maxGuesses = 5;
+            let timerEnabled = true;
+
+            let type = GameType.ProgressiveDifficulty;
+            let session = new Session(type, answerList, guessList, notify, gamePainterMock.object,
+                hardMode, maxGuesses, timerEnabled);
+
+            assert.equal(true, session.isCurrentGameNew());
+            assert.equal(0, session.score.totalScore);
+            assert.equal(0, session.score.roundsCompleted);
+            assert.equal(type, session.type);
+            assert.equal(hardMode, session.state.hardMode);
+            assert.equal(maxGuesses, session.state.maxGuesses);
+            assert.equal(timerEnabled, session.state.gameTimerLimitExists);
+            assert.equal(600, session.state.gameTimerLength);
+
+        });
+
+        it('initializes session with new game, when the Timer is enabled and a length is explicitly specified.', () => {
+            let hardMode = false;
+            let maxGuesses = 5;
+            let timerEnabled = true;
+            let timerLength = 100;
+
+            let type = GameType.ProgressiveDifficulty;
+            let session = new Session(type, answerList, guessList, notify, gamePainterMock.object,
+                hardMode, maxGuesses, timerEnabled, timerLength);
+
+            assert.equal(true, session.isCurrentGameNew());
+            assert.equal(0, session.score.totalScore);
+            assert.equal(0, session.score.roundsCompleted);
+            assert.equal(type, session.type);
+            assert.equal(hardMode, session.state.hardMode);
+            assert.equal(maxGuesses, session.state.maxGuesses);
+            assert.equal(timerEnabled, session.state.gameTimerLimitExists);
+            assert.equal(timerLength, session.state.gameTimerLength);
+
+        });
+    });
 
     describe("#next", () => {
         it('runs guesses until failure to solve when the GameType=Single and does not generate a new game after.', () => {
