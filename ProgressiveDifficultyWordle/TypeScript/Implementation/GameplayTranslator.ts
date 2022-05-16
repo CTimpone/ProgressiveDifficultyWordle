@@ -6,6 +6,8 @@ import { Session } from "../WordleAccessLayer/Session";
 import { GamePainter } from "../HtmlPainters/GamePainter";
 import { NotificationPainter } from "../HtmlPainters/NotificationPainter";
 import { GameplayTranslationInterface } from "../Interfaces/GameplayTranslationInterface";
+import { ScoreHandlingInterface } from "../Interfaces/ScoreHandlingInterface";
+import { ScoreHandler } from "./ScoreHandler";
 
 export class GameplayTranslator implements GameplayTranslationInterface {
     currentWord: string;
@@ -15,6 +17,7 @@ export class GameplayTranslator implements GameplayTranslationInterface {
     validGuesses: string[];
 
     gamePainter: GamePainterInterface;
+    scoreHandler: ScoreHandlingInterface;
     notificationPainter: NotificationPainter;
 
     private controlChord: boolean;
@@ -34,6 +37,7 @@ export class GameplayTranslator implements GameplayTranslationInterface {
         this.validGuesses = validGuesses;
 
         this.gamePainter = new GamePainter();
+        this.scoreHandler = new ScoreHandler();
         this.notificationPainter = new NotificationPainter();
 
         this.registerPlayClickEvent();
@@ -198,7 +202,7 @@ export class GameplayTranslator implements GameplayTranslationInterface {
         this.currentWord = "";
 
         this.session = new Session(type, this.validAnswers, this.validAnswers,
-            this.notificationPainter.notificationEventing, this.gamePainter, hardMode,
-            maxGuesses, timerEnabled, timerLength);
+            this.notificationPainter.notificationEventing, this.gamePainter, this.scoreHandler,
+            hardMode, maxGuesses, timerEnabled, timerLength);
     }
 }

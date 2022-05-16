@@ -14,6 +14,7 @@
 /// <reference path="../ProgressiveDifficultyWordle/TypeScript/Models/NotificationType.ts" />
 /// <reference path="../ProgressiveDifficultyWordle/TypeScript/Interfaces/GamePainterInterface.ts" />
 /// <reference path="../ProgressiveDifficultyWordle/TypeScript/Interfaces/GameplayTranslationInterface.ts" />
+/// <reference path="../ProgressiveDifficultyWordle/TypeScript/Interfaces/ScoreHandlingInterface.ts" />
 /// <reference path="../ProgressiveDifficultyWordle/TypeScript/Constants/Words/FiveLetterAnswers.ts" />
 /// <reference path="../ProgressiveDifficultyWordle/TypeScript/Constants/Words/FiveLetterGuesses.ts" />
 //# sourceMappingURL=PDWIndex.js.map
