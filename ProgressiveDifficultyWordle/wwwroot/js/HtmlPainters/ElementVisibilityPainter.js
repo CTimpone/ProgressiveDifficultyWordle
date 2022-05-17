@@ -1,9 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ElementVisibilityPainter = void 0;
+const typescript_cookie_1 = require("typescript-cookie");
 const DOMConstants_1 = require("../Constants/DOMConstants");
 const CookieConstants_1 = require("../Constants/CookieConstants");
-const typescript_cookie_1 = require("typescript-cookie");
 class ElementVisibilityPainter {
     constructor() {
         this.preventFormDefaults();
@@ -36,7 +36,6 @@ class ElementVisibilityPainter {
             $("body").removeClass("night");
             $("#nightDisplay").prop("checked", false);
         }
-        (0, typescript_cookie_1.removeCookie)(CookieConstants_1.cookieConstants.NIGHT_COOKIE_NAME);
         (0, typescript_cookie_1.setCookie)(CookieConstants_1.cookieConstants.NIGHT_COOKIE_NAME, inDarkMode, { expires: 365 });
     }
     registerHelpSelectorClick() {
