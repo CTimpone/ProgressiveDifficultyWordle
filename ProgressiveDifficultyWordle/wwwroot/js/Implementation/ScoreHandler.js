@@ -7,7 +7,8 @@ const GameType_1 = require("../Models/GameType");
 const HighScore_1 = require("../Models/Scoring/HighScore");
 const ScoreWrapper_1 = require("../Models/Scoring/ScoreWrapper");
 class ScoreHandler {
-    constructor() {
+    constructor(painter) {
+        this.painter = painter;
         const existingScoreHistory = (0, typescript_cookie_1.getCookie)(CookieConstants_1.cookieConstants.SCORE_COOKIE_NAME);
         if (existingScoreHistory !== undefined) {
             try {

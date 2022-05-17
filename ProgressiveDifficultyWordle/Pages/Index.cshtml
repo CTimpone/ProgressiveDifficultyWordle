@@ -282,8 +282,8 @@
                 </div>
             </div>
             <div id="scoreContainer" class="scoreContainer hidden">
-                <div id="radioContainer" class="baseFlex flexRow radioContainer">
-                    <form>
+                <form>
+                    <div id="radioContainer" class="baseFlex flexRow radioContainer">
                         <input type="radio" id="gameTypeScoreSelector1" name="gameType" value="single">
                         <label for="gameTypeScoreSelector1">Single</label>
 
@@ -292,10 +292,37 @@
                     
                         <input type="radio" id="gameTypeScoreSelector3" name="gameType" value="scaling">
                         <label for="gameTypeScoreSelector3">Scaling</label>
-                    </form>
-                </div>
+                    </div>
+                </form>
                 <div id="singleScoreHistory">
-                    Stubbed single history
+                    <div id="highLevelSingleStats" class="singleStatsContainer baseFlex flexRow">
+                        <div class="baseFlex flexCol">
+                            <span id="singleRoundsPlayedText" class="statsDesc">5</span>
+                            <span class="statsDesc small">Played</span>
+                        </div>
+                        <div class="baseFlex flexCol">
+                            <span id="successfulRoundsText" class="statsDesc">4</span>
+                            <span class="statsDesc small">Solved</span>
+                        </div>
+                        <div class="baseFlex flexCol">
+                            <span id="failedRoundsText" class="statsDesc">1</span>
+                            <span class="statsDesc small">Lost</span>
+                        </div>
+                        <div class="baseFlex flexCol">
+                            <span id="singleRoundsPlayedText" class="statsDesc">4</span>
+                            <span class="statsDesc small">Streak</span>
+                        </div>
+                    </div>
+                    <span class="statsDesc">Guess Distribution</span>
+                    <div id="guessCountDistribution">
+                        @for (var i = 1; i <= 6; i++)
+                        {
+                        <div id=@($"{i}guessCountContainer") class="guessCountBarContainer baseFlex flexRow">
+                            <div>@(i)</div>
+                            <div id=@($"{i}guessCountBar") class="guessCountBar">100</div>
+                        </div>
+                        } 
+                    </div>
                 </div>
                 <div id="endlessScoreHistory" class="hidden">
                     Stubbed endless history
