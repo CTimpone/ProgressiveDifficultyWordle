@@ -6,6 +6,7 @@ const CookieConstants_1 = require("../Constants/CookieConstants");
 const typescript_cookie_1 = require("typescript-cookie");
 class ElementVisibilityPainter {
     constructor() {
+        this.preventFormDefaults();
         this.registerHelpSelectorClick();
         this.registerSettingsSelectorClick();
         this.registerScoresSelectorClick();
@@ -14,8 +15,9 @@ class ElementVisibilityPainter {
         this.registerGameTypeDetailsClick();
         this.registerGameTypeScoreDetailsClick();
         this.registerTimerInputEvent();
-        this.handleDarkMode(Boolean((0, typescript_cookie_1.getCookie)(CookieConstants_1.cookieConstants.NIGHT_COOKIE_NAME)));
-        this.preventFormDefaults();
+        const nightCookie = (0, typescript_cookie_1.getCookie)(CookieConstants_1.cookieConstants.NIGHT_COOKIE_NAME);
+        const currentDarkMode = nightCookie !== undefined && nightCookie.toLowerCase() === "true";
+        this.handleDarkMode(currentDarkMode);
     }
     preventFormDefaults() {
         if (!this.preventFormDefaultsRegistered) {
@@ -28,9 +30,11 @@ class ElementVisibilityPainter {
     handleDarkMode(inDarkMode) {
         if (inDarkMode) {
             $("body").addClass("night");
+            $("#nightDisplay").prop("checked", true);
         }
         else {
             $("body").removeClass("night");
+            $("#nightDisplay").prop("checked", false);
         }
         (0, typescript_cookie_1.removeCookie)(CookieConstants_1.cookieConstants.NIGHT_COOKIE_NAME);
         (0, typescript_cookie_1.setCookie)(CookieConstants_1.cookieConstants.NIGHT_COOKIE_NAME, inDarkMode, { expires: 365 });

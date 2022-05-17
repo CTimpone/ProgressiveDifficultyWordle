@@ -19,6 +19,8 @@ export class ElementVisibilityPainter {
     private preventFormDefaultsRegistered: boolean;
 
     constructor() {
+        this.preventFormDefaults();
+
         this.registerHelpSelectorClick();
         this.registerSettingsSelectorClick();
         this.registerScoresSelectorClick();
@@ -29,8 +31,9 @@ export class ElementVisibilityPainter {
         this.registerGameTypeScoreDetailsClick();
         this.registerTimerInputEvent();
 
-        this.handleDarkMode(Boolean(getCookie(cookieConstants.NIGHT_COOKIE_NAME)));
-        this.preventFormDefaults();
+        const nightCookie = getCookie(cookieConstants.NIGHT_COOKIE_NAME);
+        const currentDarkMode = nightCookie !== undefined && nightCookie.toLowerCase() === "true";
+        this.handleDarkMode(currentDarkMode);
     }
 
     preventFormDefaults() {
@@ -46,8 +49,12 @@ export class ElementVisibilityPainter {
     private handleDarkMode(inDarkMode: boolean) {
         if (inDarkMode) {
             $("body").addClass("night");
+
+            $("#nightDisplay").prop("checked", true);
         } else {
             $("body").removeClass("night");
+
+            $("#nightDisplay").prop("checked", false);
         }
 
         removeCookie(cookieConstants.NIGHT_COOKIE_NAME);
