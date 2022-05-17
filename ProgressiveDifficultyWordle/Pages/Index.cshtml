@@ -93,16 +93,19 @@
                     </div>
                 </div>
 
-                <div id="radioContainer" class="baseFlex flexRow radioContainer">
-                    <input type="radio" id="gameTypeSelector1" name="gameType" value="single">
-                    <label for="gameTypeSelector1">Single</label>
+                <form>
+                    <div id="radioContainer" class="baseFlex flexRow radioContainer">
+                        <input type="radio" id="gameTypeSelector1" name="gameType" value="single">
+                        <label for="gameTypeSelector1">Single</label>
 
-                    <input type="radio" id="gameTypeSelector2" name="gameType" value="endless">
-                    <label for="gameTypeSelector2">Endless</label>
+                        <input type="radio" id="gameTypeSelector2" name="gameType" value="endless">
+                        <label for="gameTypeSelector2">Endless</label>
                     
-                    <input type="radio" id="gameTypeSelector3" name="gameType" value="scaling">
-                    <label for="gameTypeSelector3">Scaling</label>
-                </div>
+                        <input type="radio" id="gameTypeSelector3" name="gameType" value="scaling">
+                        <label for="gameTypeSelector3">Scaling</label>
+                    </div>
+                </form>
+
                 <div id="gameTypeDescriptionContainer" class="baseFlex flexCol innerMargin">
                     <p id="singleGameDesc">The traditional <strong>Wordle</strong> game type. Solve for a single answer and move on with your day. Can be additionally customized for a more difficult experience.</p>
                     <p id="endlessGameDesc" class="hidden"><strong>Wordle</strong> that never ends. Every time you successfully solve a puzzle, a new game is generated. Challenge yourself to get high-scores by solving as many puzzles consecutively as possible. Can be additionally customized for a more difficult experience.</p>
@@ -279,7 +282,27 @@
                 </div>
             </div>
             <div id="scoreContainer" class="scoreContainer hidden">
-                <p>Temporary score text</p>
+                <div id="radioContainer" class="baseFlex flexRow radioContainer">
+                    <form>
+                        <input type="radio" id="gameTypeScoreSelector1" name="gameType" value="single">
+                        <label for="gameTypeScoreSelector1">Single</label>
+
+                        <input type="radio" id="gameTypeScoreSelector2" name="gameType" value="endless">
+                        <label for="gameTypeScoreSelector2">Endless</label>
+                    
+                        <input type="radio" id="gameTypeScoreSelector3" name="gameType" value="scaling">
+                        <label for="gameTypeScoreSelector3">Scaling</label>
+                    </form>
+                </div>
+                <div id="singleScoreHistory">
+                    Stubbed single history
+                </div>
+                <div id="endlessScoreHistory" class="hidden">
+                    Stubbed endless history
+                </div>
+                <div id="scalingScoreHistory" class="hidden">
+                    Stubbed scaling history
+                </div>
             </div>
             <div id="rowsContainer" class="absoluteParent">
                 <div id="playButton" class="playButton baseFlex">

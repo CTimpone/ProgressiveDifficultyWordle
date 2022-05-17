@@ -34,7 +34,7 @@ export class ScoreHandler implements ScoreHandlingInterface {
                 this.scoreHistory.singleHistory.totalRounds += 1;
                 if (success === true) {
                     this.scoreHistory.singleHistory.successfulRounds += 1;
-
+                    this.scoreHistory.singleHistory.consecutiveWins += 1;
                     if (this.scoreHistory.singleHistory.guessMap.has(guessCount)) {
                         this.scoreHistory.singleHistory.guessMap.set(guessCount,
                             this.scoreHistory.singleHistory.guessMap.get(guessCount) + 1);
@@ -43,6 +43,7 @@ export class ScoreHandler implements ScoreHandlingInterface {
                     }
                 } else {
                     this.scoreHistory.singleHistory.failedRounds += 1;
+                    this.scoreHistory.singleHistory.consecutiveWins = 0;
                 }
 
                 break;
