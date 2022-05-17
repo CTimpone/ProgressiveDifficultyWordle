@@ -1,5 +1,7 @@
-﻿import { getCookie, setCookie, removeCookie } from "typescript-cookie";
+﻿import { getCookie, setCookie } from "typescript-cookie";
+
 import { cookieConstants } from "../Constants/CookieConstants";
+
 import { ScoreHandlingInterface } from "../Interfaces/ScoreHandlingInterface";
 import { GameType } from "../Models/GameType";
 import { HighScore } from "../Models/Scoring/HighScore";
@@ -51,7 +53,6 @@ export class ScoreHandler implements ScoreHandlingInterface {
                 console.log("Invalid game type, no score updates.");
         }
 
-        removeCookie(cookieConstants.SCORE_COOKIE_NAME);
         setCookie(cookieConstants.SCORE_COOKIE_NAME, JSON.stringify(this.scoreHistory), { expires: 365 });
     }
 

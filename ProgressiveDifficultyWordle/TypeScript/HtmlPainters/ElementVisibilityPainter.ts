@@ -1,6 +1,7 @@
-﻿import { domConstants } from "../Constants/DOMConstants";
+﻿import { getCookie, setCookie } from "typescript-cookie";
+
+import { domConstants } from "../Constants/DOMConstants";
 import { cookieConstants } from '../Constants/CookieConstants';
-import { getCookie, removeCookie, setCookie } from "typescript-cookie";
 
 export class ElementVisibilityPainter {
 
@@ -57,7 +58,6 @@ export class ElementVisibilityPainter {
             $("#nightDisplay").prop("checked", false);
         }
 
-        removeCookie(cookieConstants.NIGHT_COOKIE_NAME);
         setCookie(cookieConstants.NIGHT_COOKIE_NAME, inDarkMode, { expires: 365 });
     }
 

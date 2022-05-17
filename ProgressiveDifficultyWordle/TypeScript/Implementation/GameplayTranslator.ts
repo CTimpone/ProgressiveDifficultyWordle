@@ -1,4 +1,8 @@
-﻿import { domConstants } from "../Constants/DOMConstants";
+﻿import { getCookie, setCookie } from "typescript-cookie";
+
+import { domConstants } from "../Constants/DOMConstants";
+import { cookieConstants } from "../Constants/CookieConstants";
+
 import { GamePainterInterface } from "../Interfaces/GamePainterInterface";
 import { GameType } from "../Models/GameType";
 import { GuessResult } from "../Models/GuessResult";
@@ -44,6 +48,20 @@ export class GameplayTranslator implements GameplayTranslationInterface {
         this.registerKeydownEvent();
         this.registerKeyupEvent();
         this.registerVirtualKeyboardEvent();
+
+        const hardModeCookie = getCookie(cookieConstants.HARD_MODE_COOKIE_NAME);
+        const currentDarkMode = hardModeCookie !== undefined && hardModeCookie.toLowerCase() === "true";
+        this.handleHardMode(currentDarkMode);
+    }
+
+    private handleHardMode(hardMode: boolean) {
+        if (hardMode) {
+            $("#hardMode").prop("checked", true);
+        } else {
+            $("#hardMode").prop("checked", false);
+        }
+
+        setCookie(cookieConstants.HARD_MODE_COOKIE_NAME, hardMode, { expires: 365 });
     }
 
     private registerVirtualKeyboardEvent(): void {
@@ -106,6 +124,8 @@ export class GameplayTranslator implements GameplayTranslationInterface {
                         maxGuesses = Number($("#maxGuessesSelect option:selected").val());
                     }
                     const hardMode = $("#hardMode").prop("checked");
+                    setCookie(cookieConstants.HARD_MODE_COOKIE_NAME, hardMode, { expires: 365 });
+
                     scope.startSession(gameType, hardMode, maxGuesses, timerEnabled, timerLength);
                 }
             });

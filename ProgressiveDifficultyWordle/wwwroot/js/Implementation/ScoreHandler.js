@@ -50,7 +50,6 @@ class ScoreHandler {
             default:
                 console.log("Invalid game type, no score updates.");
         }
-        (0, typescript_cookie_1.removeCookie)(CookieConstants_1.cookieConstants.SCORE_COOKIE_NAME);
         (0, typescript_cookie_1.setCookie)(CookieConstants_1.cookieConstants.SCORE_COOKIE_NAME, JSON.stringify(this.scoreHistory), { expires: 365 });
     }
     updateScoreArray(oldScores, newScore) {

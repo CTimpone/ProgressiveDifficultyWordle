@@ -1,7 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GameplayTranslator = void 0;
+const typescript_cookie_1 = require("typescript-cookie");
 const DOMConstants_1 = require("../Constants/DOMConstants");
+const CookieConstants_1 = require("../Constants/CookieConstants");
 const GameType_1 = require("../Models/GameType");
 const GuessResult_1 = require("../Models/GuessResult");
 const Session_1 = require("../WordleAccessLayer/Session");
@@ -22,6 +24,18 @@ class GameplayTranslator {
         this.registerKeydownEvent();
         this.registerKeyupEvent();
         this.registerVirtualKeyboardEvent();
+        const hardModeCookie = (0, typescript_cookie_1.getCookie)(CookieConstants_1.cookieConstants.HARD_MODE_COOKIE_NAME);
+        const currentDarkMode = hardModeCookie !== undefined && hardModeCookie.toLowerCase() === "true";
+        this.handleHardMode(currentDarkMode);
+    }
+    handleHardMode(hardMode) {
+        if (hardMode) {
+            $("#hardMode").prop("checked", true);
+        }
+        else {
+            $("#hardMode").prop("checked", false);
+        }
+        (0, typescript_cookie_1.setCookie)(CookieConstants_1.cookieConstants.HARD_MODE_COOKIE_NAME, hardMode, { expires: 365 });
     }
     registerVirtualKeyboardEvent() {
         if (!this.virtualKeyboardRegistered) {
@@ -73,6 +87,7 @@ class GameplayTranslator {
                         maxGuesses = Number($("#maxGuessesSelect option:selected").val());
                     }
                     const hardMode = $("#hardMode").prop("checked");
+                    (0, typescript_cookie_1.setCookie)(CookieConstants_1.cookieConstants.HARD_MODE_COOKIE_NAME, hardMode, { expires: 365 });
                     scope.startSession(gameType, hardMode, maxGuesses, timerEnabled, timerLength);
                 }
             });
