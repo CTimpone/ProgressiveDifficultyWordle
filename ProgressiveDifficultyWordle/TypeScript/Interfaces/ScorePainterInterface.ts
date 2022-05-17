@@ -1,8 +1,8 @@
 ﻿import { GameType } from "../Models/GameType";
-import { HighScore } from "../Models/Scoring/HighScore";
-import { ResultHistory } from "../Models/Scoring/ResultHistory";
+import { ScoreWrapper } from "../Models/Scoring/ScoreWrapper";
 
 export interface ScorePainterInterface {
-    paintStats(history: ResultHistory): void;
-    paintHighScores(type: GameType, scores: HighScore[]): void;
+    swapToScoreSection(): void;
+    paintScores(type: GameType): void;
+    storeScoreData(data: ScoreWrapper): void;
 }

@@ -3,15 +3,15 @@
 import { domConstants } from "../Constants/DOMConstants";
 import { cookieConstants } from "../Constants/CookieConstants";
 
+import { GameplayTranslationInterface } from "../Interfaces/GameplayTranslationInterface";
+import { ScoreHandlingInterface } from "../Interfaces/ScoreHandlingInterface";
 import { GamePainterInterface } from "../Interfaces/GamePainterInterface";
+
 import { GameType } from "../Models/GameType";
 import { GuessResult } from "../Models/GuessResult";
 import { Session } from "../WordleAccessLayer/Session";
 import { GamePainter } from "../HtmlPainters/GamePainter";
 import { NotificationPainter } from "../HtmlPainters/NotificationPainter";
-import { GameplayTranslationInterface } from "../Interfaces/GameplayTranslationInterface";
-import { ScoreHandlingInterface } from "../Interfaces/ScoreHandlingInterface";
-import { ScoreHandler } from "./ScoreHandler";
 
 export class GameplayTranslator implements GameplayTranslationInterface {
     currentWord: string;
@@ -32,7 +32,7 @@ export class GameplayTranslator implements GameplayTranslationInterface {
     private keyupRegistered: boolean;
     private virtualKeyboardRegistered: boolean;
 
-    constructor(validAnswers: string[], validGuesses: string[]) {
+    constructor(validAnswers: string[], validGuesses: string[], scoreHandler: ScoreHandlingInterface) {
         this.controlChord = false;
         this.altChord = false;
         this.currentWord = "";
@@ -40,8 +40,8 @@ export class GameplayTranslator implements GameplayTranslationInterface {
         this.validAnswers = validAnswers;
         this.validGuesses = validGuesses;
 
+        this.scoreHandler = scoreHandler
         this.gamePainter = new GamePainter();
-        this.scoreHandler = new ScoreHandler();
         this.notificationPainter = new NotificationPainter();
 
         this.registerPlayClickEvent();
