@@ -11,11 +11,29 @@ class ScorePainter {
         if (type === GameType_1.GameType.Single) {
             this.paintSingle(this.scoreData.singleHistory);
         }
+        else if (type === GameType_1.GameType.Endless) {
+            this.paintHighScores(type, this.scoreData.endlessScores);
+        }
+        else {
+            this.paintHighScores(type, this.scoreData.scalingScores);
+        }
     }
     storeScoreData(data) {
         this.scoreData = data;
     }
-    swapToScoreSection() {
+    swapToScoreSection(type) {
+        switch (type) {
+            case GameType_1.GameType.Endless:
+                $("#gameTypeScoreSelector2").prop("checked", true);
+                break;
+            case GameType_1.GameType.ProgressiveDifficulty:
+                $("#gameTypeScoreSelector3").prop("checked", true);
+                break;
+            case GameType_1.GameType.Single:
+            default:
+                $("#gameTypeScoreSelector1").prop("checked", true);
+                break;
+        }
         if ($("#scoreContainer").hasClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME)) {
             $("#scoreHistorySelector").trigger("click");
         }
@@ -35,7 +53,32 @@ class ScorePainter {
         }
     }
     paintHighScores(type, scores) {
-        throw new Error("Method not implemented.");
+        const sectionElement = $(`#${type === GameType_1.GameType.Endless ? "endless" : "scaling"}ScoreHistory`);
+        const tableBaseElement = $(sectionElement).find(".scoreBoard");
+        if (scores.length === 0) {
+            $(sectionElement).find("#noScoresWarning").removeClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME);
+            $(tableBaseElement).addClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME);
+        }
+        else {
+            $(sectionElement).find("#noScoresWarning").addClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME);
+            $(tableBaseElement).removeClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME);
+            for (let i = 0; i < 10; i++) {
+                if (scores.length > i) {
+                    $(tableBaseElement).find(`tr[row-index=${i}]`).removeClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME);
+                    $(tableBaseElement).find(`#scoreRounds${i}`).text(scores[i].roundsCompleted);
+                    $(tableBaseElement).find(`#scorePoints${i}`).text(scores[i].score);
+                    if (scores[i].date instanceof Date) {
+                        $(tableBaseElement).find(`#scoreDate${i}`).text(scores[i].date.toISOString().slice(0, 10));
+                    }
+                    else {
+                        $(tableBaseElement).find(`#scoreDate${i}`).text(scores[i].date.toString().slice(0, 10));
+                    }
+                }
+                else {
+                    $(tableBaseElement).find(`tr[row-index=${i}]`).addClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME);
+                }
+            }
+        }
     }
 }
 exports.ScorePainter = ScorePainter;

@@ -2,7 +2,7 @@
 import { ScoreWrapper } from "../Models/Scoring/ScoreWrapper";
 
 export interface ScorePainterInterface {
-    swapToScoreSection(): void;
+    swapToScoreSection(type?: GameType): void;
     paintScores(type: GameType): void;
     storeScoreData(data: ScoreWrapper): void;
 }

@@ -618,3 +618,11 @@ p, .settingsToggleContainer label{
     border-radius: 3px;
 }
 
+.scoreBoard {
+    font-size: 1em;
+    text-align: center;
+}
+
+.scoreBoard th, .scoreBoard td {
+    padding: 5px;
+}

@@ -327,10 +327,56 @@
                     </div>
                 </div>
                 <div id="endlessScoreHistory" class="hidden">
-                    Stubbed endless history
+                    <div id="noScoresWarning" class="baseFlex hidden">
+                        <span class="statsDesc">No Scores Recorded</span>
+                    </div>
+                    <table class="scoreBoard">
+                        <tr>
+                            <th>
+                                Date
+                            </th>
+                            <th>
+                                Rounds
+                            </th>
+                            <th>
+                                Score
+                            </th>
+                        </tr>
+                        @for (var i = 0; i < 10; i++)
+                        {
+                            <tr row-index=@(i)>
+                                <td id=@($"scoreDate{i}")></td>
+                                <td id=@($"scoreRounds{i}")></td>
+                                <td id=@($"scorePoints{i}")></td>
+                            </tr>
+                        }
+                    </table>
                 </div>
                 <div id="scalingScoreHistory" class="hidden">
-                    Stubbed scaling history
+                    <div id="noScoresWarning" class="baseFlex hidden">
+                        <span class="statsDesc">No Scores Recorded</span>
+                    </div>
+                    <table class="scoreBoard">
+                        <tr>
+                            <th>
+                                Date
+                            </th>
+                            <th>
+                                Rounds
+                            </th>
+                            <th>
+                                Score
+                            </th>
+                        </tr>
+                        @for (var i = 0; i < 10; i++)
+                        {
+                            <tr>
+                                <td id=@($"scoreDate${i}")></td>
+                                <td id=@($"scoreRounds${i}")></td>
+                                <td id=@($"scorePoints${i}")></td>
+                            </tr>
+                        }
+                    </table>
                 </div>
             </div>
             <div id="rowsContainer" class="absoluteParent">

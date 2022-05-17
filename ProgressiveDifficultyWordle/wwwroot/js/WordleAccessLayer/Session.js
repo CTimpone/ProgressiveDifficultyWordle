@@ -41,7 +41,9 @@ class Session {
                 else if (!this.isCurrentGameActive()) {
                     this.messaging.message = new NotificationWrapper_1.NotificationWrapper(NotificationType_1.NotificationType.Error, `The answer was '${this.currentGame.chosenWord.toUpperCase()}. Create a new session to play again.'`);
                     this.score.endTime = this.currentGame.endTime;
-                    this.scoreHandler.updateHighScores(this.type, this.score);
+                    if (this.score.totalScore > 0) {
+                        this.scoreHandler.updateHighScores(this.type, this.score);
+                    }
                 }
             }
         }
