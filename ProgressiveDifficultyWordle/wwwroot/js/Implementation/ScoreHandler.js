@@ -3,16 +3,16 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ScoreHandler = void 0;
 const typescript_cookie_1 = require("typescript-cookie");
 const CookieConstants_1 = require("../Constants/CookieConstants");
+const ScorePainter_1 = require("../HtmlPainters/ScorePainter");
 const GameType_1 = require("../Models/GameType");
 const HighScore_1 = require("../Models/Scoring/HighScore");
 const ScoreWrapper_1 = require("../Models/Scoring/ScoreWrapper");
 class ScoreHandler {
-    constructor(painter) {
-        this.painter = painter;
+    constructor() {
         const existingScoreHistory = (0, typescript_cookie_1.getCookie)(CookieConstants_1.cookieConstants.SCORE_COOKIE_NAME);
         if (existingScoreHistory !== undefined) {
             try {
-                this.scoreHistory = JSON.parse(existingScoreHistory);
+                this.scoreHistory = JSON.parse(existingScoreHistory, this.mapJsonParseReviver);
             }
             catch (ex) {
                 console.log(`Error parsing score history cookie: ${ex}. Resetting to default.`);
@@ -22,6 +22,7 @@ class ScoreHandler {
         else {
             this.scoreHistory = new ScoreWrapper_1.ScoreWrapper();
         }
+        this.painter = new ScorePainter_1.ScorePainter(this.scoreHistory);
     }
     updateHighScores(type, details, success, guessCount) {
         switch (type) {
@@ -51,7 +52,15 @@ class ScoreHandler {
             default:
                 console.log("Invalid game type, no score updates.");
         }
-        (0, typescript_cookie_1.setCookie)(CookieConstants_1.cookieConstants.SCORE_COOKIE_NAME, JSON.stringify(this.scoreHistory), { expires: 365 });
+        this.painter.storeScoreData(this.scoreHistory);
+        (0, typescript_cookie_1.setCookie)(CookieConstants_1.cookieConstants.SCORE_COOKIE_NAME, JSON.stringify(this.scoreHistory, this.mapJsonStringifyReplacement), { expires: 365 });
+    }
+    displayScores(type) {
+        this.painter.paintScores(type);
+        this.painter.swapToScoreSection();
+    }
+    accessPainter() {
+        return this.painter;
     }
     updateScoreArray(oldScores, newScore) {
         let insertedNewScore = false;
@@ -70,8 +79,26 @@ class ScoreHandler {
         }
         return oldScores;
     }
-    displayScores(type) {
-        throw new Error("Method not implemented.");
+    //From https://stackoverflow.com/a/56150320
+    mapJsonStringifyReplacement(key, value) {
+        if (value instanceof Map) {
+            console.log(value);
+            return {
+                dataType: 'Map',
+                value: Array.from(value.entries()),
+            };
+        }
+        else {
+            return value;
+        }
+    }
+    mapJsonParseReviver(key, value) {
+        if (typeof value === 'object' && value !== null) {
+            if (value.dataType === 'Map') {
+                return new Map(value.value);
+            }
+        }
+        return value;
     }
 }
 exports.ScoreHandler = ScoreHandler;

@@ -9,16 +9,15 @@ const GuessResult_1 = require("../Models/GuessResult");
 const Session_1 = require("../WordleAccessLayer/Session");
 const GamePainter_1 = require("../HtmlPainters/GamePainter");
 const NotificationPainter_1 = require("../HtmlPainters/NotificationPainter");
-const ScoreHandler_1 = require("./ScoreHandler");
 class GameplayTranslator {
-    constructor(validAnswers, validGuesses) {
+    constructor(validAnswers, validGuesses, scoreHandler) {
         this.controlChord = false;
         this.altChord = false;
         this.currentWord = "";
         this.validAnswers = validAnswers;
         this.validGuesses = validGuesses;
+        this.scoreHandler = scoreHandler;
         this.gamePainter = new GamePainter_1.GamePainter();
-        this.scoreHandler = new ScoreHandler_1.ScoreHandler();
         this.notificationPainter = new NotificationPainter_1.NotificationPainter();
         this.registerPlayClickEvent();
         this.registerKeydownEvent();

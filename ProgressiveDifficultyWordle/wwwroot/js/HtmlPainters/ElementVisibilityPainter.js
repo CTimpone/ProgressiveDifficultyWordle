@@ -4,8 +4,10 @@ exports.ElementVisibilityPainter = void 0;
 const typescript_cookie_1 = require("typescript-cookie");
 const DOMConstants_1 = require("../Constants/DOMConstants");
 const CookieConstants_1 = require("../Constants/CookieConstants");
+const GameType_1 = require("../Models/GameType");
 class ElementVisibilityPainter {
-    constructor() {
+    constructor(scorePainter) {
+        this.scorePainter = scorePainter;
         this.preventFormDefaults();
         this.registerHelpSelectorClick();
         this.registerSettingsSelectorClick();
@@ -85,6 +87,7 @@ class ElementVisibilityPainter {
         if (!this.scoresSelectorEventRegistered) {
             this.scoresSelectorEventRegistered = true;
             $("#gameTypeScoreSelector1").prop("checked", true);
+            const scope = this;
             $("#scoreHistorySelector").click(function () {
                 $("#helpContainer").addClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME);
                 $("#settingsContainer").addClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME);
@@ -93,6 +96,7 @@ class ElementVisibilityPainter {
                     $("#keyboard, #rowsContainer").addClass(DOMConstants_1.domConstants.INVISIBLE_CLASS_NAME);
                     $(".detailsColumn").addClass(DOMConstants_1.domConstants.INVISIBLE_CLASS_NAME);
                     $("#returnToBoard").removeClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME);
+                    scope.paintScoreSection($("#settingsContainer .radioContainer input:checked").val().toString());
                 }
                 else {
                     $("#scoreContainer").addClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME);
@@ -159,29 +163,37 @@ class ElementVisibilityPainter {
     registerGameTypeScoreDetailsClick() {
         if (!this.gameTypeScoreHistoryEventRegistered) {
             this.gameTypeScoreHistoryEventRegistered = true;
+            const scope = this;
             $("#scoreContainer .radioContainer label").click(function (event) {
-                const gameType = $(`#${$(event.currentTarget).attr("for")}`).val();
-                switch (gameType) {
-                    case "single":
-                        $("#singleScoreHistory").removeClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME);
-                        $("#endlessScoreHistory").addClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME);
-                        $("#scalingScoreHistory").addClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME);
-                        break;
-                    case "endless":
-                        $("#singleScoreHistory").addClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME);
-                        $("#endlessScoreHistory").removeClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME);
-                        $("#scalingScoreHistory").addClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME);
-                        break;
-                    case "scaling":
-                        $("#singleScoreHistory").addClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME);
-                        $("#endlessScoreHistory").addClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME);
-                        $("#scalingScoreHistory").removeClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME);
-                        break;
-                    default:
-                        break;
-                }
+                const gameType = $(`#${$(event.currentTarget).attr("for")}`).val().toString();
+                scope.paintScoreSection(gameType);
             });
         }
+    }
+    paintScoreSection(type) {
+        let gameType;
+        switch (type) {
+            case "endless":
+                $("#singleScoreHistory").addClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME);
+                $("#endlessScoreHistory").removeClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME);
+                $("#scalingScoreHistory").addClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME);
+                gameType = GameType_1.GameType.Endless;
+                break;
+            case "scaling":
+                $("#singleScoreHistory").addClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME);
+                $("#endlessScoreHistory").addClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME);
+                $("#scalingScoreHistory").removeClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME);
+                gameType = GameType_1.GameType.ProgressiveDifficulty;
+                break;
+            case "single":
+            default:
+                $("#singleScoreHistory").removeClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME);
+                $("#endlessScoreHistory").addClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME);
+                $("#scalingScoreHistory").addClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME);
+                gameType = GameType_1.GameType.Single;
+                break;
+        }
+        this.scorePainter.paintScores(gameType);
     }
     registerTimerInputEvent() {
         if (!this.timerInputEventRegistered) {

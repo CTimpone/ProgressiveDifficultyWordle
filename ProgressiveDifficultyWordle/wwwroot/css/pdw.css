@@ -580,9 +580,10 @@ p, .settingsToggleContainer label{
 }
 
 .statsDesc {
-    font-size: 2em;
+    font-size: 1.75em;
     font-weight: bold;
     text-align: center;
+    margin: 0px auto;
 }
 
 .statsDesc.small {
@@ -600,7 +601,7 @@ p, .settingsToggleContainer label{
 
 .guessCountBarContainer {
     width: 70%;
-    margin: 5px 10px;
+    margin: 5px auto;
     font-weight: bold;
     justify-content: left;
 }
@@ -614,5 +615,6 @@ p, .settingsToggleContainer label{
     text-align: right;
     padding-right: 5px;
     min-width: 35px;
+    border-radius: 3px;
 }
 

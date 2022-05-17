@@ -1,6 +1,7 @@
 ﻿import { getCookie, setCookie } from "typescript-cookie";
 
 import { cookieConstants } from "../Constants/CookieConstants";
+import { ScorePainter } from "../HtmlPainters/ScorePainter";
 
 import { ScoreHandlingInterface } from "../Interfaces/ScoreHandlingInterface";
 import { ScorePainterInterface } from "../Interfaces/ScorePainterInterface";
@@ -12,14 +13,14 @@ import { ScoreDetails } from "../WordleAccessLayer/ScoreDetails";
 
 export class ScoreHandler implements ScoreHandlingInterface {
     scoreHistory: ScoreWrapper;
-    painter: ScorePainterInterface;
 
-    constructor(painter: ScorePainterInterface) {
-        this.painter = painter;
+    private painter: ScorePainterInterface;
+
+    constructor() {
         const existingScoreHistory = getCookie(cookieConstants.SCORE_COOKIE_NAME);
         if (existingScoreHistory !== undefined) {
             try {
-                this.scoreHistory = JSON.parse(existingScoreHistory);
+                this.scoreHistory = JSON.parse(existingScoreHistory, this.mapJsonParseReviver);
             } catch (ex) {
                 console.log(`Error parsing score history cookie: ${ex}. Resetting to default.`);
                 this.scoreHistory = new ScoreWrapper();
@@ -27,6 +28,8 @@ export class ScoreHandler implements ScoreHandlingInterface {
         } else {
             this.scoreHistory = new ScoreWrapper();
         }
+
+        this.painter = new ScorePainter(this.scoreHistory);
     }
 
     updateHighScores(type: GameType, details: ScoreDetails, success?: boolean, guessCount?: number): void {
@@ -58,7 +61,18 @@ export class ScoreHandler implements ScoreHandlingInterface {
                 console.log("Invalid game type, no score updates.");
         }
 
-        setCookie(cookieConstants.SCORE_COOKIE_NAME, JSON.stringify(this.scoreHistory), { expires: 365 });
+        this.painter.storeScoreData(this.scoreHistory);
+        setCookie(cookieConstants.SCORE_COOKIE_NAME,
+            JSON.stringify(this.scoreHistory, this.mapJsonStringifyReplacement), { expires: 365 });
+    }
+
+    displayScores(type: GameType): void {
+        this.painter.paintScores(type);
+        this.painter.swapToScoreSection();
+    }
+
+    accessPainter(): ScorePainterInterface {
+        return this.painter;
     }
 
     private updateScoreArray(oldScores: HighScore[], newScore: ScoreDetails): HighScore[] {
@@ -80,7 +94,26 @@ export class ScoreHandler implements ScoreHandlingInterface {
         return oldScores;
     }
 
-    displayScores(type: GameType) {
-        throw new Error("Method not implemented.");
+    //From https://stackoverflow.com/a/56150320
+    private mapJsonStringifyReplacement(key, value) {
+        if (value instanceof Map) {
+            console.log(value);
+            return {
+                dataType: 'Map',
+                value: Array.from(value.entries()), 
+            };
+        } else {
+            return value;
+        }
     }
+
+    private mapJsonParseReviver(key, value) {
+        if (typeof value === 'object' && value !== null) {
+            if (value.dataType === 'Map') {
+                return new Map(value.value);
+            }
+        }
+        return value;
+    }
+
 }

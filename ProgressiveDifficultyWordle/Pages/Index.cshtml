@@ -309,17 +309,19 @@
                             <span class="statsDesc small">Lost</span>
                         </div>
                         <div class="baseFlex flexCol">
-                            <span id="singleRoundsPlayedText" class="statsDesc">4</span>
+                            <span id="streakText" class="statsDesc">4</span>
                             <span class="statsDesc small">Streak</span>
                         </div>
                     </div>
-                    <span class="statsDesc">Guess Distribution</span>
+                    <div class="baseFlex">
+                        <span class="statsDesc">Guess Distribution</span>
+                    </div>
                     <div id="guessCountDistribution">
                         @for (var i = 1; i <= 6; i++)
                         {
                         <div id=@($"{i}guessCountContainer") class="guessCountBarContainer baseFlex flexRow">
                             <div>@(i)</div>
-                            <div id=@($"{i}guessCountBar") class="guessCountBar">100</div>
+                            <div id=@($"{i}guessCountBar") class="guessCountBar"></div>
                         </div>
                         } 
                     </div>
