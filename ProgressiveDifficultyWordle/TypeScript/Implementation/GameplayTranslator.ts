@@ -89,7 +89,7 @@ export class GameplayTranslator implements GameplayTranslationInterface {
                 if (scope.session === undefined || !scope.session.state.active) {
                     $(event.currentTarget).addClass(domConstants.HIDDEN_CLASS_NAME);
 
-                    const gameTypeElements = $("#radioContainer input");
+                    const gameTypeElements = $("#settingsContainer #radioContainer input");
                     let gameTypeString = undefined;
                     for (const element of gameTypeElements) {
                         if ($(element).prop("checked") === true) {
@@ -203,7 +203,7 @@ export class GameplayTranslator implements GameplayTranslationInterface {
                 const guessResult = this.session.next(this.currentWord);
                 if (!this.session.isCurrentGameActive()) {
                     $("#playButton").removeClass(domConstants.HIDDEN_CLASS_NAME);
-                    //TO DO SHOW SCORING
+                    this.scoreHandler.accessPainter().swapToScoreSection(this.session.type);
                 } else if (guessResult === GuessResult.GameComplete || guessResult === GuessResult.Progress) {
                     this.currentWord = "";
                 }

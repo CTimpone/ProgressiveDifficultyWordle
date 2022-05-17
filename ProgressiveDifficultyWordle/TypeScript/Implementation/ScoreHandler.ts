@@ -94,10 +94,9 @@ export class ScoreHandler implements ScoreHandlingInterface {
         return oldScores;
     }
 
-    //From https://stackoverflow.com/a/56150320
+    //Adapted from https://stackoverflow.com/a/56150320
     private mapJsonStringifyReplacement(key, value) {
         if (value instanceof Map) {
-            console.log(value);
             return {
                 dataType: 'Map',
                 value: Array.from(value.entries()), 

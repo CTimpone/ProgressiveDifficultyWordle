@@ -64,7 +64,9 @@ export class Session {
 
                     this.score.endTime = this.currentGame.endTime;
 
-                    this.scoreHandler.updateHighScores(this.type, this.score);
+                    if (this.score.totalScore > 0) {
+                        this.scoreHandler.updateHighScores(this.type, this.score);
+                    }
                 }
             }
         } else {

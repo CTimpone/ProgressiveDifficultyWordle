@@ -55,7 +55,7 @@ class GameplayTranslator {
             $("#playButton").click(function (event) {
                 if (scope.session === undefined || !scope.session.state.active) {
                     $(event.currentTarget).addClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME);
-                    const gameTypeElements = $("#radioContainer input");
+                    const gameTypeElements = $("#settingsContainer #radioContainer input");
                     let gameTypeString = undefined;
                     for (const element of gameTypeElements) {
                         if ($(element).prop("checked") === true) {
@@ -154,7 +154,7 @@ class GameplayTranslator {
                 const guessResult = this.session.next(this.currentWord);
                 if (!this.session.isCurrentGameActive()) {
                     $("#playButton").removeClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME);
-                    //TO DO SHOW SCORING
+                    this.scoreHandler.accessPainter().swapToScoreSection(this.session.type);
                 }
                 else if (guessResult === GuessResult_1.GuessResult.GameComplete || guessResult === GuessResult_1.GuessResult.Progress) {
                     this.currentWord = "";
