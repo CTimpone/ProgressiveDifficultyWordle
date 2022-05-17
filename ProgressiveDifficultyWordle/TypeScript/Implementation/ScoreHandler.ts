@@ -3,6 +3,8 @@
 import { cookieConstants } from "../Constants/CookieConstants";
 
 import { ScoreHandlingInterface } from "../Interfaces/ScoreHandlingInterface";
+import { ScorePainterInterface } from "../Interfaces/ScorePainterInterface";
+
 import { GameType } from "../Models/GameType";
 import { HighScore } from "../Models/Scoring/HighScore";
 import { ScoreWrapper } from "../Models/Scoring/ScoreWrapper";
@@ -10,8 +12,10 @@ import { ScoreDetails } from "../WordleAccessLayer/ScoreDetails";
 
 export class ScoreHandler implements ScoreHandlingInterface {
     scoreHistory: ScoreWrapper;
+    painter: ScorePainterInterface;
 
-    constructor() {
+    constructor(painter: ScorePainterInterface) {
+        this.painter = painter;
         const existingScoreHistory = getCookie(cookieConstants.SCORE_COOKIE_NAME);
         if (existingScoreHistory !== undefined) {
             try {
@@ -24,6 +28,7 @@ export class ScoreHandler implements ScoreHandlingInterface {
             this.scoreHistory = new ScoreWrapper();
         }
     }
+
     updateHighScores(type: GameType, details: ScoreDetails, success?: boolean, guessCount?: number): void {
         switch (type) {
             case GameType.Endless:

@@ -1,0 +1,1 @@
+{"version":3,"file":"ScorePainter.js","sourceRoot":"","sources":["../../../TypeScript/HtmlPainters/ScorePainter.ts"],"names":[],"mappings":";;;AAKA,MAAa,YAAY;IAErB;IACA,CAAC;IAED,UAAU,CAAC,OAAsB;QAC7B,MAAM,IAAI,KAAK,CAAC,yBAAyB,CAAC,CAAC;IAC/C,CAAC;IACD,eAAe,CAAC,IAAc,EAAE,MAAmB;QAC/C,MAAM,IAAI,KAAK,CAAC,yBAAyB,CAAC,CAAC;IAC/C,CAAC;CACJ;AAXD,oCAWC"}
