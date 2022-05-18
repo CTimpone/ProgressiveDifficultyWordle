@@ -8,7 +8,8 @@
   },
   "scripts": {
     "build": "tsc --build",
-    "clean": "tsc --build --clean"
+    "clean": "tsc --build --clean",
+    "test": "mocha 'Tests/*.js'"
   },
   "devDependencies": {
     "@types/jquery": "^3.5.14",

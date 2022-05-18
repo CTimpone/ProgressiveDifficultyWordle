@@ -1,13 +1,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.GameOptions = void 0;
-class GameOptions {
-    constructor(hardMode = false, maxGuesses = 6, maxTimeLimitExists = false, maxTimeLimit = 600) {
-        this.hardMode = hardMode;
-        this.maxGuesses = maxGuesses;
-        this.maxTimeLimitExists = maxTimeLimitExists;
-        this.maxTimeLimit = maxTimeLimit;
+exports.HighScore = void 0;
+class HighScore {
+    constructor(details) {
+        this.score = details.totalScore;
+        this.roundsCompleted = details.roundsCompleted;
+        this.date = details.endTime;
     }
 }
-exports.GameOptions = GameOptions;
-//# sourceMappingURL=GameOptions.js.map
+exports.HighScore = HighScore;
+//# sourceMappingURL=HighScore.js.map
