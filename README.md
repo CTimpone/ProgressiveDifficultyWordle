@@ -13,4 +13,8 @@ Is this strictly necessary for a 'Read Me' file? No, but it's time to stop posin
     - **Classic**: For those who lack self-control, but only want the site to allow them to do one puzzle in a day.
     - **Endless**: For those who just want to do puzzle after puzzle after puzzle after puzzle <sup>after puzzle after puzzle</sup> ad nauseaum.
     - **Progressive Difficulty**: Hey, that's what this application is named for. Adds an additional scaling rule-set on top of the traditional gameplay that grows harder over time. Includes timers, "hard-mode" requirements, lowers maximum guess count, and whatever else I decide to throw in there. Aim for a high-score with my proprietary and totally legitimate and balanced scoring system.
-3. Dev ops and deployment methodology TBD (but definitely imporant).
+3. Tracks state through browser side cookies including:
+    - Dark/Night theme selection.
+    - Hard mode selection, for the traditionalists who enjoy forced plays in a poorly named mode.
+    - Gameplay statistics and high score history.
+4. Deploys in conjunction with GitHub Actions and Azure. Find the deployed version at https://progressivedifficultywordle20220517175626.azurewebsites.net/
