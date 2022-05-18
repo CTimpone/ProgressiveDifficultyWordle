@@ -98,9 +98,6 @@ class SingleGame {
         else if (this.userGuesses.length >= this.options.maxGuesses && this.endTime === undefined) {
             this.messaging.message = new NotificationWrapper_1.NotificationWrapper(NotificationType_1.NotificationType.Error, `Exceeded max number ${this.options.maxGuesses} of guesses; the correct answer was '${this.chosenWord.toUpperCase()}'`);
             this.endTime = new Date();
-            if (this.timerInterval !== undefined) {
-                clearInterval(this.timerInterval);
-            }
         }
     }
     solved() {
@@ -120,9 +117,14 @@ class SingleGame {
             if (gameScope.options.maxTimeLimitExists && seconds <= 0) {
                 gameScope.messaging.message = new NotificationWrapper_1.NotificationWrapper(NotificationType_1.NotificationType.Error, `The timer has ended; the correct answer was '${gameScope.chosenWord.toUpperCase()}'`);
                 gameScope.endTime = new Date();
-                clearInterval(gameScope.timerInterval);
+                gameScope.stopTimer();
             }
         }, 1000);
+    }
+    stopTimer() {
+        if (this.timerInterval !== undefined) {
+            clearInterval(this.timerInterval);
+        }
     }
 }
 exports.SingleGame = SingleGame;

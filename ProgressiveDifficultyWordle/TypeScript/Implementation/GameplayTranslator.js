@@ -153,6 +153,7 @@ class GameplayTranslator {
             else if (this.currentWord.length === 5 && isOk) {
                 const guessResult = this.session.next(this.currentWord);
                 if (!this.session.isCurrentGameActive()) {
+                    this.session.release();
                     $("#playButton").removeClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME);
                     this.scoreHandler.accessPainter().swapToScoreSection(this.session.type);
                 }

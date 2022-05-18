@@ -99,6 +99,10 @@ export class Session {
             game.userGuesses.map(guess => guess.characterStates), onlyPaintLast, game.endTime === undefined);
     }
 
+    release() {
+        this.currentGame.stopTimer();
+    }
+
     private generateGame(): void {
         this.currentGame = new SingleGame(this.generateGameOptions(), this.eligibleWords, this.messaging,
             this.gamePainter, true);

@@ -135,9 +135,6 @@ export class SingleGame {
                 `Exceeded max number ${this.options.maxGuesses} of guesses; the correct answer was '${this.chosenWord.toUpperCase()}'`);
             this.endTime = new Date();
 
-            if (this.timerInterval !== undefined) {
-                clearInterval(this.timerInterval);
-            }
         }
     }
 
@@ -164,8 +161,14 @@ export class SingleGame {
                     `The timer has ended; the correct answer was '${gameScope.chosenWord.toUpperCase()}'`);
                 gameScope.endTime = new Date();
 
-                clearInterval(gameScope.timerInterval);
+                gameScope.stopTimer();
             }
         }, 1000);
+    }
+
+    stopTimer(): void {
+        if (this.timerInterval !== undefined) {
+            clearInterval(this.timerInterval);
+        }
     }
 }

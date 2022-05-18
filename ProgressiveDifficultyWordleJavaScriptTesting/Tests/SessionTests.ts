@@ -19,6 +19,7 @@ describe("Session", () => {
 
     let gamePainterMock: TypeMoq.IMock<GamePainterInterface>;
     let scoreHandlerMock: TypeMoq.IMock<ScoreHandlingInterface>;
+    let session: Session;
 
     beforeEach(() => {
         consoleSpy = sinon.spy(console, 'log');
@@ -35,13 +36,14 @@ describe("Session", () => {
 
     afterEach(() => {
         consoleSpy.restore();
+        session.release();
     });
 
     describe("#constructor", () => {
         it('initializes session with new game, when GameType is Single.', () => {
             let hardMode = false;
             let type = GameType.Single;
-            let session = new Session(type, answerList, guessList, notify, gamePainterMock.object,
+            session = new Session(type, answerList, guessList, notify, gamePainterMock.object,
                 scoreHandlerMock.object, hardMode);
 
             assert.equal(true, session.isCurrentGameNew());
@@ -62,13 +64,12 @@ describe("Session", () => {
             gamePainterMock.verify(x => x.paintWords(TypeMoq.It.isAny(), TypeMoq.It.isAny(), TypeMoq.It.isAny(),
                 TypeMoq.It.isAny(), TypeMoq.It.isAny()), TypeMoq.Times.never());
             gamePainterMock.verify(x => x.paintTimer(TypeMoq.It.isAnyNumber()), TypeMoq.Times.never());
-
         });
 
         it('initializes session with new game, when GameType is Endless.', () => {
             let hardMode = false;
             let type = GameType.Endless;
-            let session = new Session(type, answerList, guessList, notify, gamePainterMock.object,
+            session = new Session(type, answerList, guessList, notify, gamePainterMock.object,
                 scoreHandlerMock.object, hardMode);
 
             assert.equal(true, session.isCurrentGameNew());
@@ -82,7 +83,7 @@ describe("Session", () => {
         it('initializes session with new game, when GameType is ProgressiveDifficulty.', () => {
             let hardMode = false;
             let type = GameType.ProgressiveDifficulty;
-            let session = new Session(type, answerList, guessList, notify, gamePainterMock.object,
+            session = new Session(type, answerList, guessList, notify, gamePainterMock.object,
                 scoreHandlerMock.object, hardMode);
 
             assert.equal(true, session.isCurrentGameNew());
@@ -96,7 +97,7 @@ describe("Session", () => {
         it('initializes session with new game, when Hard Mode is enabled.', () => {
             let hardMode = true;
             let type = GameType.ProgressiveDifficulty;
-            let session = new Session(type, answerList, guessList, notify, gamePainterMock.object,
+            session = new Session(type, answerList, guessList, notify, gamePainterMock.object,
                 scoreHandlerMock.object, hardMode);
 
             assert.equal(true, session.isCurrentGameNew());
@@ -111,7 +112,7 @@ describe("Session", () => {
             let hardMode = false;
             let maxGuesses = 5;
             let type = GameType.ProgressiveDifficulty;
-            let session = new Session(type, answerList, guessList, notify, gamePainterMock.object,
+            session = new Session(type, answerList, guessList, notify, gamePainterMock.object,
                 scoreHandlerMock.object, hardMode, maxGuesses);
 
             assert.equal(true, session.isCurrentGameNew());
@@ -128,7 +129,7 @@ describe("Session", () => {
             let timerEnabled = true;
 
             let type = GameType.ProgressiveDifficulty;
-            let session = new Session(type, answerList, guessList, notify, gamePainterMock.object,
+            session = new Session(type, answerList, guessList, notify, gamePainterMock.object,
                 scoreHandlerMock.object, hardMode, maxGuesses, timerEnabled);
 
             assert.equal(true, session.isCurrentGameNew());
@@ -149,7 +150,7 @@ describe("Session", () => {
             let timerLength = 100;
 
             let type = GameType.ProgressiveDifficulty;
-            let session = new Session(type, answerList, guessList, notify, gamePainterMock.object,
+            session = new Session(type, answerList, guessList, notify, gamePainterMock.object,
                 scoreHandlerMock.object, hardMode, maxGuesses, timerEnabled, timerLength);
 
             assert.equal(true, session.isCurrentGameNew());
@@ -168,7 +169,7 @@ describe("Session", () => {
         it('runs guesses until failure to solve when the GameType=Single and does not generate a new game after.', () => {
             let hardMode = false;
             let type = GameType.Single;
-            let session = new Session(type, answerList, guessList, notify, gamePainterMock.object,
+            session = new Session(type, answerList, guessList, notify, gamePainterMock.object,
                 scoreHandlerMock.object, hardMode);
 
             for (let i = 1; i < 6; i++) {
@@ -204,7 +205,7 @@ describe("Session", () => {
         it('runs guesses until solved to solve when the GameType=Single and does not generate a new game after.', () => {
             let hardMode = false;
             let type = GameType.Single;
-            let session = new Session(type, answerList, guessList, notify, gamePainterMock.object,
+            session = new Session(type, answerList, guessList, notify, gamePainterMock.object,
                 scoreHandlerMock.object, hardMode);
 
             for (let i = 1; i < 6; i++) {
@@ -240,7 +241,7 @@ describe("Session", () => {
         it('runs guesses until successful when the GameType=Endless and subsequently generate a new game, never modifying the underlying state.', () => {
             let hardMode = false;
             let type = GameType.Endless;
-            let session = new Session(type, answerList, guessList, notify, gamePainterMock.object,
+            session = new Session(type, answerList, guessList, notify, gamePainterMock.object,
                 scoreHandlerMock.object, hardMode);
 
             assert.equal(hardMode, session.state.hardMode);
@@ -299,7 +300,7 @@ describe("Session", () => {
         it('runs guesses until fails when the GameType=Endless and then don\'t generate a new game.', () => {
             let hardMode = false;
             let type = GameType.Endless;
-            let session = new Session(type, answerList, guessList, notify, gamePainterMock.object,
+            session = new Session(type, answerList, guessList, notify, gamePainterMock.object,
                 scoreHandlerMock.object, hardMode);
 
             for (let i = 1; i <= 5; i++) {
@@ -341,7 +342,7 @@ describe("Session", () => {
         it('runs guesses until successful when the GameType=ProgressiveDifficulty and subsequently generate a new game, never modifying the underlying state.', () => {
             let hardMode = false;
             let type = GameType.ProgressiveDifficulty;
-            let session = new Session(type, answerList, guessList, notify, gamePainterMock.object,
+            session = new Session(type, answerList, guessList, notify, gamePainterMock.object,
                 scoreHandlerMock.object, hardMode);
 
             assert.equal(hardMode, session.state.hardMode);
