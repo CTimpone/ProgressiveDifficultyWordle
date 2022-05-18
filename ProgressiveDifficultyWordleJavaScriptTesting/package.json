@@ -9,7 +9,7 @@
   "scripts": {
     "build": "tsc --build",
     "clean": "tsc --build --clean",
-    "test": "mocha 'Tests/*.js'"
+    "test": "mocha 'Tests/*.js' --exit"
   },
   "devDependencies": {
     "@types/jquery": "^3.5.14",
