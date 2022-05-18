@@ -17,6 +17,7 @@ describe("SingleGame", () => {
     var consoleSpy;
     var notify;
     let gamePainterMock: TypeMoq.IMock<GamePainterInterface>;
+    let game: SingleGame;
 
     beforeEach(() => {
         consoleSpy = sinon.spy(console, 'log');
@@ -26,6 +27,7 @@ describe("SingleGame", () => {
 
     afterEach(() => {
         consoleSpy.restore();
+        game.stopTimer();
     });
 
     describe("#constructor", () => {
@@ -39,7 +41,7 @@ describe("SingleGame", () => {
                 assert.fail("No notification should occur");
             });
 
-            let game = new SingleGame(options, ew, notify, gamePainterMock.object, false);
+            game = new SingleGame(options, ew, notify, gamePainterMock.object, false);
             assert.notEqual(undefined, game.chosenWord);
             assert.equal(true, ew.eligibleAnswers.indexOf(game.chosenWord) !== -1);
 
@@ -64,7 +66,7 @@ describe("SingleGame", () => {
                 assert.fail("No notification should occur");
             });
             
-            let game = new SingleGame(options, ew, notify, gamePainterMock.object, true);
+            game = new SingleGame(options, ew, notify, gamePainterMock.object, true);
 
             await new Promise(r => setTimeout(r, 1100));
 
@@ -95,7 +97,7 @@ describe("SingleGame", () => {
                 assert.fail("No notification should occur");
             }
 
-            let game = new SingleGame(options, ew, notify, gamePainterMock.object, false);
+            game = new SingleGame(options, ew, notify, gamePainterMock.object, false);
 
             assert.equal(true, game.validateGuess("abbot"));
 
@@ -117,7 +119,7 @@ describe("SingleGame", () => {
             let options = new GameOptions();
             notify.internalEventListener = function (wrapper: NotificationWrapper) { };
 
-            let game = new SingleGame(options, ew, notify, gamePainterMock.object, false);
+            game = new SingleGame(options, ew, notify, gamePainterMock.object, false);
 
             assert.equal(true, game.validateGuess("abbot"));
             assert.equal(0, game.userGuesses);
@@ -146,7 +148,7 @@ describe("SingleGame", () => {
                 assert.equal("The game has already ended.", wrapper.message);
             }
 
-            let game = new SingleGame(options, ew, notify, gamePainterMock.object, false);
+            game = new SingleGame(options, ew, notify, gamePainterMock.object, false);
             game.endTime = new Date();
 
             assert.equal(false, game.validateGuess("wrong"));
@@ -172,7 +174,7 @@ describe("SingleGame", () => {
                 assert.equal("Exceeded max number 1 of guesses.", wrapper.message);
             }
 
-            let game = new SingleGame(options, ew, notify, gamePainterMock.object, false);
+            game = new SingleGame(options, ew, notify, gamePainterMock.object, false);
             game.userGuesses.push(new GuessDetails("other", game.chosenWord));
 
             assert.equal(game.options.maxGuesses, game.userGuesses.length);
@@ -199,7 +201,7 @@ describe("SingleGame", () => {
                 assert.equal("Exceeded max number 1 of guesses.", wrapper.message);
             }
 
-            let game = new SingleGame(options, ew, notify, gamePainterMock.object, false);
+            game = new SingleGame(options, ew, notify, gamePainterMock.object, false);
             game.userGuesses.push(new GuessDetails("other", game.chosenWord));
             game.userGuesses.push(new GuessDetails("again", game.chosenWord));
 
@@ -227,7 +229,7 @@ describe("SingleGame", () => {
                 assert.equal("Invalid input.", wrapper.message);
             }
 
-            let game = new SingleGame(options, ew, notify, gamePainterMock.object, false);
+            game = new SingleGame(options, ew, notify, gamePainterMock.object, false);
 
             assert.equal(false, game.validateGuess("WRONG"));
             assert.equal(false, game.validateGuess("WRoNG"));
@@ -256,7 +258,7 @@ describe("SingleGame", () => {
                 assert.equal("Invalid input.", wrapper.message);
             }
 
-            let game = new SingleGame(options, ew, notify, gamePainterMock.object, false);
+            game = new SingleGame(options, ew, notify, gamePainterMock.object, false);
 
             assert.equal(false, game.validateGuess("abbo"));
             assert.equal(false, game.validateGuess("abho"));
@@ -285,7 +287,7 @@ describe("SingleGame", () => {
                 assert.equal("Hard mode rules violated: 'b' must be present at character index 1 of 4.", wrapper.message);
             }
 
-            let game = new SingleGame(options, ew, notify, gamePainterMock.object, false);
+            game = new SingleGame(options, ew, notify, gamePainterMock.object, false);
             game.letterState.ExactMatch.set(0, 'a');
             game.letterState.ExactMatch.set(1, 'b');
             game.letterState.ExactMatch.set(2, 'h');
@@ -312,7 +314,7 @@ describe("SingleGame", () => {
                 assert.fail("No notification should occur");
             }
 
-            let game = new SingleGame(options, ew, notify, gamePainterMock.object, false);
+            game = new SingleGame(options, ew, notify, gamePainterMock.object, false);
             game.letterState.ExactMatch.set(0, 'a');
             game.letterState.ExactMatch.set(1, 'b');
             game.letterState.PresentBadLocations.set('o', [3]);
@@ -340,7 +342,7 @@ describe("SingleGame", () => {
                 assert.equal("'ABUZZ' is not in word list.", wrapper.message);
             }
 
-            let game = new SingleGame(options, ew, notify, gamePainterMock.object, false);
+            game = new SingleGame(options, ew, notify, gamePainterMock.object, false);
             game.letterState.ExactMatch.set(0, 'a');
             game.letterState.ExactMatch.set(1, 'b');
 
@@ -371,7 +373,7 @@ describe("SingleGame", () => {
                 assert.equal("Successful solve - 'APPLE'!", wrapper.message);
             }
 
-            let game = new SingleGame(options, ew, notify, gamePainterMock.object, false);
+            game = new SingleGame(options, ew, notify, gamePainterMock.object, false);
 
             let guess = game.chosenWord;
             game.finalizeGuess(guess);
@@ -407,7 +409,7 @@ describe("SingleGame", () => {
                 assert.equal("Exceeded max number 1 of guesses; the correct answer was 'APPLE'", wrapper.message);
             }
 
-            let game = new SingleGame(options, ew, notify, gamePainterMock.object, false);
+            game = new SingleGame(options, ew, notify, gamePainterMock.object, false);
 
             let guess = game.eligibleWords.eligibleGuesses[0];
 
@@ -438,7 +440,7 @@ describe("SingleGame", () => {
                 assert.equal("Exceeded max number 6 of guesses; the correct answer was 'APPLE'", wrapper.message);
             }
 
-            let game = new SingleGame(options, ew, notify, gamePainterMock.object, false);
+            game = new SingleGame(options, ew, notify, gamePainterMock.object, false);
 
             let guess = game.eligibleWords.eligibleGuesses[0];
 
@@ -474,7 +476,7 @@ describe("SingleGame", () => {
                 assert.fail("No notification should occur");
             }
 
-            let game = new SingleGame(options, ew, notify, gamePainterMock.object, false);
+            game = new SingleGame(options, ew, notify, gamePainterMock.object, false);
 
             let guess = 'risen';
             game.finalizeGuess(guess);
@@ -503,7 +505,7 @@ describe("SingleGame", () => {
                 assert.fail("No notification should occur");
             }
 
-            let game = new SingleGame(options, ew, notify, gamePainterMock.object, false);
+            game = new SingleGame(options, ew, notify, gamePainterMock.object, false);
 
             let guess = 'risen';
             game.finalizeGuess(guess);
@@ -534,7 +536,7 @@ describe("SingleGame", () => {
                 assert.fail("No notification should occur");
             }
 
-            let game = new SingleGame(options, ew, notify, gamePainterMock.object, false);
+            game = new SingleGame(options, ew, notify, gamePainterMock.object, false);
 
             let guess = 'risen';
             game.finalizeGuess(guess);
@@ -572,7 +574,7 @@ describe("SingleGame", () => {
                 assert.fail("No notification should occur");
             }
 
-            let game = new SingleGame(options, ew, notify, gamePainterMock.object, false);
+            game = new SingleGame(options, ew, notify, gamePainterMock.object, false);
 
             let guess = 'later';
             game.finalizeGuess(guess);
@@ -602,7 +604,7 @@ describe("SingleGame", () => {
                 assert.fail("No notification should occur");
             }
 
-            let game = new SingleGame(options, ew, notify, gamePainterMock.object, false);
+            game = new SingleGame(options, ew, notify, gamePainterMock.object, false);
 
             let guess = 'later';
             game.finalizeGuess(guess);
@@ -645,7 +647,7 @@ describe("SingleGame", () => {
                 assert.fail("No notification should occur");
             }
 
-            let game = new SingleGame(options, ew, notify, gamePainterMock.object, false);
+            game = new SingleGame(options, ew, notify, gamePainterMock.object, false);
 
             let guess = 'aorta';
             game.finalizeGuess(guess);
@@ -682,7 +684,7 @@ describe("SingleGame", () => {
                 assert.fail("No notification should occur");
             }
 
-            let game = new SingleGame(options, ew, notify, gamePainterMock.object, false);
+            game = new SingleGame(options, ew, notify, gamePainterMock.object, false);
 
             let guess = 'aorta';
             game.finalizeGuess(guess);

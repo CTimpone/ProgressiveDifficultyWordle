@@ -67,6 +67,9 @@ class Session {
         onlyPaintLast = onlyPaintLast !== null && onlyPaintLast !== void 0 ? onlyPaintLast : false;
         this.gamePainter.paintBoard(game.userGuesses.map(guess => guess.guess), game.userGuesses.map(guess => guess.characterStates), onlyPaintLast, game.endTime === undefined);
     }
+    release() {
+        this.currentGame.stopTimer();
+    }
     generateGame() {
         this.currentGame = new SingleGame_1.SingleGame(this.generateGameOptions(), this.eligibleWords, this.messaging, this.gamePainter, true);
         this.paintDetails();

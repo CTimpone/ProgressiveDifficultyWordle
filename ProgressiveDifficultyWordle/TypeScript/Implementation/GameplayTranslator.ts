@@ -202,6 +202,7 @@ export class GameplayTranslator implements GameplayTranslationInterface {
             else if (this.currentWord.length === 5 && isOk) {
                 const guessResult = this.session.next(this.currentWord);
                 if (!this.session.isCurrentGameActive()) {
+                    this.session.release();
                     $("#playButton").removeClass(domConstants.HIDDEN_CLASS_NAME);
                     this.scoreHandler.accessPainter().swapToScoreSection(this.session.type);
                 } else if (guessResult === GuessResult.GameComplete || guessResult === GuessResult.Progress) {
