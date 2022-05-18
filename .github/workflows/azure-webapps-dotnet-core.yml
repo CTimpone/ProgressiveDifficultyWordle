@@ -23,6 +23,8 @@ jobs:
       run: dotnet restore "${{ env.WORKING_DIRECTORY }}"
     - name: NPM Install (with Caching)
       uses: bahmutov/npm-install@v1.6.0
+      with:
+          working-directory: ${{ env.WORKING_DIRECTORY }}
     - name: Build
       run: dotnet build "${{ env.WORKING_DIRECTORY }}" --configuration ${{ env.CONFIGURATION }} --no-restore
     - name: Test
