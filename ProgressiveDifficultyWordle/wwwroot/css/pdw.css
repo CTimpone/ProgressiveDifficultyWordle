@@ -261,7 +261,6 @@ input[type="checkbox"]:checked + label::after {
 .notificationsContainer {
     position: absolute;
     background: var(--offBlack);
-    /*min-height: 80px;*/
     width: 94%;
     z-index: 100;
     opacity: 0.97;
