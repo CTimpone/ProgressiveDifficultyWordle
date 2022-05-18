@@ -1,71 +1,104 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Session = void 0;
-const GameType_1 = require("./GameType");
-const ScoreDetails_1 = require("./ScoreDetails");
-const SingleGame_1 = require("./SingleGame");
-const SessionState_1 = require("./SessionState");
-const GameOptions_1 = require("./GameOptions");
-const EligibleWords_1 = require("./EligibleWords");
-const NotificationWrapper_1 = require("./Notification/NotificationWrapper");
-const NotificationType_1 = require("./Notification/NotificationType");
-class Session {
-    constructor(type, hardMode, eligibleAnswers, eligibleGuesses, notificationTools, fn) {
-        this.type = type;
-        this.messaging = notificationTools;
-        this.score = new ScoreDetails_1.ScoreDetails();
-        this.state = new SessionState_1.SessionState(hardMode);
-        this.boardBinder = fn;
-        this.eligibleWords = new EligibleWords_1.EligibleWords(eligibleAnswers, eligibleGuesses);
-        this.generateGame();
-        this.state.startTime = this.currentGame.startTime;
-    }
-    next(input) {
-        if (this.state.active) {
-            if (this.type === GameType_1.GameType.Single) {
-                this.currentGame.finalizeGuess(input);
-                this.paintBoard();
-                this.state.active = this.currentGame.endTime === undefined;
+exports.ScoreHandler = void 0;
+const typescript_cookie_1 = require("typescript-cookie");
+const CookieConstants_1 = require("../Constants/CookieConstants");
+const ScorePainter_1 = require("../HtmlPainters/ScorePainter");
+const GameType_1 = require("../Models/GameType");
+const HighScore_1 = require("../Models/Scoring/HighScore");
+const ScoreWrapper_1 = require("../Models/Scoring/ScoreWrapper");
+class ScoreHandler {
+    constructor() {
+        const existingScoreHistory = (0, typescript_cookie_1.getCookie)(CookieConstants_1.cookieConstants.SCORE_COOKIE_NAME);
+        if (existingScoreHistory !== undefined) {
+            try {
+                this.scoreHistory = JSON.parse(existingScoreHistory, this.mapJsonParseReviver);
             }
-            else {
-                this.currentGame.finalizeGuess(input);
-                this.paintBoard();
-                if (this.currentGame.solved()) {
-                    this.anotherGame();
-                }
-                else if (this.currentGame.endTime) {
-                    this.state.active = false;
-                    this.messaging.message = new NotificationWrapper_1.NotificationWrapper(NotificationType_1.NotificationType.Error, "Unsuccessfully solved. To keep playing, you will need a new session.");
-                }
+            catch (ex) {
+                console.log(`Error parsing score history cookie: ${ex}. Resetting to default.`);
+                this.scoreHistory = new ScoreWrapper_1.ScoreWrapper();
             }
         }
         else {
-            this.messaging.message = new NotificationWrapper_1.NotificationWrapper(NotificationType_1.NotificationType.Error, "The session has ended. To keep playing, you will need a new session.");
+            this.scoreHistory = new ScoreWrapper_1.ScoreWrapper();
+        }
+        this.painter = new ScorePainter_1.ScorePainter(this.scoreHistory);
+    }
+    updateHighScores(type, details, success, guessCount) {
+        switch (type) {
+            case GameType_1.GameType.Endless:
+                this.scoreHistory.endlessScores = this.updateScoreArray(this.scoreHistory.endlessScores, details);
+                break;
+            case GameType_1.GameType.ProgressiveDifficulty:
+                this.scoreHistory.scalingScores = this.updateScoreArray(this.scoreHistory.scalingScores, details);
+                break;
+            case GameType_1.GameType.Single:
+                this.scoreHistory.singleHistory.totalRounds += 1;
+                if (success === true) {
+                    this.scoreHistory.singleHistory.successfulRounds += 1;
+                    this.scoreHistory.singleHistory.consecutiveWins += 1;
+                    if (this.scoreHistory.singleHistory.guessMap.has(guessCount)) {
+                        this.scoreHistory.singleHistory.guessMap.set(guessCount, this.scoreHistory.singleHistory.guessMap.get(guessCount) + 1);
+                    }
+                    else {
+                        this.scoreHistory.singleHistory.guessMap.set(guessCount, 1);
+                    }
+                }
+                else {
+                    this.scoreHistory.singleHistory.failedRounds += 1;
+                    this.scoreHistory.singleHistory.consecutiveWins = 0;
+                }
+                break;
+            default:
+                console.log("Invalid game type, no score updates.");
+        }
+        this.painter.storeScoreData(this.scoreHistory);
+        (0, typescript_cookie_1.setCookie)(CookieConstants_1.cookieConstants.SCORE_COOKIE_NAME, JSON.stringify(this.scoreHistory, this.mapJsonStringifyReplacement), { expires: 365 });
+    }
+    displayScores(type) {
+        this.painter.paintScores(type);
+        this.painter.swapToScoreSection();
+    }
+    accessPainter() {
+        return this.painter;
+    }
+    updateScoreArray(oldScores, newScore) {
+        let insertedNewScore = false;
+        const mappedScore = new HighScore_1.HighScore(newScore);
+        for (let i = 0; i < oldScores.length; i++) {
+            if (!insertedNewScore && oldScores[i].score < newScore.totalScore) {
+                oldScores.splice(i, 0, mappedScore);
+                insertedNewScore = true;
+            }
+        }
+        if (oldScores.length > 10) {
+            oldScores = oldScores.slice(0, 10);
+        }
+        else if (!insertedNewScore && oldScores.length < 10) {
+            oldScores.push(mappedScore);
+        }
+        return oldScores;
+    }
+    //Adapted from https://stackoverflow.com/a/56150320
+    mapJsonStringifyReplacement(key, value) {
+        if (value instanceof Map) {
+            return {
+                dataType: 'Map',
+                value: Array.from(value.entries()),
+            };
+        }
+        else {
+            return value;
         }
     }
-    isCurrentGameNew() {
-        return this.currentGame !== undefined && this.currentGame.userGuesses.length === 0;
-    }
-    paintBoard(game, onlyPaintLast) {
-        game = game !== null && game !== void 0 ? game : this.currentGame;
-        onlyPaintLast = onlyPaintLast !== null && onlyPaintLast !== void 0 ? onlyPaintLast : false;
-        this.boardBinder(game.userGuesses.map(guess => guess.guess), game.userGuesses.map(guess => guess.characterStates), onlyPaintLast);
-    }
-    generateGame() {
-        this.currentGame = new SingleGame_1.SingleGame(this.generateGameOptions(), this.eligibleWords, this.messaging);
-    }
-    generateGameOptions() {
-        return new GameOptions_1.GameOptions(this.state.hardMode, this.state.maxGuesses, this.state.gameTimerLimitExists, this.state.gameTimerLength);
-    }
-    anotherGame() {
-        this.state.gameHistory.push(this.currentGame);
-        this.score.updateScore(this.currentGame);
-        if (this.type === GameType_1.GameType.ProgressiveDifficulty) {
-            this.state.getHarder(this.score.roundsCompleted);
+    mapJsonParseReviver(key, value) {
+        if (typeof value === 'object' && value !== null) {
+            if (value.dataType === 'Map') {
+                return new Map(value.value);
+            }
         }
-        this.generateGame();
-        this.paintBoard();
+        return value;
     }
 }
-exports.Session = Session;
-//# sourceMappingURL=session.js.map
+exports.ScoreHandler = ScoreHandler;
+//# sourceMappingURL=ScoreHandler.js.map

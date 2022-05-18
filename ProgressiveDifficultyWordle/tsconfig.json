@@ -6,8 +6,7 @@
     "removeComments": false,
     "sourceMap": true,
     "target": "es6",
-    "module": "CommonJS",
-    "outDir": "wwwroot/js"
+    "module": "CommonJS"
   },
   "include": [
     "TypeScript/**/**/*",

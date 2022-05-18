@@ -1,71 +1,209 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Session = void 0;
-const GameType_1 = require("./GameType");
-const ScoreDetails_1 = require("./ScoreDetails");
-const SingleGame_1 = require("./SingleGame");
-const SessionState_1 = require("./SessionState");
-const GameOptions_1 = require("./GameOptions");
-const EligibleWords_1 = require("./EligibleWords");
-const NotificationWrapper_1 = require("./Notification/NotificationWrapper");
-const NotificationType_1 = require("./Notification/NotificationType");
-class Session {
-    constructor(type, hardMode, eligibleAnswers, eligibleGuesses, notificationTools, fn) {
-        this.type = type;
-        this.messaging = notificationTools;
-        this.score = new ScoreDetails_1.ScoreDetails();
-        this.state = new SessionState_1.SessionState(hardMode);
-        this.boardBinder = fn;
-        this.eligibleWords = new EligibleWords_1.EligibleWords(eligibleAnswers, eligibleGuesses);
-        this.generateGame();
-        this.state.startTime = this.currentGame.startTime;
+exports.ElementVisibilityPainter = void 0;
+const typescript_cookie_1 = require("typescript-cookie");
+const DOMConstants_1 = require("../Constants/DOMConstants");
+const CookieConstants_1 = require("../Constants/CookieConstants");
+const GameType_1 = require("../Models/GameType");
+class ElementVisibilityPainter {
+    constructor(scorePainter) {
+        this.scorePainter = scorePainter;
+        this.preventFormDefaults();
+        this.registerHelpSelectorClick();
+        this.registerSettingsSelectorClick();
+        this.registerScoresSelectorClick();
+        this.registerBoardReturnEvent();
+        this.registerNightToggle();
+        this.registerGameTypeDetailsClick();
+        this.registerGameTypeScoreDetailsClick();
+        this.registerTimerInputEvent();
+        const nightCookie = (0, typescript_cookie_1.getCookie)(CookieConstants_1.cookieConstants.NIGHT_COOKIE_NAME);
+        const currentDarkMode = nightCookie !== undefined && nightCookie.toLowerCase() === "true";
+        this.handleDarkMode(currentDarkMode);
     }
-    next(input) {
-        if (this.state.active) {
-            if (this.type === GameType_1.GameType.Single) {
-                this.currentGame.finalizeGuess(input);
-                this.paintBoard();
-                this.state.active = this.currentGame.endTime === undefined;
-            }
-            else {
-                this.currentGame.finalizeGuess(input);
-                this.paintBoard();
-                if (this.currentGame.solved()) {
-                    this.anotherGame();
-                }
-                else if (this.currentGame.endTime) {
-                    this.state.active = false;
-                    this.messaging.message = new NotificationWrapper_1.NotificationWrapper(NotificationType_1.NotificationType.Error, "Unsuccessfully solved. To keep playing, you will need a new session.");
-                }
-            }
+    preventFormDefaults() {
+        if (!this.preventFormDefaultsRegistered) {
+            this.preventFormDefaultsRegistered = true;
+            $("form").submit(function (event) {
+                event.preventDefault();
+            });
+        }
+    }
+    handleDarkMode(inDarkMode) {
+        if (inDarkMode) {
+            $("body").addClass("night");
+            $("#nightDisplay").prop("checked", true);
         }
         else {
-            this.messaging.message = new NotificationWrapper_1.NotificationWrapper(NotificationType_1.NotificationType.Error, "The session has ended. To keep playing, you will need a new session.");
+            $("body").removeClass("night");
+            $("#nightDisplay").prop("checked", false);
+        }
+        (0, typescript_cookie_1.setCookie)(CookieConstants_1.cookieConstants.NIGHT_COOKIE_NAME, inDarkMode, { expires: 365 });
+    }
+    registerHelpSelectorClick() {
+        if (!this.helpSelectorEventRegistered) {
+            this.helpSelectorEventRegistered = true;
+            $("#helpSelector").click(function () {
+                $("#settingsContainer").addClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME);
+                $("#scoreContainer").addClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME);
+                if ($("#helpContainer").hasClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME)) {
+                    $("#helpContainer").removeClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME);
+                    $("#keyboard, #rowsContainer").addClass(DOMConstants_1.domConstants.INVISIBLE_CLASS_NAME);
+                    $(".detailsColumn").addClass(DOMConstants_1.domConstants.INVISIBLE_CLASS_NAME);
+                    $("#returnToBoard").removeClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME);
+                }
+                else {
+                    $("#helpContainer").addClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME);
+                    $("#keyboard, #rowsContainer").removeClass(DOMConstants_1.domConstants.INVISIBLE_CLASS_NAME);
+                    $(".detailsColumn").removeClass(DOMConstants_1.domConstants.INVISIBLE_CLASS_NAME);
+                    $("#returnToBoard").addClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME);
+                }
+            });
         }
     }
-    isCurrentGameNew() {
-        return this.currentGame !== undefined && this.currentGame.userGuesses.length === 0;
-    }
-    paintBoard(game, onlyPaintLast) {
-        game = game !== null && game !== void 0 ? game : this.currentGame;
-        onlyPaintLast = onlyPaintLast !== null && onlyPaintLast !== void 0 ? onlyPaintLast : false;
-        this.boardBinder(game.userGuesses.map(guess => guess.guess), game.userGuesses.map(guess => guess.characterStates), onlyPaintLast);
-    }
-    generateGame() {
-        this.currentGame = new SingleGame_1.SingleGame(this.generateGameOptions(), this.eligibleWords, this.messaging);
-    }
-    generateGameOptions() {
-        return new GameOptions_1.GameOptions(this.state.hardMode, this.state.maxGuesses, this.state.gameTimerLimitExists, this.state.gameTimerLength);
-    }
-    anotherGame() {
-        this.state.gameHistory.push(this.currentGame);
-        this.score.updateScore(this.currentGame);
-        if (this.type === GameType_1.GameType.ProgressiveDifficulty) {
-            this.state.getHarder(this.score.roundsCompleted);
+    registerSettingsSelectorClick() {
+        if (!this.settingsSelectorEventRegistered) {
+            this.settingsSelectorEventRegistered = true;
+            $("#gameTypeSelector1").prop("checked", true);
+            $("#settingsSelector").click(function () {
+                $("#helpContainer").addClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME);
+                $("#scoreContainer").addClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME);
+                if ($("#settingsContainer").hasClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME)) {
+                    $("#settingsContainer").removeClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME);
+                    $("#keyboard, #rowsContainer").addClass(DOMConstants_1.domConstants.INVISIBLE_CLASS_NAME);
+                    $(".detailsColumn").addClass(DOMConstants_1.domConstants.INVISIBLE_CLASS_NAME);
+                    $("#returnToBoard").removeClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME);
+                }
+                else {
+                    $("#settingsContainer").addClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME);
+                    $("#keyboard, #rowsContainer").removeClass(DOMConstants_1.domConstants.INVISIBLE_CLASS_NAME);
+                    $(".detailsColumn").removeClass(DOMConstants_1.domConstants.INVISIBLE_CLASS_NAME);
+                    $("#returnToBoard").addClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME);
+                }
+            });
         }
-        this.generateGame();
-        this.paintBoard();
+    }
+    registerScoresSelectorClick() {
+        if (!this.scoresSelectorEventRegistered) {
+            this.scoresSelectorEventRegistered = true;
+            $("#gameTypeScoreSelector1").prop("checked", true);
+            const scope = this;
+            $("#scoreHistorySelector").click(function () {
+                $("#helpContainer").addClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME);
+                $("#settingsContainer").addClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME);
+                if ($("#scoreContainer").hasClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME)) {
+                    $("#scoreContainer").removeClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME);
+                    $("#keyboard, #rowsContainer").addClass(DOMConstants_1.domConstants.INVISIBLE_CLASS_NAME);
+                    $(".detailsColumn").addClass(DOMConstants_1.domConstants.INVISIBLE_CLASS_NAME);
+                    $("#returnToBoard").removeClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME);
+                    scope.paintScoreSection($("#settingsContainer .radioContainer input:checked").val().toString());
+                }
+                else {
+                    $("#scoreContainer").addClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME);
+                    $("#keyboard, #rowsContainer").removeClass(DOMConstants_1.domConstants.INVISIBLE_CLASS_NAME);
+                    $(".detailsColumn").removeClass(DOMConstants_1.domConstants.INVISIBLE_CLASS_NAME);
+                    $("#returnToBoard").addClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME);
+                }
+            });
+        }
+    }
+    registerBoardReturnEvent() {
+        if (!this.boardReturnEventRegistered) {
+            this.boardReturnEventRegistered = true;
+            $("#returnToBoard").click(function () {
+                $("#settingsContainer").addClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME);
+                $("#helpContainer").addClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME);
+                $("#scoreContainer").addClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME);
+                $("#keyboard, #rowsContainer").removeClass(DOMConstants_1.domConstants.INVISIBLE_CLASS_NAME);
+                $(".detailsColumn").removeClass(DOMConstants_1.domConstants.INVISIBLE_CLASS_NAME);
+                $("#returnToBoard").addClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME);
+            });
+        }
+    }
+    registerNightToggle() {
+        if (!this.nightToggleRegistered) {
+            this.nightToggleRegistered = true;
+            const scope = this;
+            $("#nightDisplay").click(function () {
+                $("body").toggleClass("night");
+                scope.handleDarkMode($("body").hasClass("night"));
+            });
+        }
+    }
+    registerGameTypeDetailsClick() {
+        if (!this.gameTypeDetailsEventRegistered) {
+            this.gameTypeDetailsEventRegistered = true;
+            $("#settingsContainer .radioContainer label").click(function (event) {
+                const gameType = $(`#${$(event.currentTarget).attr("for")}`).val();
+                switch (gameType) {
+                    case "single":
+                        $("#singleGameDesc").removeClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME);
+                        $("#endlessGameDesc").addClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME);
+                        $("#scalingGameDesc").addClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME);
+                        $("#advancedSettings").removeClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME);
+                        break;
+                    case "endless":
+                        $("#singleGameDesc").addClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME);
+                        $("#endlessGameDesc").removeClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME);
+                        $("#scalingGameDesc").addClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME);
+                        $("#advancedSettings").removeClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME);
+                        break;
+                    case "scaling":
+                        $("#singleGameDesc").addClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME);
+                        $("#endlessGameDesc").addClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME);
+                        $("#scalingGameDesc").removeClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME);
+                        $("#advancedSettings").addClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME);
+                        break;
+                    default:
+                        break;
+                }
+            });
+        }
+    }
+    registerGameTypeScoreDetailsClick() {
+        if (!this.gameTypeScoreHistoryEventRegistered) {
+            this.gameTypeScoreHistoryEventRegistered = true;
+            const scope = this;
+            $("#scoreContainer .radioContainer label").click(function (event) {
+                const gameType = $(`#${$(event.currentTarget).attr("for")}`).val().toString();
+                scope.paintScoreSection(gameType);
+            });
+        }
+    }
+    paintScoreSection(type) {
+        let gameType;
+        switch (type) {
+            case "endless":
+                $("#singleScoreHistory").addClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME);
+                $("#endlessScoreHistory").removeClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME);
+                $("#scalingScoreHistory").addClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME);
+                gameType = GameType_1.GameType.Endless;
+                break;
+            case "scaling":
+                $("#singleScoreHistory").addClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME);
+                $("#endlessScoreHistory").addClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME);
+                $("#scalingScoreHistory").removeClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME);
+                gameType = GameType_1.GameType.ProgressiveDifficulty;
+                break;
+            case "single":
+            default:
+                $("#singleScoreHistory").removeClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME);
+                $("#endlessScoreHistory").addClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME);
+                $("#scalingScoreHistory").addClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME);
+                gameType = GameType_1.GameType.Single;
+                break;
+        }
+        this.scorePainter.paintScores(gameType);
+    }
+    registerTimerInputEvent() {
+        if (!this.timerInputEventRegistered) {
+            this.timerInputEventRegistered = true;
+            $("#timerEnableToggle").click(function (event) {
+                const checked = $(event.currentTarget).find("input").prop("checked");
+                $("#timerLengthInput").prop("disabled", !checked);
+            });
+        }
     }
 }
-exports.Session = Session;
-//# sourceMappingURL=session.js.map
+exports.ElementVisibilityPainter = ElementVisibilityPainter;
+//# sourceMappingURL=ElementVisibilityPainter.js.map
