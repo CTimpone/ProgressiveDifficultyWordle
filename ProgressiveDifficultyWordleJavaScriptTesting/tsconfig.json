@@ -7,11 +7,13 @@
     "sourceMap": true,
     "watch": true
   },
-  "include": [
+  "files": [
     "app.ts",
-    "Tests/*"
-  ],
-  "exclude": [
-    "node_modules"
+    "Tests/EligibleWordsTests.ts",
+    "Tests/GuessDetailsTests.ts",
+    "Tests/ScoreDetailsTests.ts",
+    "Tests/SessionStateTests.ts",
+    "Tests/SessionTests.ts",
+    "Tests/SingleGameTests.ts"
   ]
 }
