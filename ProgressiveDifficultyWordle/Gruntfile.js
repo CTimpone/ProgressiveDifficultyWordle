@@ -1,19 +1,9 @@
 /// <binding AfterBuild='all' />
 const webpackConfig = require('./webpack.config.js');
 
+
 module.exports = function (grunt) {
     grunt.initConfig({
-        clean: {
-            complete: {
-                src: ["wwwroot/lib/combined.min.js", "wwwroot/lib/words.min.js", "temp/"],
-            },
-            codeOnly: {
-                src: ["wwwroot/lib/combined.min.js", "temp/"],
-            },
-            tempOnly: {
-                src: ["temp/"],
-            }
-        },
         eslint: {
             options: {
                 overrideConfigFile: 'eslint.json',
@@ -25,6 +15,12 @@ module.exports = function (grunt) {
         },
         webpack: {
             webpackConfig,
+        },
+        cssmin: {
+            target: {
+                src: 'wwwroot/css/pdw.css',
+                dest: 'wwwroot/lib/pdw.min.css'
+            }
         },
         watch: {
             codeWatch: {
@@ -40,11 +36,10 @@ module.exports = function (grunt) {
 
     });
 
-    grunt.loadNpmTasks("grunt-contrib-clean");
     grunt.loadNpmTasks("grunt-eslint");
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-webpack');
+    grunt.loadNpmTasks('grunt-contrib-cssmin');
 
-    grunt.registerTask("all", ['clean:complete', 'eslint', 'webpack', 'clean:tempOnly']);
-
+    grunt.registerTask("all", ['eslint', 'webpack', 'cssmin']);
 };
