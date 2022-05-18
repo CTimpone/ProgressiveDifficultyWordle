@@ -1,71 +1,113 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Session = void 0;
-const GameType_1 = require("./GameType");
-const ScoreDetails_1 = require("./ScoreDetails");
-const SingleGame_1 = require("./SingleGame");
-const SessionState_1 = require("./SessionState");
-const GameOptions_1 = require("./GameOptions");
-const EligibleWords_1 = require("./EligibleWords");
-const NotificationWrapper_1 = require("./Notification/NotificationWrapper");
-const NotificationType_1 = require("./Notification/NotificationType");
-class Session {
-    constructor(type, hardMode, eligibleAnswers, eligibleGuesses, notificationTools, fn) {
-        this.type = type;
-        this.messaging = notificationTools;
-        this.score = new ScoreDetails_1.ScoreDetails();
-        this.state = new SessionState_1.SessionState(hardMode);
-        this.boardBinder = fn;
-        this.eligibleWords = new EligibleWords_1.EligibleWords(eligibleAnswers, eligibleGuesses);
-        this.generateGame();
-        this.state.startTime = this.currentGame.startTime;
+exports.GamePainter = void 0;
+const DOMConstants_1 = require("../Constants/DOMConstants");
+const GameType_1 = require("../Models/GameType");
+const LetterStatus_1 = require("../Models/LetterStatus");
+class GamePainter {
+    typeLetter(key, currentLetterIndex) {
+        $(`.wordleRow[active-row=true] .tile[tile-index=${currentLetterIndex}] span`).text(key);
     }
-    next(input) {
-        if (this.state.active) {
-            if (this.type === GameType_1.GameType.Single) {
-                this.currentGame.finalizeGuess(input);
-                this.paintBoard();
-                this.state.active = this.currentGame.endTime === undefined;
-            }
-            else {
-                this.currentGame.finalizeGuess(input);
-                this.paintBoard();
-                if (this.currentGame.solved()) {
-                    this.anotherGame();
-                }
-                else if (this.currentGame.endTime) {
-                    this.state.active = false;
-                    this.messaging.message = new NotificationWrapper_1.NotificationWrapper(NotificationType_1.NotificationType.Error, "Unsuccessfully solved. To keep playing, you will need a new session.");
-                }
-            }
+    paintBoard(words, letterStatuses, onlyPaintLast, activeGame) {
+        const length = words.length;
+        if (length > 0) {
+            this.paintWords(length, words, letterStatuses, onlyPaintLast, activeGame);
         }
         else {
-            this.messaging.message = new NotificationWrapper_1.NotificationWrapper(NotificationType_1.NotificationType.Error, "The session has ended. To keep playing, you will need a new session.");
+            this.resetBoard();
         }
     }
-    isCurrentGameNew() {
-        return this.currentGame !== undefined && this.currentGame.userGuesses.length === 0;
-    }
-    paintBoard(game, onlyPaintLast) {
-        game = game !== null && game !== void 0 ? game : this.currentGame;
-        onlyPaintLast = onlyPaintLast !== null && onlyPaintLast !== void 0 ? onlyPaintLast : false;
-        this.boardBinder(game.userGuesses.map(guess => guess.guess), game.userGuesses.map(guess => guess.characterStates), onlyPaintLast);
-    }
-    generateGame() {
-        this.currentGame = new SingleGame_1.SingleGame(this.generateGameOptions(), this.eligibleWords, this.messaging);
-    }
-    generateGameOptions() {
-        return new GameOptions_1.GameOptions(this.state.hardMode, this.state.maxGuesses, this.state.gameTimerLimitExists, this.state.gameTimerLength);
-    }
-    anotherGame() {
-        this.state.gameHistory.push(this.currentGame);
-        this.score.updateScore(this.currentGame);
-        if (this.type === GameType_1.GameType.ProgressiveDifficulty) {
-            this.state.getHarder(this.score.roundsCompleted);
+    truncateBoard(maxGuesses) {
+        for (maxGuesses; maxGuesses < 6; maxGuesses++) {
+            $(`.wordleRow[row-index=${maxGuesses}]`).addClass(DOMConstants_1.domConstants.INVISIBLE_CLASS_NAME);
         }
-        this.generateGame();
-        this.paintBoard();
+    }
+    paintDetails(type, sessionState, scoreDetails) {
+        switch (type) {
+            case GameType_1.GameType.Endless:
+                $("#gameTypeVal").text("Endless");
+                $("#currentRoundDisplay").removeClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME);
+                $("#currentRoundVal").text(scoreDetails.roundsCompleted + 1);
+                break;
+            case GameType_1.GameType.ProgressiveDifficulty:
+                $("#gameTypeVal").text("Scaling");
+                $("#currentRoundDisplay").removeClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME);
+                $("#currentRoundVal").text(scoreDetails.roundsCompleted + 1);
+                break;
+            case GameType_1.GameType.Single:
+                $("#gameTypeVal").text("Single");
+                $("#currentRoundDisplay").addClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME);
+                break;
+            default:
+                break;
+        }
+        $("#maxGuessesVal").text(sessionState.maxGuesses);
+        $("#scoreVal").text(scoreDetails.totalScore);
+        if (sessionState.hardMode === true) {
+            $("#hardModeOnIcon").removeClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME);
+            $("#hardModeOffIcon").addClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME);
+        }
+        else {
+            $("#hardModeOnIcon").addClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME);
+            $("#hardModeOffIcon").removeClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME);
+        }
+    }
+    resetBoard() {
+        $(".tile span").text("");
+        $(".tile").removeClass(DOMConstants_1.domConstants.FLIPPED_CLASS_NAME);
+        $(".tileBack").removeClass(DOMConstants_1.domConstants.EXACT_MATCH_CLASS_NAME)
+            .removeClass(DOMConstants_1.domConstants.ABSENT_LETTER_CLASS_NAME)
+            .removeClass(DOMConstants_1.domConstants.WRONG_LOCATION_CLASS_NAME);
+        $(".baseKey").removeClass(DOMConstants_1.domConstants.ABSENT_LETTER_CLASS_NAME)
+            .removeClass(DOMConstants_1.domConstants.EXACT_MATCH_CLASS_NAME)
+            .removeClass(DOMConstants_1.domConstants.WRONG_LOCATION_CLASS_NAME);
+        $(".wordleRow").attr("active-row", "false").removeClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME);
+        $(".wordleRow[row-index=0]").attr("active-row", "true");
+    }
+    paintWords(length, words, letterStatuses, onlyPaintLast, activeGame) {
+        if (activeGame) {
+            $(`.wordleRow[row-index=${length - 1}]`).attr("active-row", "false");
+            $(`.wordleRow[row-index=${length}]`).attr("active-row", "true");
+        }
+        for (let i = 0; i < length; i++) {
+            if (i === length - 1 || onlyPaintLast !== true) {
+                const currentWord = words[i];
+                const statuses = letterStatuses[i];
+                const tiles = $(`.wordleRow[row-index=${i}] .tileBack`);
+                for (let j = 0; j < tiles.length; j++) {
+                    const tile = tiles[j];
+                    const relevantKey = $(`.baseKey[key=${currentWord[j]}]`);
+                    $(tile).find("span").text(currentWord[j].toUpperCase());
+                    switch (statuses[j]) {
+                        case LetterStatus_1.LetterStatus.ExactMatch:
+                            $(tile).addClass(DOMConstants_1.domConstants.EXACT_MATCH_CLASS_NAME);
+                            relevantKey.removeClass(DOMConstants_1.domConstants.WRONG_LOCATION_CLASS_NAME);
+                            relevantKey.addClass(DOMConstants_1.domConstants.EXACT_MATCH_CLASS_NAME);
+                            break;
+                        case LetterStatus_1.LetterStatus.Absent:
+                            $(tile).addClass(DOMConstants_1.domConstants.ABSENT_LETTER_CLASS_NAME);
+                            if (!relevantKey.hasClass(DOMConstants_1.domConstants.EXACT_MATCH_CLASS_NAME)
+                                && !relevantKey.hasClass(DOMConstants_1.domConstants.WRONG_LOCATION_CLASS_NAME)) {
+                                relevantKey.addClass(DOMConstants_1.domConstants.ABSENT_LETTER_CLASS_NAME);
+                            }
+                            break;
+                        case LetterStatus_1.LetterStatus.WrongLocation:
+                            $(tile).addClass(DOMConstants_1.domConstants.WRONG_LOCATION_CLASS_NAME);
+                            if (!relevantKey.hasClass(DOMConstants_1.domConstants.EXACT_MATCH_CLASS_NAME)) {
+                                relevantKey.addClass(DOMConstants_1.domConstants.WRONG_LOCATION_CLASS_NAME);
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                $(`.wordleRow[row-index=${i}] .tile`).addClass("flipped");
+            }
+        }
+    }
+    paintTimer(seconds) {
+        $("#timerVal").text(seconds.toString());
     }
 }
-exports.Session = Session;
-//# sourceMappingURL=session.js.map
+exports.GamePainter = GamePainter;
+//# sourceMappingURL=GamePainter.js.map

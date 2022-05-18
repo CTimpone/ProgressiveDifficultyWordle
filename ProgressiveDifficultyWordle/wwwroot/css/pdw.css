@@ -263,7 +263,7 @@ input[type="checkbox"]:checked + label::after {
     background: var(--offBlack);
     /*min-height: 80px;*/
     width: 94%;
-    z-index: 1;
+    z-index: 100;
     opacity: 0.97;
     top: 65px;
     right: 3%;

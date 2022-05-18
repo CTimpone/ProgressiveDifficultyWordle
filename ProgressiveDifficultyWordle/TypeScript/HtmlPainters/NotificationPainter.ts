@@ -29,7 +29,7 @@ export class NotificationPainter {
             $("#notificationsContainer").addClass(domConstants.INVISIBLE_CLASS_NAME);
         }, 8000);
 
-        $(document).one("click", function () {
+        $(".boardMain").one("click", function () {
             $("#notificationsContainer").addClass(domConstants.INVISIBLE_CLASS_NAME);
             clearTimeout(timeout);
         });

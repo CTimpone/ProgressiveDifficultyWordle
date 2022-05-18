@@ -1,71 +1,179 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Session = void 0;
-const GameType_1 = require("./GameType");
-const ScoreDetails_1 = require("./ScoreDetails");
-const SingleGame_1 = require("./SingleGame");
-const SessionState_1 = require("./SessionState");
-const GameOptions_1 = require("./GameOptions");
-const EligibleWords_1 = require("./EligibleWords");
-const NotificationWrapper_1 = require("./Notification/NotificationWrapper");
-const NotificationType_1 = require("./Notification/NotificationType");
-class Session {
-    constructor(type, hardMode, eligibleAnswers, eligibleGuesses, notificationTools, fn) {
-        this.type = type;
-        this.messaging = notificationTools;
-        this.score = new ScoreDetails_1.ScoreDetails();
-        this.state = new SessionState_1.SessionState(hardMode);
-        this.boardBinder = fn;
-        this.eligibleWords = new EligibleWords_1.EligibleWords(eligibleAnswers, eligibleGuesses);
-        this.generateGame();
-        this.state.startTime = this.currentGame.startTime;
+exports.GameplayTranslator = void 0;
+const typescript_cookie_1 = require("typescript-cookie");
+const DOMConstants_1 = require("../Constants/DOMConstants");
+const CookieConstants_1 = require("../Constants/CookieConstants");
+const GameType_1 = require("../Models/GameType");
+const GuessResult_1 = require("../Models/GuessResult");
+const Session_1 = require("../WordleAccessLayer/Session");
+const GamePainter_1 = require("../HtmlPainters/GamePainter");
+const NotificationPainter_1 = require("../HtmlPainters/NotificationPainter");
+class GameplayTranslator {
+    constructor(validAnswers, validGuesses, scoreHandler) {
+        this.controlChord = false;
+        this.altChord = false;
+        this.currentWord = "";
+        this.validAnswers = validAnswers;
+        this.validGuesses = validGuesses;
+        this.scoreHandler = scoreHandler;
+        this.gamePainter = new GamePainter_1.GamePainter();
+        this.notificationPainter = new NotificationPainter_1.NotificationPainter();
+        this.registerPlayClickEvent();
+        this.registerKeydownEvent();
+        this.registerKeyupEvent();
+        this.registerVirtualKeyboardEvent();
+        const hardModeCookie = (0, typescript_cookie_1.getCookie)(CookieConstants_1.cookieConstants.HARD_MODE_COOKIE_NAME);
+        const currentDarkMode = hardModeCookie !== undefined && hardModeCookie.toLowerCase() === "true";
+        this.handleHardMode(currentDarkMode);
     }
-    next(input) {
-        if (this.state.active) {
-            if (this.type === GameType_1.GameType.Single) {
-                this.currentGame.finalizeGuess(input);
-                this.paintBoard();
-                this.state.active = this.currentGame.endTime === undefined;
-            }
-            else {
-                this.currentGame.finalizeGuess(input);
-                this.paintBoard();
-                if (this.currentGame.solved()) {
-                    this.anotherGame();
-                }
-                else if (this.currentGame.endTime) {
-                    this.state.active = false;
-                    this.messaging.message = new NotificationWrapper_1.NotificationWrapper(NotificationType_1.NotificationType.Error, "Unsuccessfully solved. To keep playing, you will need a new session.");
-                }
-            }
+    handleHardMode(hardMode) {
+        if (hardMode) {
+            $("#hardMode").prop("checked", true);
         }
         else {
-            this.messaging.message = new NotificationWrapper_1.NotificationWrapper(NotificationType_1.NotificationType.Error, "The session has ended. To keep playing, you will need a new session.");
+            $("#hardMode").prop("checked", false);
+        }
+        (0, typescript_cookie_1.setCookie)(CookieConstants_1.cookieConstants.HARD_MODE_COOKIE_NAME, hardMode, { expires: 365 });
+    }
+    registerVirtualKeyboardEvent() {
+        if (!this.virtualKeyboardRegistered) {
+            this.virtualKeyboardRegistered = true;
+            const scope = this;
+            $(".baseKey, .bigKey").click(function (event) {
+                event.preventDefault();
+                if (!$("#mainGameContainer").hasClass(DOMConstants_1.domConstants.LOCKED_CLASS_NAME)) {
+                    scope.inputLetter($(event.currentTarget).attr("key").toUpperCase());
+                }
+            });
         }
     }
-    isCurrentGameNew() {
-        return this.currentGame !== undefined && this.currentGame.userGuesses.length === 0;
-    }
-    paintBoard(game, onlyPaintLast) {
-        game = game !== null && game !== void 0 ? game : this.currentGame;
-        onlyPaintLast = onlyPaintLast !== null && onlyPaintLast !== void 0 ? onlyPaintLast : false;
-        this.boardBinder(game.userGuesses.map(guess => guess.guess), game.userGuesses.map(guess => guess.characterStates), onlyPaintLast);
-    }
-    generateGame() {
-        this.currentGame = new SingleGame_1.SingleGame(this.generateGameOptions(), this.eligibleWords, this.messaging);
-    }
-    generateGameOptions() {
-        return new GameOptions_1.GameOptions(this.state.hardMode, this.state.maxGuesses, this.state.gameTimerLimitExists, this.state.gameTimerLength);
-    }
-    anotherGame() {
-        this.state.gameHistory.push(this.currentGame);
-        this.score.updateScore(this.currentGame);
-        if (this.type === GameType_1.GameType.ProgressiveDifficulty) {
-            this.state.getHarder(this.score.roundsCompleted);
+    registerPlayClickEvent() {
+        if (!this.playClickRegistered) {
+            this.playClickRegistered = true;
+            const scope = this;
+            $("#playButton").click(function (event) {
+                if (scope.session === undefined || !scope.session.state.active) {
+                    $(event.currentTarget).addClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME);
+                    const gameTypeElements = $("#settingsContainer #radioContainer input");
+                    let gameTypeString = undefined;
+                    for (const element of gameTypeElements) {
+                        if ($(element).prop("checked") === true) {
+                            gameTypeString = $(element).val();
+                        }
+                    }
+                    let gameType = undefined;
+                    let timerEnabled = false;
+                    let timerLength = undefined;
+                    let maxGuesses = 6;
+                    switch (gameTypeString) {
+                        case "endless":
+                            gameType = GameType_1.GameType.Endless;
+                            break;
+                        case "scaling":
+                            gameType = GameType_1.GameType.ProgressiveDifficulty;
+                            break;
+                        case "single":
+                        default:
+                            gameType = GameType_1.GameType.Single;
+                    }
+                    if (gameType !== GameType_1.GameType.ProgressiveDifficulty) {
+                        const timerToggle = $("#timerEnable");
+                        timerEnabled = timerToggle.prop("checked");
+                        if (timerEnabled) {
+                            timerLength = Number($("#timerLengthInput").val());
+                        }
+                        maxGuesses = Number($("#maxGuessesSelect option:selected").val());
+                    }
+                    const hardMode = $("#hardMode").prop("checked");
+                    (0, typescript_cookie_1.setCookie)(CookieConstants_1.cookieConstants.HARD_MODE_COOKIE_NAME, hardMode, { expires: 365 });
+                    scope.startSession(gameType, hardMode, maxGuesses, timerEnabled, timerLength);
+                }
+            });
         }
-        this.generateGame();
-        this.paintBoard();
+    }
+    registerKeydownEvent() {
+        if (!this.keydownRegistered) {
+            this.keydownRegistered = true;
+            const scope = this;
+            $(document).keydown(function (event) {
+                const currentKey = event.key.toUpperCase();
+                const gameContainerElement = $("#mainGameContainer, #rowsContainer");
+                if (!gameContainerElement.hasClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME) &&
+                    !gameContainerElement.hasClass(DOMConstants_1.domConstants.INVISIBLE_CLASS_NAME) &&
+                    !gameContainerElement.hasClass(DOMConstants_1.domConstants.LOCKED_CLASS_NAME)) {
+                    switch (currentKey) {
+                        case "CONTROL":
+                            scope.controlChord = true;
+                            break;
+                        case "ALT":
+                            scope.altChord = true;
+                            break;
+                        default:
+                            if (!scope.altChord && !scope.controlChord) {
+                                scope.inputLetter(currentKey);
+                            }
+                    }
+                }
+            });
+        }
+    }
+    registerKeyupEvent() {
+        if (!this.keyupRegistered) {
+            this.keyupRegistered = true;
+            const scope = this;
+            $(document).keyup(function (event) {
+                const currentKey = event.key.toUpperCase();
+                switch (currentKey) {
+                    case "CONTROL":
+                        scope.controlChord = false;
+                        break;
+                    case "ALT":
+                        scope.altChord = false;
+                        break;
+                    default:
+                        break;
+                }
+            });
+            window.onfocus = function () {
+                scope.controlChord = false;
+                scope.altChord = false;
+            };
+        }
+    }
+    inputLetter(key) {
+        if (this.session !== undefined && this.session.isCurrentGameActive()) {
+            const isLetter = /^[A-Z]$/.test(key);
+            const isOk = /^ENTER|ACCEPT|EXECUTE$/.test(key);
+            const isDelete = /^BACKSPACE$/.test(key);
+            if (this.currentWord.length < 5 && isLetter) {
+                this.gamePainter.typeLetter(key, this.currentWord.length);
+                this.currentWord += key;
+            }
+            else if (this.currentWord.length === 5 && isOk) {
+                const guessResult = this.session.next(this.currentWord);
+                if (!this.session.isCurrentGameActive()) {
+                    $("#playButton").removeClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME);
+                    this.scoreHandler.accessPainter().swapToScoreSection(this.session.type);
+                }
+                else if (guessResult === GuessResult_1.GuessResult.GameComplete || guessResult === GuessResult_1.GuessResult.Progress) {
+                    this.currentWord = "";
+                }
+            }
+            else if (isDelete) {
+                this.currentWord = this.currentWord.slice(0, -1);
+                this.gamePainter.typeLetter("", this.currentWord.length);
+            }
+        }
+        else if ($("#playButton").has(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME)) {
+            this.currentWord = "";
+            $("#playButton").removeClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME);
+        }
+    }
+    startSession(type, hardMode, maxGuesses, timerEnabled, timerLength) {
+        this.currentWord = "";
+        this.session = new Session_1.Session(type, this.validAnswers, this.validAnswers, this.notificationPainter.notificationEventing, this.gamePainter, this.scoreHandler, hardMode, maxGuesses, timerEnabled, timerLength);
     }
 }
-exports.Session = Session;
-//# sourceMappingURL=session.js.map
+exports.GameplayTranslator = GameplayTranslator;
+//# sourceMappingURL=GameplayTranslator.js.map

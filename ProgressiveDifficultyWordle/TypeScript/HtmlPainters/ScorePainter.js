@@ -1,71 +1,85 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Session = void 0;
-const GameType_1 = require("./GameType");
-const ScoreDetails_1 = require("./ScoreDetails");
-const SingleGame_1 = require("./SingleGame");
-const SessionState_1 = require("./SessionState");
-const GameOptions_1 = require("./GameOptions");
-const EligibleWords_1 = require("./EligibleWords");
-const NotificationWrapper_1 = require("./Notification/NotificationWrapper");
-const NotificationType_1 = require("./Notification/NotificationType");
-class Session {
-    constructor(type, hardMode, eligibleAnswers, eligibleGuesses, notificationTools, fn) {
-        this.type = type;
-        this.messaging = notificationTools;
-        this.score = new ScoreDetails_1.ScoreDetails();
-        this.state = new SessionState_1.SessionState(hardMode);
-        this.boardBinder = fn;
-        this.eligibleWords = new EligibleWords_1.EligibleWords(eligibleAnswers, eligibleGuesses);
-        this.generateGame();
-        this.state.startTime = this.currentGame.startTime;
+exports.ScorePainter = void 0;
+const DOMConstants_1 = require("../Constants/DOMConstants");
+const GameType_1 = require("../Models/GameType");
+class ScorePainter {
+    constructor(data) {
+        this.scoreData = data;
     }
-    next(input) {
-        if (this.state.active) {
-            if (this.type === GameType_1.GameType.Single) {
-                this.currentGame.finalizeGuess(input);
-                this.paintBoard();
-                this.state.active = this.currentGame.endTime === undefined;
-            }
-            else {
-                this.currentGame.finalizeGuess(input);
-                this.paintBoard();
-                if (this.currentGame.solved()) {
-                    this.anotherGame();
-                }
-                else if (this.currentGame.endTime) {
-                    this.state.active = false;
-                    this.messaging.message = new NotificationWrapper_1.NotificationWrapper(NotificationType_1.NotificationType.Error, "Unsuccessfully solved. To keep playing, you will need a new session.");
-                }
-            }
+    paintScores(type) {
+        if (type === GameType_1.GameType.Single) {
+            this.paintSingle(this.scoreData.singleHistory);
+        }
+        else if (type === GameType_1.GameType.Endless) {
+            this.paintHighScores(type, this.scoreData.endlessScores);
         }
         else {
-            this.messaging.message = new NotificationWrapper_1.NotificationWrapper(NotificationType_1.NotificationType.Error, "The session has ended. To keep playing, you will need a new session.");
+            this.paintHighScores(type, this.scoreData.scalingScores);
         }
     }
-    isCurrentGameNew() {
-        return this.currentGame !== undefined && this.currentGame.userGuesses.length === 0;
+    storeScoreData(data) {
+        this.scoreData = data;
     }
-    paintBoard(game, onlyPaintLast) {
-        game = game !== null && game !== void 0 ? game : this.currentGame;
-        onlyPaintLast = onlyPaintLast !== null && onlyPaintLast !== void 0 ? onlyPaintLast : false;
-        this.boardBinder(game.userGuesses.map(guess => guess.guess), game.userGuesses.map(guess => guess.characterStates), onlyPaintLast);
-    }
-    generateGame() {
-        this.currentGame = new SingleGame_1.SingleGame(this.generateGameOptions(), this.eligibleWords, this.messaging);
-    }
-    generateGameOptions() {
-        return new GameOptions_1.GameOptions(this.state.hardMode, this.state.maxGuesses, this.state.gameTimerLimitExists, this.state.gameTimerLength);
-    }
-    anotherGame() {
-        this.state.gameHistory.push(this.currentGame);
-        this.score.updateScore(this.currentGame);
-        if (this.type === GameType_1.GameType.ProgressiveDifficulty) {
-            this.state.getHarder(this.score.roundsCompleted);
+    swapToScoreSection(type) {
+        switch (type) {
+            case GameType_1.GameType.Endless:
+                $("#gameTypeScoreSelector2").prop("checked", true);
+                break;
+            case GameType_1.GameType.ProgressiveDifficulty:
+                $("#gameTypeScoreSelector3").prop("checked", true);
+                break;
+            case GameType_1.GameType.Single:
+            default:
+                $("#gameTypeScoreSelector1").prop("checked", true);
+                break;
         }
-        this.generateGame();
-        this.paintBoard();
+        if ($("#scoreContainer").hasClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME)) {
+            $("#scoreHistorySelector").trigger("click");
+        }
+    }
+    paintSingle(history) {
+        $("#singleScoreHistory").removeClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME);
+        $("#endlessScoreHistory, #scalingScoreHistory").addClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME);
+        $("#singleRoundsPlayedText").text(history.totalRounds);
+        $("#successfulRoundsText").text(history.successfulRounds);
+        $("#failedRoundsText").text(history.failedRounds);
+        $("#streakText").text(history.consecutiveWins);
+        const barMaxWidth = $(".guessCountBarContainer").width();
+        for (let i = 1; i <= 6; i++) {
+            const incidenceCount = history.guessMap.has(i) ? history.guessMap.get(i) : 0;
+            const calculatedPercentMod = (((incidenceCount / history.successfulRounds) * (barMaxWidth - 35) / barMaxWidth) * 100).toFixed(2);
+            $(`#${i}guessCountBar`).width(`calc(${calculatedPercentMod}% + 35px`).text(incidenceCount);
+        }
+    }
+    paintHighScores(type, scores) {
+        const sectionElement = $(`#${type === GameType_1.GameType.Endless ? "endless" : "scaling"}ScoreHistory`);
+        const tableBaseElement = $(sectionElement).find(".scoreBoard");
+        if (scores.length === 0) {
+            $(sectionElement).find("#noScoresWarning").removeClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME);
+            $(tableBaseElement).addClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME);
+        }
+        else {
+            $(sectionElement).find("#noScoresWarning").addClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME);
+            $(tableBaseElement).removeClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME);
+            for (let i = 0; i < 10; i++) {
+                if (scores.length > i) {
+                    $(tableBaseElement).find(`tr[row-index=${i}]`).removeClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME);
+                    $(tableBaseElement).find(`#scoreRounds${i}`).text(scores[i].roundsCompleted);
+                    $(tableBaseElement).find(`#scorePoints${i}`).text(scores[i].score);
+                    if (scores[i].date instanceof Date) {
+                        $(tableBaseElement).find(`#scoreDate${i}`).text(scores[i].date.toISOString().slice(0, 10));
+                    }
+                    else {
+                        $(tableBaseElement).find(`#scoreDate${i}`).text(scores[i].date.toString().slice(0, 10));
+                    }
+                }
+                else {
+                    $(tableBaseElement).find(`tr[row-index=${i}]`).addClass(DOMConstants_1.domConstants.HIDDEN_CLASS_NAME);
+                }
+            }
+        }
     }
 }
-exports.Session = Session;
-//# sourceMappingURL=session.js.map
+exports.ScorePainter = ScorePainter;
+//# sourceMappingURL=ScorePainter.js.map
